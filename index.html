@@ -56,19 +56,22 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 20px 10px;
+      justify-content: flex-start;
+      padding: 16px 8px;
       transition: background 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
     }
 
-    /* Device Mockup Wrapper */
+    /* Device Mockup Wrapper - Fully Adaptive */
     .device-container {
       width: 100%;
       max-width: 430px;
-      height: 880px;
+      height: 94vh;
+      max-height: 890px;
+      min-height: 580px;
       background: var(--surface);
-      border: 4px solid var(--phone-border);
-      border-radius: 44px;
+      border: 3px solid var(--phone-border);
+      border-radius: 40px;
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
@@ -76,50 +79,82 @@
       overflow: hidden;
     }
 
+    @media (max-width: 480px) {
+      body {
+        padding: 0;
+        margin: 0;
+        background: var(--surface);
+      }
+      .device-container {
+        max-width: 100%;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+      }
+    }
+
     /* Top Status Bar */
     .status-bar {
-      height: 38px;
+      height: 34px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 24px;
-      font-size: 13px;
+      padding: 0 20px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--text-muted);
       z-index: 10;
+      flex-shrink: 0;
     }
 
     .island {
-      width: 100px;
-      height: 22px;
+      width: 84px;
+      height: 18px;
       background: #000;
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
-    /* App Header */
+    /* App Header - Responsive Width */
     .app-header {
-      padding: 10px 20px;
+      padding: 6px 18px 10px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .app-brand {
+      min-width: 0;
+      flex: 1;
     }
 
     .app-brand h1 {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
+      line-height: 1.2;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .app-brand p {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .theme-btn {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: var(--surface-variant);
       border: 1px solid var(--border);
@@ -128,34 +163,46 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 16px;
+      flex-shrink: 0;
     }
 
-    /* Mode Switcher: Ищу vs Предлагаю */
+    /* Mode Switcher: Ищу vs Предлагаю vs Хорошая цена */
     .mode-switcher {
-      margin: 12px 20px;
+      margin: 4px 16px 8px 16px;
       background: var(--surface-variant);
       border-radius: 28px;
-      padding: 4px;
+      padding: 3px;
       display: flex;
-      position: relative;
+      gap: 3px;
+      flex-shrink: 0;
     }
 
     .mode-btn {
       flex: 1;
-      height: 44px;
+      height: 40px;
       border: none;
       background: transparent;
       color: var(--text-muted);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      border-radius: 24px;
+      border-radius: 22px;
       cursor: pointer;
       transition: all 0.25s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 4px;
+      white-space: nowrap;
+      padding: 0 4px;
+    }
+
+    @media (max-width: 380px) {
+      .mode-btn {
+        font-size: 11px;
+        padding: 0 2px;
+        gap: 2px;
+      }
     }
 
     .mode-btn.active.demand {
@@ -189,14 +236,37 @@
       gap: 4px;
     }
 
+    .badge-partial {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
     /* Main Content Area */
     .screen-content {
       flex: 1;
       overflow-y: auto;
-      padding: 10px 20px 20px 20px;
+      padding: 8px 16px 20px 16px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .screen-content::-webkit-scrollbar {
+      width: 4px;
+    }
+    .screen-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .screen-content::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
     }
 
     /* District Card */
@@ -546,13 +616,14 @@
       gap: 6px;
       background: var(--primary);
       color: #fff;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
-      padding: 3px 10px;
+      padding: 4px 10px;
       border-radius: 20px;
-      align-self: flex-start;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .demand-pulse {
       display: inline-block;
@@ -651,7 +722,7 @@
     </div>
 
     <!-- Mode Switcher -->
-    <div class="mode-switcher" style="grid-template-columns: 1fr 1.05fr 1.35fr;">
+    <div class="mode-switcher">
       <button class="mode-btn active demand" id="demandBtn" onclick="switchMode('DEMAND')">
         🔍 Ищу
       </button>
@@ -689,7 +760,7 @@
       <!-- Natural Language Input -->
       <div class="input-card">
         <h3 id="inputTitle">Что вам нужно найти?</h3>
-        <textarea id="aiInput" class="ai-textarea" placeholder="Опишите своими словами:&#10;«Нужен генератор 5 кВт до 40 тысяч на Таирова»"></textarea>
+        <textarea id="aiInput" class="ai-textarea" placeholder="Опишите своими словами:&#10;«Нужен насос велосипедный ручной до 200 грн на Таирова»"></textarea>
         
         <button class="action-btn" id="mainActionBtn" onclick="runSearch()">
           ⚡ Найти подходящие варианты
@@ -701,16 +772,19 @@
       </div>
 
       <!-- Quick Chips -->
-      <span class="chips-title">Популярные запросы:</span>
-      <div class="chips-scroll" id="chipsContainer">
-        <!-- populated by JS -->
+      <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 2px;">
+        <span class="chips-title">Популярные запросы:</span>
+        <div class="chips-scroll" id="chipsContainer">
+          <!-- populated by JS -->
+        </div>
       </div>
 
       <!-- Universal Category Discovery Tabs (All Odesa Niches) -->
       <div class="category-tabs" id="categoryTabsContainer">
         <button class="cat-tab active" data-cat="all" onclick="setCategoryFilter('all')">🌐 Все категории</button>
-        <button class="cat-tab" data-cat="services" onclick="setCategoryFilter('services')">🛠️ Услуги мастеров (Одесса)</button>
+        <button class="cat-tab" data-cat="sports" onclick="setCategoryFilter('sports')">🚲 Вело & Спорт</button>
         <button class="cat-tab" data-cat="appliances" onclick="setCategoryFilter('appliances')">☕ Мелкая техника & Чайники</button>
+        <button class="cat-tab" data-cat="services" onclick="setCategoryFilter('services')">🛠️ Услуги мастеров (Одесса)</button>
         <button class="cat-tab" data-cat="electronics" onclick="setCategoryFilter('electronics')">📱 Электроника</button>
         <button class="cat-tab" data-cat="generators" onclick="setCategoryFilter('generators')">⚡ Генераторы</button>
         <button class="cat-tab" data-cat="real-estate" onclick="setCategoryFilter('real-estate')">🏠 Недвижимость</button>
@@ -840,11 +914,12 @@
 
     const demandSuggestions = [
       "🔥 Все супер-цены (-25%+)",
+      "Насос велосипедный ручной",
+      "Чайник б/у до 100 грн",
+      "Электрик подключение генератора",
       "iPhone 15 Pro до 35 000 грн",
       "2к квартира Аркадия до 15 000 грн",
-      "Генератор 5 кВт до 40 000 грн",
-      "MacBook Air M2 Одесса",
-      "Детская коляска 2 в 1"
+      "Генератор 5 кВт до 40 000 грн"
     ];
 
     const supplySuggestions = [
@@ -1127,6 +1202,76 @@
         url: "https://vserabotniki.com.ua",
         is_hot_deal: false,
         img: "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 116,
+        title: "Насос велосипедный ручной со шлангом и манометром Giyo",
+        desc: "Универсальный ручной велосипедный насос. Автониппель (Schrader) и Presta. Давление до 8 bar. Таирова.",
+        price: "160 грн",
+        category: "sports",
+        district: "Таирова",
+        dist: "0.9 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua",
+        is_hot_deal: true,
+        discount_pct: 36,
+        unit_metric_comparison: "Медиана по Одессе: 250 грн • Скидка 36%",
+        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 117,
+        title: "Велосипедный насос ножной универсальный с манометром",
+        desc: "Надёжный ножной насос для велосипеда, мячей и шин. Металлический корпус, переходники. Черёмушки.",
+        price: "220 грн",
+        category: "sports",
+        district: "Черёмушки",
+        dist: "2.8 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "Prom.ua",
+        url: "https://prom.ua",
+        is_hot_deal: false,
+        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 118,
+        title: "Компактный мини-насос на раму велосипеда алюминиевый",
+        desc: "Легкий портативный велосипедный насос с креплением на раму. Центр Одессы.",
+        price: "195 грн",
+        category: "sports",
+        district: "Центр",
+        dist: "2.5 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua",
+        is_hot_deal: true,
+        discount_pct: 25,
+        unit_metric_comparison: "Медиана по Одессе: 260 грн • Скидка 25%",
+        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 119,
+        title: "Напольный насос велосипедный высокого давления до 11 bar",
+        desc: "Профессиональный стационарный велонасос для шоссейных и горных велосипедов. Аркадия.",
+        price: "340 грн",
+        category: "sports",
+        district: "Аркадия",
+        dist: "1.8 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua",
+        is_hot_deal: true,
+        discount_pct: 28,
+        unit_metric_comparison: "Медиана по Одессе: 470 грн • Скидка 28%",
+        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
       }
     ];
 
@@ -1345,6 +1490,10 @@
       if (currentCategoryFilter && currentCategoryFilter !== 'all') {
         itemsToRender = itemsToRender.filter(item => {
           const text = (item.title + " " + item.desc + " " + item.category).toLowerCase();
+          if (currentCategoryFilter === 'sports') {
+            return text.includes('вело') || text.includes('насос') || text.includes('спорт') || 
+                   text.includes('тренажер') || text.includes('trek') || text.includes('crosser');
+          }
           if (currentCategoryFilter === 'services') {
             return text.includes('услуг') || text.includes('электрик') || text.includes('сантехник') || 
                    text.includes('ремонт') || text.includes('мастер') || text.includes('грузчик') || text.includes('инвертор');
@@ -1371,7 +1520,7 @@
         });
       }
 
-      // 4. Natural Language Intent & Tokenized Search Engine
+      // 4. Natural Language Intent & Tokenized Search Engine (Strict Compound Matching)
       const queryRaw = (document.getElementById('aiInput').value || "").trim();
       let demandCaptured = null;
       let zeroResultsForQuery = false;
@@ -1404,58 +1553,86 @@
           .split(/\s+/)
           .filter(t => t.length >= 3 && !stopWords.has(t) && !/^\d+$/.test(t));
 
-        // Score candidates based on token overlap & budget match
-        const scoredItems = [];
+        // Separate items into Exact Matches (all substantive tokens matched) and Partial
+        const exactMatches = [];
+        const partialMatches = [];
+
         for (const item of itemsToRender) {
           const itemText = (item.title + " " + item.desc + " " + item.category + " " + (item.source || "")).toLowerCase();
           const itemPriceNum = parseFloat((item.price || '').replace(/[^\d.]/g, '')) || 0;
 
           let tokenMatches = 0;
+          const matchedWords = [];
           for (const token of tokens) {
-            // Check full token match or stem match (e.g. "чайник" -> "электрочайник", "чайники")
+            // Match token or stem
             const stem = token.length > 4 ? token.slice(0, -1) : token;
             if (itemText.includes(token) || itemText.includes(stem)) {
               tokenMatches++;
+              matchedWords.push(token);
             }
           }
 
-          // If tokens were supplied, require at least 1 token match
-          if (tokens.length > 0 && tokenMatches === 0) {
-            continue;
-          }
+          if (tokenMatches === 0) continue;
 
           const isWithinBudget = (maxPrice === null || itemPriceNum <= maxPrice);
-          let grade = isWithinBudget ? "Отлично подходит" : `Выше бюджета (${Math.round(itemPriceNum)} грн)`;
-          let gradeClass = isWithinBudget ? "badge-relevance badge-best" : "badge-relevance badge-good";
+          // Strict compound check: if multiple tokens exist, ALL must be present in the listing
+          const isExact = (tokens.length === 1 && tokenMatches >= 1) || (tokens.length > 1 && tokenMatches >= tokens.length);
 
-          scoredItems.push({
-            ...item,
-            grade: grade,
-            gradeClass: gradeClass,
-            _score: (tokenMatches * 20) + (isWithinBudget ? 15 : -10) - (itemPriceNum > (maxPrice || 9999999) ? 5 : 0),
-            _withinBudget: isWithinBudget,
-            _priceNum: itemPriceNum
-          });
+          if (isExact) {
+            let grade = isWithinBudget ? "Точное совпадение" : `Выше бюджета (${Math.round(itemPriceNum)} грн)`;
+            let gradeClass = isWithinBudget ? "badge-excellent" : "badge-good";
+            exactMatches.push({
+              ...item,
+              grade: grade,
+              gradeClass: gradeClass,
+              _isExact: true,
+              _score: 100 + (isWithinBudget ? 50 : 0) - (itemPriceNum > (maxPrice || 9999999) ? 20 : 0),
+              _withinBudget: isWithinBudget,
+              _priceNum: itemPriceNum
+            });
+          } else {
+            // Partial match (e.g. matched only "велосипед" or only "насос")
+            let grade = `Частично: «${matchedWords.join(', ')}»`;
+            partialMatches.push({
+              ...item,
+              grade: grade,
+              gradeClass: "badge-partial",
+              _isExact: false,
+              _score: (tokenMatches * 20) + (isWithinBudget ? 10 : 0),
+              _withinBudget: isWithinBudget,
+              _priceNum: itemPriceNum
+            });
+          }
         }
 
-        demandCaptured = {
-          raw: queryRaw,
-          maxPrice: maxPrice,
-          tokens: tokens,
-          matchesCount: scoredItems.length
-        };
+        // Sort exact matches
+        exactMatches.sort((a, b) => {
+          if (a._withinBudget !== b._withinBudget) return a._withinBudget ? -1 : 1;
+          return a._priceNum - b._priceNum;
+        });
 
-        if (scoredItems.length === 0) {
-          zeroResultsForQuery = true;
-          // Keep a pool of close alternative suggestions in Odessa so screen is never dead
-          itemsToRender = mockListings.slice(0, 4);
+        // Sort partial matches
+        partialMatches.sort((a, b) => b._score - a._score || a._priceNum - b._priceNum);
+
+        if (exactMatches.length > 0) {
+          zeroResultsForQuery = false;
+          demandCaptured = {
+            raw: queryRaw,
+            maxPrice: maxPrice,
+            tokens: tokens,
+            matchesCount: exactMatches.length
+          };
+          itemsToRender = exactMatches;
         } else {
-          // Sort scored items: within budget first, then by score descending
-          scoredItems.sort((a, b) => {
-            if (a._withinBudget !== b._withinBudget) return a._withinBudget ? -1 : 1;
-            return b._score - a._score || a._priceNum - b._priceNum;
-          });
-          itemsToRender = scoredItems;
+          zeroResultsForQuery = true;
+          demandCaptured = {
+            raw: queryRaw,
+            maxPrice: maxPrice,
+            tokens: tokens,
+            matchesCount: 0
+          };
+          // Show up to 3 partial matches or fallback items clearly separated
+          itemsToRender = partialMatches.length > 0 ? partialMatches.slice(0, 3) : mockListings.slice(0, 3);
         }
       }
 
@@ -1464,25 +1641,25 @@
       if (demandCaptured) {
         demandHeaderHtml = `
           <div class="demand-captured-card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px;">
               <span class="demand-captured-badge"><span class="demand-pulse"></span> ЗАПРОС СПРОСА СОХРАНЁН</span>
-              <small style="color: var(--primary); font-weight: 700; font-size: 11px;">Одесса • Активный спрос</small>
+              <span style="color: var(--primary); font-weight: 700; font-size: 11px; white-space: nowrap;">Одесса • Активный спрос</span>
             </div>
-            <div style="font-size: 14px; font-weight: 700;">
+            <div style="font-size: 14px; font-weight: 700; margin-top: 4px;">
               🎯 Ищу: «${demandCaptured.raw}»
             </div>
             <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 0;">
               ${zeroResultsForQuery 
-                ? `Точного совпадения дешевле ${demandCaptured.maxPrice ? demandCaptured.maxPrice + ' грн' : 'заданного бюджета'} в текущей базе пока нет. <strong>Ваш запрос принят!</strong> Мы оповестим одесских продавцов и запустили безопасный антибан-поиск на OLX и Prom.ua.`
-                : `✅ Найдено ${demandCaptured.matchesCount} подходящих предложений в Одессе! Запрос зафиксирован в реестре спроса.`}
+                ? `🔍 Точных совпадений по запросу «${demandCaptured.raw}» в текущей базе пока нет. <strong>Ваш запрос спроса зафиксирован!</strong> Мы оповестим одесских продавцов и запустили безопасный антибан-поиск на OLX и Prom.ua.`
+                : `✅ Найдено ${demandCaptured.matchesCount} точных предложений в Одессе! Запрос зафиксирован в реестре спроса.`}
             </p>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <button class="action-btn" style="height: 36px; font-size: 12px; background: var(--accent-green);" onclick="triggerStealthSearch('${demandCaptured.raw}')">
+            <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+              <button class="action-btn" style="height: 36px; font-size: 12px; background: var(--accent-green); width: 100%;" onclick="triggerStealthSearch('${demandCaptured.raw}')">
                 🔍 Запустить фоновый парсинг OLX/Prom по этому запросу
               </button>
             </div>
           </div>
-          ${zeroResultsForQuery ? `<div style="font-weight: 700; font-size: 13px; color: var(--text-muted); margin-top: 4px;">Ближайшие доступные варианты в Одессе:</div>` : ''}
+          ${zeroResultsForQuery ? `<div style="font-weight: 700; font-size: 13px; color: var(--text-muted); margin-top: 6px;">💡 Сопутствующие товары и похожие категории в Одессе:</div>` : ''}
         `;
       }
 

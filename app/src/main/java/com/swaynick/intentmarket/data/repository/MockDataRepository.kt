@@ -427,6 +427,88 @@ object MockDataRepository {
             imageUrl = "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=500&auto=format&fit=crop&q=60",
             matchGrade = MatchGrade.EXCELLENT,
             attributes = mapOf("service_type" to "movers")
+        ),
+        // BICYCLE & SPORTS
+        ListingItem(
+            id = "velo-pump-1",
+            title = "Насос велосипедный ручной со шлангом и манометром Giyo",
+            description = "Универсальный ручной велосипедный насос. Автониппель (Schrader) и Presta. Давление до 8 bar. Таирова.",
+            category = Category.SPORTS,
+            price = 160.0,
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 0.9,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua",
+            imageUrl = "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            isHotDeal = true,
+            discountPct = 36,
+            unitMetricComparison = "160 грн (медиана 250 грн • -36%)"
+        ),
+        ListingItem(
+            id = "velo-pump-2",
+            title = "Велосипедный насос ножной универсальный с манометром",
+            description = "Надёжный ножной насос для велосипеда, мячей и шин. Металлический корпус, переходники. Черёмушки.",
+            category = Category.SPORTS,
+            price = 220.0,
+            district = ODESA_DISTRICTS[3], // Черёмушки
+            distanceKm = 2.8,
+            isExternal = true,
+            sourceName = "Prom",
+            sourceUrl = "https://prom.ua",
+            imageUrl = "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT
+        ),
+        ListingItem(
+            id = "velo-pump-3",
+            title = "Компактный мини-насос на раму велосипеда алюминиевый",
+            description = "Легкий портативный велосипедный насос с креплением на раму. Центр Одессы.",
+            category = Category.SPORTS,
+            price = 195.0,
+            district = ODESA_DISTRICTS[2], // Центр
+            distanceKm = 2.5,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua",
+            imageUrl = "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            isHotDeal = true,
+            discountPct = 25,
+            unitMetricComparison = "195 грн (медиана 260 грн • -25%)"
+        ),
+        ListingItem(
+            id = "velo-bike-1",
+            title = "Горный велосипед Trek Marlin 7 29 (Рама L, Deore)",
+            description = "Гидравлические тормоза Shimano, блокировка вилки, накат по Трассе Здоровья. Большой Фонтан.",
+            category = Category.SPORTS,
+            price = 15200.0,
+            district = ODESA_DISTRICTS[4], // Большой Фонтан
+            distanceKm = 2.8,
+            isExternal = false,
+            sourceName = "На нашей площадке",
+            imageUrl = "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            isHotDeal = true,
+            discountPct = 32,
+            unitMetricComparison = "15 200 грн (медиана 22 500 грн)"
+        ),
+        ListingItem(
+            id = "app-kettle-1",
+            title = "Чайник электрический Scarlett SC-EK21S25 б/у рабочий",
+            description = "Дисковый нагревательный элемент, автоотключение. Полностью рабочий. Таирова.",
+            category = Category.APPLIANCES,
+            price = 90.0,
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 0.9,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua",
+            imageUrl = "https://images.unsplash.com/photo-1594213114663-d94db9b17125?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            isHotDeal = true,
+            discountPct = 64,
+            unitMetricComparison = "90 грн (медиана 250 грн • -64%)"
         )
     )
 
@@ -456,18 +538,22 @@ object MockDataRepository {
             .split(Regex("""\s+"""))
             .filter { it.length >= 3 && it !in stopWords && !it.all { c -> c.isDigit() } }
 
-        val pool = LISTINGS_POOL.filter { listing ->
-            val categoryMatch = (category == Category.OTHER || listing.category == category)
+        // Strict compound matching: requires all tokens to match
+        val exactMatches = LISTINGS_POOL.filter { listing ->
             val text = (listing.title + " " + listing.description).lowercase()
-            val keywordMatch = tokens.isEmpty() || tokens.any { token ->
+            tokens.isEmpty() || tokens.all { token ->
                 val stem = if (token.length > 4) token.substring(0, token.length - 1) else token
                 text.contains(token) || text.contains(stem)
             }
-            if (tokens.isNotEmpty()) {
-                keywordMatch
-            } else {
-                categoryMatch
-            }
+        }
+
+        val pool = if (exactMatches.isNotEmpty()) {
+            exactMatches
+        } else if (tokens.isNotEmpty()) {
+            // No item matched all tokens -> demand is captured, no false-positive matches
+            emptyList()
+        } else {
+            LISTINGS_POOL.filter { category == Category.OTHER || it.category == category }
         }
 
         return pool
