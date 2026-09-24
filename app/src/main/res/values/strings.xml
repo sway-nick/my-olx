@@ -30,6 +30,10 @@
     <string name="source_external">Внешний источник</string>
     <string name="badge_ad">Реклама</string>
     
+    <!-- Supabase Project Configuration -->
+    <string name="supabase_url">https://gpqjuwcfdkqdmyxplfbs.supabase.co</string>
+    <string name="supabase_anon_key">sb_publishable_nbP4Szi9LyDh4BY15fsJUg_Q_RJkaqd</string>
+    
     <!-- Ad interstitial dialog -->
     <string name="ad_dialog_title">Переход к внешнему источнику</string>
     <string name="ad_dialog_message">Вы переходите на стороннюю площадку. Сейчас будет показан короткий спонсорский ролик.</string>
