@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>IntentMarket — Умный поиск спроса и предложений (Одесса)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --surface: #111827;
+      --surface-variant: #1f2937;
+      --border: #374151;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #14b8a6;
+      --primary-rgb: 20, 184, 166;
+      --secondary: #818cf8;
+      --secondary-rgb: 129, 140, 248;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-blue: #3b82f6;
+      --phone-border: #1e293b;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-variant: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0d9488;
+      --primary-rgb: 13, 148, 136;
+      --secondary: #6366f1;
+      --secondary-rgb: 99, 102, 241;
+      --phone-border: #cbd5e1;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 10px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Device Mockup Wrapper */
+    .device-container {
+      width: 100%;
+      max-width: 430px;
+      height: 880px;
+      background: var(--surface);
+      border: 4px solid var(--phone-border);
+      border-radius: 44px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Top Status Bar */
+    .status-bar {
+      height: 38px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      z-index: 10;
+    }
+
+    .island {
+      width: 100px;
+      height: 22px;
+      background: #000;
+      border-radius: 12px;
+    }
+
+    /* App Header */
+    .app-header {
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .app-brand h1 {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .app-brand p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .theme-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--surface-variant);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    /* Mode Switcher: Ищу vs Предлагаю */
+    .mode-switcher {
+      margin: 12px 20px;
+      background: var(--surface-variant);
+      border-radius: 28px;
+      padding: 4px;
+      display: flex;
+      position: relative;
+    }
+
+    .mode-btn {
+      flex: 1;
+      height: 44px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .mode-btn.active.demand {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.35);
+    }
+
+    .mode-btn.active.supply {
+      background: var(--secondary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(var(--secondary-rgb), 0.35);
+    }
+
+    /* Main Content Area */
+    .screen-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 20px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* District Card */
+    .district-card {
+      background: var(--surface-variant);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .district-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(var(--primary-rgb), 0.15);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .district-info small {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .district-info strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    /* Input Card */
+    .input-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .ai-textarea {
+      width: 100%;
+      height: 90px;
+      background: var(--surface-variant);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text);
+      font-size: 14px;
+      resize: none;
+      outline: none;
+    }
+
+    .ai-textarea:focus {
+      border-color: var(--primary);
+    }
+
+    .action-btn {
+      height: 48px;
+      border: none;
+      border-radius: 14px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.1s ease;
+    }
+
+    .action-btn:active {
+      transform: scale(0.98);
+    }
+
+    .action-btn.secondary {
+      background: var(--secondary);
+    }
+
+    .smart-form-link {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 4px;
+    }
+
+    /* Chips */
+    .chips-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .chips-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .chips-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      white-space: nowrap;
+      background: var(--surface-variant);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .chip:hover {
+      border-color: var(--primary);
+    }
+
+    /* Results Header */
+    .results-banner {
+      background: rgba(var(--primary-rgb), 0.12);
+      border: 1px solid rgba(var(--primary-rgb), 0.3);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .results-banner-text strong {
+      display: block;
+      font-size: 13px;
+      color: var(--primary);
+    }
+
+    .results-banner-text small {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Match Card */
+    .match-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge-excellent {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-good {
+      background: rgba(var(--primary-rgb), 0.15);
+      color: var(--primary);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .distance-tag {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-body {
+      display: flex;
+      gap: 12px;
+    }
+
+    .card-img {
+      width: 76px;
+      height: 76px;
+      border-radius: 12px;
+      object-fit: crop;
+      background: var(--surface-variant);
+    }
+
+    .card-details h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .card-price {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .card-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .source-tag {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .btn-call {
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-external {
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--primary);
+      background: transparent;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Ad Banner */
+    .ad-card {
+      background: var(--surface-variant);
+      border: 1px dashed var(--accent-amber);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ad-badge {
+      display: inline-block;
+      align-self: flex-start;
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--accent-amber);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Modal Dialog */
+    .modal-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 20px;
+      max-width: 340px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-box h3 {
+      font-size: 16px;
+    }
+
+    .modal-box p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      height: 40px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .modal-btn.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .modal-btn.cancel {
+      background: var(--surface-variant);
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="device-container">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="island"></div>
+      <span>5G 100%</span>
+    </div>
+
+    <!-- Header -->
+    <div class="app-header">
+      <div class="app-brand">
+        <h1>IntentMarket</h1>
+        <p>AI Спрос & Предложение • Одесса</p>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" title="Переключить тему">🌓</button>
+    </div>
+
+    <!-- Mode Switcher -->
+    <div class="mode-switcher">
+      <button class="mode-btn active demand" id="demandBtn" onclick="switchMode('DEMAND')">
+        🔍 Ищу / Куплю
+      </button>
+      <button class="mode-btn" id="supplyBtn" onclick="switchMode('SUPPLY')">
+        📦 Предлагаю
+      </button>
+    </div>
+
+    <!-- Scrollable Screen Content -->
+    <div class="screen-content" id="screenContent">
+
+      <!-- District Selector -->
+      <div class="district-card" onclick="cycleDistrict()">
+        <div class="district-icon">📍</div>
+        <div class="district-info">
+          <small>Ваш район (нажмите для смены)</small>
+          <strong id="districtLabel">Таирова (Одесса)</strong>
+        </div>
+      </div>
+
+      <!-- Natural Language Input -->
+      <div class="input-card">
+        <h3 id="inputTitle">Что вам нужно найти?</h3>
+        <textarea id="aiInput" class="ai-textarea" placeholder="Опишите своими словами:&#10;«Нужен генератор 5 кВт до 40 тысяч на Таирова»"></textarea>
+        
+        <button class="action-btn" id="mainActionBtn" onclick="runSearch()">
+          ⚡ Найти подходящие варианты
+        </button>
+
+        <button class="smart-form-link" onclick="openSmartFormAlert()">
+          ⚙️ Открыть умную анкету с фото
+        </button>
+      </div>
+
+      <!-- Quick Chips -->
+      <span class="chips-title">Популярные запросы:</span>
+      <div class="chips-scroll" id="chipsContainer">
+        <!-- populated by JS -->
+      </div>
+
+      <!-- Matches Results View -->
+      <div id="resultsArea" style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="results-banner">
+          <span style="font-size: 20px;">🎯</span>
+          <div class="results-banner-text">
+            <strong>Location-First подбор (Одесса)</strong>
+            <small id="resultsSummary">Сначала ближайшие варианты на Таирова</small>
+          </div>
+        </div>
+
+        <!-- Dynamic Listings Injected by JS -->
+        <div id="listingsList" style="display: flex; flex-direction: column; gap: 14px;"></div>
+      </div>
+
+    </div>
+
+    <!-- External Rewarded Ad Modal -->
+    <div class="modal-overlay" id="adModal">
+      <div class="modal-box">
+        <span style="font-size: 28px;">📢</span>
+        <h3>Переход к внешнему источнику</h3>
+        <p id="modalDesc">Объявление размещено на OLX. Перед бесплатным переходом мы покажем короткий спонсорский ролик Google AdMob.</p>
+        <div class="modal-actions">
+          <button class="modal-btn cancel" onclick="closeAdModal()">Отмена</button>
+          <button class="modal-btn primary" onclick="confirmAdRedirect()">Смотреть и перейти</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentMode = 'DEMAND';
+    let currentDistrictIndex = 0;
+    const districts = [
+      { name: "Таирова", lat: 46.3980, lon: 30.7120 },
+      { name: "Аркадия", lat: 46.4350, lon: 30.7600 },
+      { name: "Центр", lat: 46.4825, lon: 30.7233 },
+      { name: "Черёмушки", lat: 46.4370, lon: 30.7020 },
+      { name: "Большой Фонтан", lat: 46.4420, lon: 30.7480 },
+      { name: "Пос. Котовского", lat: 46.5750, lon: 30.7950 }
+    ];
+
+    const demandSuggestions = [
+      "Генератор 5 кВт до 40 000 грн",
+      "2к квартира Аркадия до 15 000 грн",
+      "Электрик сегодня Таирова",
+      "Инверторный генератор Центр",
+      "1к студия возле моря"
+    ];
+
+    const supplySuggestions = [
+      "Продам генератор Honda 5.5 кВт 35000 грн",
+      "Сдам 2к квартиру в Аркадии 15000 грн",
+      "Услуги электрика, подключение генераторов"
+    ];
+
+    const mockListings = [
+      {
+        id: 1,
+        title: "Бензиновый генератор Honda 5.5 кВт",
+        desc: "Медная обмотка, электростартер, 15 моточасов. Самовывоз Таирова.",
+        price: "35 000 грн",
+        district: "Таирова",
+        dist: "1.2 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: false,
+        source: "На нашей площадке",
+        img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=200&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 2,
+        title: "Генератор Daewoo 5.0 кВт бензин",
+        desc: "Новый в коробке, AVR стабилизатор, гарантия 1 год. Черёмушки.",
+        price: "38 500 грн",
+        district: "Черёмушки",
+        dist: "4.5 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua",
+        img: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=200&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 3,
+        title: "Аренда 2к квартиры в Аркадии",
+        desc: "ЖК 36 Жемчужина. Евроремонт, техника, вид на море, генератор в доме!",
+        price: "15 000 грн",
+        district: "Аркадия",
+        dist: "3.2 км",
+        grade: "Подходит",
+        gradeClass: "badge-good",
+        isExternal: false,
+        source: "На нашей площадке",
+        img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=200&auto=format&fit=crop&q=60"
+      }
+    ];
+
+    let pendingRedirectUrl = "";
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      html.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const dBtn = document.getElementById('demandBtn');
+      const sBtn = document.getElementById('supplyBtn');
+      const inputTitle = document.getElementById('inputTitle');
+      const aiInput = document.getElementById('aiInput');
+      const mainActionBtn = document.getElementById('mainActionBtn');
+
+      if (mode === 'DEMAND') {
+        dBtn.className = "mode-btn active demand";
+        sBtn.className = "mode-btn";
+        inputTitle.innerText = "Что вам нужно найти?";
+        aiInput.placeholder = "Опишите своими словами:\n«Нужен генератор 5 кВт до 40 тысяч на Таирова»";
+        mainActionBtn.innerText = "⚡ Найти подходящие варианты";
+        mainActionBtn.className = "action-btn";
+      } else {
+        sBtn.className = "mode-btn active supply";
+        dBtn.className = "mode-btn";
+        inputTitle.innerText = "Что вы предлагаете?";
+        aiInput.placeholder = "Опишите ваше предложение:\n«Сдам 2к квартиру в Аркадии 15000 грн» или «Продам генератор»";
+        mainActionBtn.innerText = "📦 Разместить и найти покупателей";
+        mainActionBtn.className = "action-btn secondary";
+      }
+      renderChips();
+    }
+
+    function cycleDistrict() {
+      currentDistrictIndex = (currentDistrictIndex + 1) % districts.length;
+      document.getElementById('districtLabel').innerText = districts[currentDistrictIndex].name + " (Одесса)";
+      renderListings();
+    }
+
+    function renderChips() {
+      const list = currentMode === 'DEMAND' ? demandSuggestions : supplySuggestions;
+      const container = document.getElementById('chipsContainer');
+      container.innerHTML = list.map(item => `
+        <div class="chip" onclick="applySuggestion('${item}')">${item}</div>
+      `).join('');
+    }
+
+    function applySuggestion(text) {
+      document.getElementById('aiInput').value = text;
+      runSearch();
+    }
+
+    function runSearch() {
+      const val = document.getElementById('aiInput').value;
+      if (!val) {
+        document.getElementById('aiInput').value = "Нужен генератор 5 кВт Одесса";
+      }
+      renderListings();
+    }
+
+    function renderListings() {
+      const curDist = districts[currentDistrictIndex].name;
+      document.getElementById('resultsSummary').innerText = `Сначала ближайшие варианты в районе: ${curDist}`;
+
+      const container = document.getElementById('listingsList');
+      container.innerHTML = mockListings.map((item, idx) => {
+        const adHtml = (idx === 1) ? `
+          <div class="ad-card">
+            <span class="ad-badge">РЕКЛАМА • Google AdMob</span>
+            <strong style="font-size: 13px;">Установка и подключение генераторов за 2 часа</strong>
+            <p style="font-size: 11px; color: var(--text-muted);">Сертифицированный монтаж с гарантией по Одессе и области.</p>
+          </div>
+        ` : '';
+
+        return `
+          <div class="match-card">
+            <div class="card-top">
+              <span class="${item.gradeClass}">${item.grade}</span>
+              <span class="distance-tag">📍 ${item.dist} (${item.district})</span>
+            </div>
+            <div class="card-body">
+              <img src="${item.img}" class="card-img" alt="${item.title}">
+              <div class="card-details">
+                <h4>${item.title}</h4>
+                <div class="card-price">${item.price}</div>
+                <div class="card-desc">${item.desc}</div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="source-tag">${item.isExternal ? '🌐 ' + item.source : '✅ На нашей площадке'}</span>
+              ${item.isExternal 
+                ? `<button class="btn-external" onclick="openAdModal('${item.source}', '${item.url}')">Открыть источник</button>`
+                : `<button class="btn-call" onclick="alert('Вызов продавца: +380671234567')">📞 Позвонить</button>`}
+            </div>
+          </div>
+          ${adHtml}
+        `;
+      }).join('');
+    }
+
+    function openAdModal(source, url) {
+      pendingRedirectUrl = url || "https://olx.ua";
+      document.getElementById('modalDesc').innerText = `Объявление размещено на ${source}. Перед бесплатным переходом мы покажем спонсорский рекламный ролик Google AdMob.`;
+      document.getElementById('adModal').style.display = 'flex';
+    }
+
+    function closeAdModal() {
+      document.getElementById('adModal').style.display = 'none';
+    }
+
+    function confirmAdRedirect() {
+      closeAdModal();
+      window.open(pendingRedirectUrl, '_blank');
+    }
+
+    function openSmartFormAlert() {
+      alert("✨ Умная анкета: нейросеть автоматически заполняет поля категории, мощности (кВт), комнатности и цены. Доступна загрузка до 10 фотографий.");
+    }
+
+    // Init
+    renderChips();
+    renderListings();
+  </script>
+</body>
+</html>
