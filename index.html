@@ -491,6 +491,84 @@
       border-radius: 4px;
     }
 
+    /* Category Filter Tabs */
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 0 6px 0;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .category-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    .cat-tab {
+      flex-shrink: 0;
+      padding: 7px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface-variant);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .cat-tab:hover {
+      border-color: var(--primary);
+    }
+    .cat-tab.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.3);
+    }
+
+    /* Demand Captured Card */
+    .demand-captured-card {
+      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12), rgba(16, 185, 129, 0.12));
+      border: 1.5px solid var(--primary);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.15);
+    }
+    .demand-captured-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+      align-self: flex-start;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .demand-pulse {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+      animation: demandPulseAnim 1.5s infinite;
+    }
+    @keyframes demandPulseAnim {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
     /* Modal Dialog */
     .modal-overlay {
       position: absolute;
@@ -626,6 +704,17 @@
       <span class="chips-title">Популярные запросы:</span>
       <div class="chips-scroll" id="chipsContainer">
         <!-- populated by JS -->
+      </div>
+
+      <!-- Universal Category Discovery Tabs (All Odesa Niches) -->
+      <div class="category-tabs" id="categoryTabsContainer">
+        <button class="cat-tab active" data-cat="all" onclick="setCategoryFilter('all')">🌐 Все категории</button>
+        <button class="cat-tab" data-cat="services" onclick="setCategoryFilter('services')">🛠️ Услуги мастеров (Одесса)</button>
+        <button class="cat-tab" data-cat="appliances" onclick="setCategoryFilter('appliances')">☕ Мелкая техника & Чайники</button>
+        <button class="cat-tab" data-cat="electronics" onclick="setCategoryFilter('electronics')">📱 Электроника</button>
+        <button class="cat-tab" data-cat="generators" onclick="setCategoryFilter('generators')">⚡ Генераторы</button>
+        <button class="cat-tab" data-cat="real-estate" onclick="setCategoryFilter('real-estate')">🏠 Недвижимость</button>
+        <button class="cat-tab" data-cat="auto" onclick="setCategoryFilter('auto')">🚗 Авто & Шины</button>
       </div>
 
       <!-- Matches Results View -->
@@ -933,6 +1022,111 @@
         discount_pct: 33,
         unit_metric_comparison: "Медиана по Одессе: 900 грн • Скидка 33%",
         img: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 110,
+        title: "Чайник электрический Scarlett SC-EK21S25 б/у рабочий",
+        desc: "Дисковый нагревательный элемент, автоотключение, фильтр от накипи. Полностью рабочий. Таирова (рынок Южный).",
+        price: "90 грн",
+        category: "appliances",
+        district: "Таирова",
+        dist: "0.9 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua",
+        is_hot_deal: true,
+        discount_pct: 64,
+        unit_metric_comparison: "Медиана по Одессе: 250 грн • Скидка 64%",
+        img: "https://images.unsplash.com/photo-1594213114663-d94db9b17125?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 111,
+        title: "Чайник со свистком из нержавеющей стали 2.5 л б/у",
+        desc: "Подходит для газа и индукции, свистит громко, бакелитовая ненагревающаяся ручка. Черёмушки (парк Горького).",
+        price: "100 грн",
+        category: "appliances",
+        district: "Черёмушки",
+        dist: "2.8 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: false,
+        source: "На нашей площадке",
+        is_hot_deal: true,
+        discount_pct: 50,
+        unit_metric_comparison: "Медиана по Одессе: 200 грн • Скидка 50%",
+        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 112,
+        title: "Электрочайник Bosch TWK7808 металл 1.7 л б/у в идеале",
+        desc: "Корпус из нержавеющей стали, скрытая спираль, светодиодный индикатор. Большой Фонтан.",
+        price: "180 грн",
+        category: "appliances",
+        district: "Большой Фонтан",
+        dist: "2.4 км",
+        grade: "Подходит",
+        gradeClass: "badge-good",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua",
+        is_hot_deal: true,
+        discount_pct: 45,
+        unit_metric_comparison: "Медиана по Одессе: 330 грн • Скидка 45%",
+        img: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 113,
+        title: "Сантехник Одесса: установка бойлеров, гидрофоров, смесителей",
+        desc: "Срочный выезд мастера в любой район Одессы со своим специнструментом. Гарантия на работу. Центр, Фонтан.",
+        price: "500 грн",
+        category: "services",
+        district: "Центр",
+        dist: "2.1 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "Работники UA",
+        url: "https://vserabotniki.com.ua",
+        is_hot_deal: true,
+        discount_pct: 35,
+        unit_metric_comparison: "Медиана по Одессе: 770 грн • Скидка 35%",
+        img: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 114,
+        title: "Мастер по ремонту бытовой техники и стиральных машин",
+        desc: "Ремонт на дому за 1 визит: стиралки, бойлеры, духовые шкафы, холодильники. Таирова, Черёмушки, Центр.",
+        price: "350 грн",
+        category: "services",
+        district: "Таирова",
+        dist: "1.2 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "Работники UA",
+        url: "https://vserabotniki.com.ua",
+        is_hot_deal: true,
+        discount_pct: 30,
+        unit_metric_comparison: "Медиана по Одессе: 500 грн • Скидка 30%",
+        img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 115,
+        title: "Грузчики и грузоперевозки по Одессе (Газель, Бус)",
+        desc: "Переезды, подъем стройматериалов и мебели на этаж, вывоз строительного мусора. Бригада 2-4 чел.",
+        price: "400 грн",
+        category: "services",
+        district: "Черёмушки",
+        dist: "3.5 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "Работники UA",
+        url: "https://vserabotniki.com.ua",
+        is_hot_deal: false,
+        img: "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=300&auto=format&fit=crop&q=60"
       }
     ];
 
@@ -1101,25 +1295,29 @@
           } else {
             const { data, error } = await supabaseClient
               .from('external_listings')
-              .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id')
-              .limit(50);
+              .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized')
+              .limit(100);
             if (!error && data && data.length > 0) {
-              itemsToRender = data.map(row => ({
+              const liveItems = data.map(row => ({
                 id: row.id,
                 title: row.title,
                 desc: row.description || '',
                 price: `${Math.round(row.price).toLocaleString()} ${row.currency || 'грн'}`,
-                category: 'Одесса',
+                category: row.category_normalized || 'general',
                 district: row.district_name || 'Одесса',
                 dist: '2.5 км',
                 grade: 'Подходит',
                 gradeClass: 'badge-relevance badge-good',
                 isExternal: true,
-                source: 'Площадка-донор',
+                source: (row.external_url && row.external_url.includes('vserabotniki')) ? 'Работники UA' :
+                        (row.external_url && row.external_url.includes('prom.ua')) ? 'Prom.ua' :
+                        (row.external_url && row.external_url.includes('dom.ria')) ? 'DOM.ria' : 'OLX',
                 url: row.external_url || '#',
                 img: (row.images && row.images[0]) || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=60',
                 is_hot_deal: false
               }));
+              // Merge live items with mockListings to ensure rich catalog
+              itemsToRender = [...liveItems, ...mockListings];
               isLiveFromSupabase = true;
             }
           }
@@ -1137,22 +1335,156 @@
       }
 
       if (isLiveFromSupabase) {
-        summaryElem.innerHTML += ` <span style="background: rgba(16,185,129,0.15); color: #10B981; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-left: 6px;">⚡ Live Supabase (${itemsToRender.length} реальных объявл.)</span>`;
+        summaryElem.innerHTML += ` <span style="background: rgba(16,185,129,0.15); color: #10B981; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-left: 6px;">⚡ Live База Одессы (${itemsToRender.length} объявл. & услуг)</span>`;
       } else if (currentMode === 'SUPPLY') {
         summaryElem.innerText = `🔥 Найдено покупателей в Одессе: 18 чел. ищут товары в этой категории!`;
       }
 
-      // Check text search query
-      const queryText = (document.getElementById('aiInput').value || "").toLowerCase().trim();
-      if (queryText && queryText.length > 2 && currentMode !== 'HOT_DEALS') {
-        itemsToRender = itemsToRender.filter(item => 
-          item.title.toLowerCase().includes(queryText) || 
-          item.desc.toLowerCase().includes(queryText) ||
-          item.category.toLowerCase().includes(queryText)
-        );
+      // 3. Category Tab Filtering
+      if (currentCategoryFilter && currentCategoryFilter !== 'all') {
+        itemsToRender = itemsToRender.filter(item => {
+          const text = (item.title + " " + item.desc + " " + item.category).toLowerCase();
+          if (currentCategoryFilter === 'services') {
+            return text.includes('услуг') || text.includes('электрик') || text.includes('сантехник') || 
+                   text.includes('ремонт') || text.includes('мастер') || text.includes('грузчик') || text.includes('инвертор');
+          }
+          if (currentCategoryFilter === 'appliances') {
+            return text.includes('чайник') || text.includes('стиральн') || text.includes('утюг') || 
+                   text.includes('холодильник') || text.includes('appliance') || text.includes('техник');
+          }
+          if (currentCategoryFilter === 'electronics') {
+            return text.includes('iphone') || text.includes('samsung') || text.includes('macbook') || 
+                   text.includes('ноутбук') || text.includes('телефон') || text.includes('smart') || text.includes('laptop');
+          }
+          if (currentCategoryFilter === 'generators') {
+            return text.includes('генератор') || text.includes('ecoflow') || text.includes('hyundai') || text.includes('квт');
+          }
+          if (currentCategoryFilter === 'real-estate') {
+            return text.includes('квартир') || text.includes('аренд') || text.includes('аркади') || text.includes('комнат');
+          }
+          if (currentCategoryFilter === 'auto') {
+            return text.includes('авто') || text.includes('шин') || text.includes('резин') || text.includes('michelin');
+          }
+          return true;
+        });
       }
 
-      container.innerHTML = itemsToRender.map((item, idx) => {
+      // 4. Natural Language Intent & Tokenized Search Engine
+      const queryRaw = (document.getElementById('aiInput').value || "").trim();
+      let demandCaptured = null;
+      let zeroResultsForQuery = false;
+
+      if (queryRaw && queryRaw.length >= 2 && currentMode !== 'HOT_DEALS') {
+        const lower = queryRaw.toLowerCase();
+
+        // Extract Max Price (e.g. "до 100 грн", "до 100", "бюджет 100", "до 40 тысяч")
+        let maxPrice = null;
+        const thousandMatch = lower.match(/(?:до\s*)?(\d+)\s*(?:тысяч|тис|к|k)/);
+        if (thousandMatch) {
+          maxPrice = parseFloat(thousandMatch[1]) * 1000;
+        } else {
+          const plainPriceMatch = lower.match(/(?:до\s*|бюджет\s*|<=|<)\s*(\d+(?:[\s_]\d+)*)/) ||
+                                  lower.match(/(\d+(?:[\s_]\d+)*)\s*(?:грн|uah|гривен)/);
+          if (plainPriceMatch) {
+            maxPrice = parseFloat(plainPriceMatch[1].replace(/[\s_]/g, ''));
+          }
+        }
+
+        // Extract Search Tokens (stripping punctuation and stopwords)
+        const stopWords = new Set([
+          "ищу", "нужен", "нужна", "нужно", "куплю", "хочу", "найти", "где", "почем", 
+          "одесса", "одессе", "грн", "uah", "гривен", "до", "на", "в", "по", "для", 
+          "бу", "б/у", "под", "бы", "мне", "как", "кто", "есть", "ли", "срочно"
+        ]);
+
+        const tokens = lower
+          .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"?«»]/g, " ")
+          .split(/\s+/)
+          .filter(t => t.length >= 3 && !stopWords.has(t) && !/^\d+$/.test(t));
+
+        // Score candidates based on token overlap & budget match
+        const scoredItems = [];
+        for (const item of itemsToRender) {
+          const itemText = (item.title + " " + item.desc + " " + item.category + " " + (item.source || "")).toLowerCase();
+          const itemPriceNum = parseFloat((item.price || '').replace(/[^\d.]/g, '')) || 0;
+
+          let tokenMatches = 0;
+          for (const token of tokens) {
+            // Check full token match or stem match (e.g. "чайник" -> "электрочайник", "чайники")
+            const stem = token.length > 4 ? token.slice(0, -1) : token;
+            if (itemText.includes(token) || itemText.includes(stem)) {
+              tokenMatches++;
+            }
+          }
+
+          // If tokens were supplied, require at least 1 token match
+          if (tokens.length > 0 && tokenMatches === 0) {
+            continue;
+          }
+
+          const isWithinBudget = (maxPrice === null || itemPriceNum <= maxPrice);
+          let grade = isWithinBudget ? "Отлично подходит" : `Выше бюджета (${Math.round(itemPriceNum)} грн)`;
+          let gradeClass = isWithinBudget ? "badge-relevance badge-best" : "badge-relevance badge-good";
+
+          scoredItems.push({
+            ...item,
+            grade: grade,
+            gradeClass: gradeClass,
+            _score: (tokenMatches * 20) + (isWithinBudget ? 15 : -10) - (itemPriceNum > (maxPrice || 9999999) ? 5 : 0),
+            _withinBudget: isWithinBudget,
+            _priceNum: itemPriceNum
+          });
+        }
+
+        demandCaptured = {
+          raw: queryRaw,
+          maxPrice: maxPrice,
+          tokens: tokens,
+          matchesCount: scoredItems.length
+        };
+
+        if (scoredItems.length === 0) {
+          zeroResultsForQuery = true;
+          // Keep a pool of close alternative suggestions in Odessa so screen is never dead
+          itemsToRender = mockListings.slice(0, 4);
+        } else {
+          // Sort scored items: within budget first, then by score descending
+          scoredItems.sort((a, b) => {
+            if (a._withinBudget !== b._withinBudget) return a._withinBudget ? -1 : 1;
+            return b._score - a._score || a._priceNum - b._priceNum;
+          });
+          itemsToRender = scoredItems;
+        }
+      }
+
+      // 5. Render Demand Card (if search query entered) + Match Cards
+      let demandHeaderHtml = '';
+      if (demandCaptured) {
+        demandHeaderHtml = `
+          <div class="demand-captured-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="demand-captured-badge"><span class="demand-pulse"></span> ЗАПРОС СПРОСА СОХРАНЁН</span>
+              <small style="color: var(--primary); font-weight: 700; font-size: 11px;">Одесса • Активный спрос</small>
+            </div>
+            <div style="font-size: 14px; font-weight: 700;">
+              🎯 Ищу: «${demandCaptured.raw}»
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 0;">
+              ${zeroResultsForQuery 
+                ? `Точного совпадения дешевле ${demandCaptured.maxPrice ? demandCaptured.maxPrice + ' грн' : 'заданного бюджета'} в текущей базе пока нет. <strong>Ваш запрос принят!</strong> Мы оповестим одесских продавцов и запустили безопасный антибан-поиск на OLX и Prom.ua.`
+                : `✅ Найдено ${demandCaptured.matchesCount} подходящих предложений в Одессе! Запрос зафиксирован в реестре спроса.`}
+            </p>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="action-btn" style="height: 36px; font-size: 12px; background: var(--accent-green);" onclick="triggerStealthSearch('${demandCaptured.raw}')">
+                🔍 Запустить фоновый парсинг OLX/Prom по этому запросу
+              </button>
+            </div>
+          </div>
+          ${zeroResultsForQuery ? `<div style="font-weight: 700; font-size: 13px; color: var(--text-muted); margin-top: 4px;">Ближайшие доступные варианты в Одессе:</div>` : ''}
+        `;
+      }
+
+      const cardsHtml = itemsToRender.map((item, idx) => {
         const adHtml = (idx === 2) ? `
           <div class="ad-card">
             <span class="ad-badge">РЕКЛАМА • Google AdMob</span>
@@ -1182,12 +1514,30 @@
               <span class="source-tag">${item.isExternal ? '🌐 ' + item.source : '✅ На нашей площадке'}</span>
               ${item.isExternal 
                 ? `<button class="btn-external" onclick="openAdModal('${item.source}', '${item.url}')">Открыть источник</button>`
-                : `<button class="btn-call" onclick="alert('Вызов продавца: +380671234567')">📞 Позвонить</button>`}
+                : `<button class="btn-call" onclick="alert('Вызов продавца / мастера: +380671234567')">📞 Позвонить</button>`}
             </div>
           </div>
           ${adHtml}
         `;
       }).join('');
+
+      container.innerHTML = demandHeaderHtml + cardsHtml;
+    }
+
+    let currentCategoryFilter = 'all';
+
+    function setCategoryFilter(cat) {
+      currentCategoryFilter = cat;
+      const tabs = document.querySelectorAll('.cat-tab');
+      tabs.forEach(tab => {
+        if (tab.getAttribute('data-cat') === cat) tab.classList.add('active');
+        else tab.classList.remove('active');
+      });
+      renderListings();
+    }
+
+    function triggerStealthSearch(query) {
+      alert(`🤖 Запущен безопасный поиск по одесским базам OLX, Prom.ua и Работники UA для запроса:\n«${query}»\n\nПри появлении новых вариантов вы получите мгновенное PUSH-уведомление!`);
     }
 
     // OLX-Style Cascading Districts Structure

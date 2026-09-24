@@ -1,23 +1,23 @@
 {
-  "round_index": 1,
-  "total_synced": 32,
-  "last_run": "2026-09-24T23:10:14.084203+00:00",
+  "round_index": 2,
+  "total_synced": 68,
+  "last_run": "2026-09-24T23:14:36.877843+00:00",
   "platform_stats": {
     "OLX": {
-      "total": 20,
-      "last_success": "2026-09-24T23:10:14.084122+00:00"
+      "total": 44,
+      "last_success": "2026-09-24T23:14:36.877802+00:00"
     },
     "Prom.ua": {
-      "total": 4,
-      "last_success": "2026-09-24T23:09:43.317229+00:00"
+      "total": 8,
+      "last_success": "2026-09-24T23:14:04.767911+00:00"
     },
     "DOM.ria": {
-      "total": 4,
-      "last_success": "2026-09-24T23:09:46.225617+00:00"
+      "total": 8,
+      "last_success": "2026-09-24T23:14:08.755225+00:00"
     },
     "Работники UA": {
-      "total": 4,
-      "last_success": "2026-09-24T23:09:48.781471+00:00"
+      "total": 8,
+      "last_success": "2026-09-24T23:14:13.428902+00:00"
     }
   }
 }

@@ -629,6 +629,54 @@ ODESA_LAPTOP_SEEDS = [
 
 ODESA_APPLIANCE_SEEDS = [
     {
+        "external_id": "olx-app-kettle-scarlett",
+        "title": "Чайник электрический Scarlett SC-EK21S25 б/у рабочий",
+        "description": "Электрочайник б/у в рабочем состоянии. Дисковый нагреватель, автоотключение. Самовывоз Таирова (Королёва).",
+        "price": 90.0,
+        "district_name": "Таирова",
+        "lat": 46.3980,
+        "lon": 30.7120,
+        "url": "https://www.olx.ua/d/uk/obyavlenie/chainik-scarlett-tairova.html",
+        "images": ["https://images.unsplash.com/photo-1594213114663-d94db9b17125?w=600&auto=format&fit=crop&q=60"],
+        "attributes": {"brand": "Scarlett", "type": "electric_kettle", "condition": "used"}
+    },
+    {
+        "external_id": "olx-app-kettle-whistle",
+        "title": "Чайник со свистком из нержавеющей стали 2.5 л б/у",
+        "description": "Чайник для газовых и индукционных плит, громкий свисток, удобная ручка. Черёмушки (парк Горького).",
+        "price": 100.0,
+        "district_name": "Черёмушки",
+        "lat": 46.4370,
+        "lon": 30.7020,
+        "url": "https://www.olx.ua/d/uk/obyavlenie/chainik-so-svistkom-cheremushki.html",
+        "images": ["https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600&auto=format&fit=crop&q=60"],
+        "attributes": {"type": "kettle", "material": "stainless_steel", "condition": "used"}
+    },
+    {
+        "external_id": "olx-app-kettle-bosch-twk",
+        "title": "Электрочайник Bosch TWK7808 металл 1.7 л б/у идеал",
+        "description": "Надёжный металлический чайник Bosch, скрытый нагревательный элемент, фильтр от накипи. Большой Фонтан.",
+        "price": 180.0,
+        "district_name": "Большой Фонтан",
+        "lat": 46.4420,
+        "lon": 30.7480,
+        "url": "https://www.olx.ua/d/uk/obyavlenie/kettle-bosch-twk-fontan.html",
+        "images": ["https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=600&auto=format&fit=crop&q=60"],
+        "attributes": {"brand": "Bosch", "type": "electric_kettle", "condition": "used"}
+    },
+    {
+        "external_id": "olx-app-iron-philips",
+        "title": "Утюг с паровым ударом Philips EasySpeed б/у",
+        "description": "Керамическая подошва, подача пара, защита от накипи. Полностью рабочий. Центр города.",
+        "price": 150.0,
+        "district_name": "Центр",
+        "lat": 46.4825,
+        "lon": 30.7233,
+        "url": "https://www.olx.ua/d/uk/obyavlenie/utyug-philips-center.html",
+        "images": ["https://images.unsplash.com/photo-1585659722983-3a675dabf23d?w=600&auto=format&fit=crop&q=60"],
+        "attributes": {"brand": "Philips", "type": "iron", "condition": "used"}
+    },
+    {
         "external_id": "olx-app-bosch-serie6",
         "title": "Стиральная машина Bosch Serie 6 EcoSilence Drive 8 кг",
         "description": "Бесшумный инверторный мотор, обработка паром, 1400 об/мин. Производство Германия. Черёмушки.",

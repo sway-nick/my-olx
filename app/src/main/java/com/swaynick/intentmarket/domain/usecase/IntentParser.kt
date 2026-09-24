@@ -23,7 +23,8 @@ object IntentParser {
             lower.contains("ноутбук") || lower.contains("macbook") || lower.contains("макбук") || lower.contains("компьютер") -> {
                 Category.LAPTOPS_PC
             }
-            lower.contains("стиральн") || lower.contains("холодильник") || lower.contains("кондиционер") || lower.contains("пылесос") -> {
+            lower.contains("стиральн") || lower.contains("холодильник") || lower.contains("кондиционер") || lower.contains("пылесос") ||
+            lower.contains("чайник") || lower.contains("чайники") || lower.contains("утюг") || lower.contains("микроволновк") || lower.contains("блендер") || lower.contains("кофеварк") || lower.contains("тостер") -> {
                 Category.APPLIANCES
             }
             lower.contains("квартир") || lower.contains("аренд") || lower.contains("оренд") || lower.contains("сдам") || lower.contains("сниму") -> {
@@ -44,7 +45,8 @@ object IntentParser {
             lower.contains("авто") || lower.contains("машин") || lower.contains("шин") || lower.contains("резин") || lower.contains("диск") -> {
                 Category.TRANSPORT_AUTO
             }
-            lower.contains("электрик") || lower.contains("електрик") || lower.contains("ремонт") || lower.contains("услуг") || lower.contains("послуг") || lower.contains("сантехник") -> {
+            lower.contains("электрик") || lower.contains("електрик") || lower.contains("ремонт") || lower.contains("услуг") || lower.contains("послуг") || lower.contains("сантехник") ||
+            lower.contains("мастер") || lower.contains("грузчик") || lower.contains("переезд") || lower.contains("муж на час") -> {
                 Category.SERVICES
             }
             lower.contains("одежд") || lower.contains("обув") || lower.contains("куртк") || lower.contains("кроссовк") -> {
@@ -88,17 +90,18 @@ object IntentParser {
             }
         }
 
-        // 3. Extract Price (до 40 тысяч, 40000, 15к)
+        // 3. Extract Price (до 40 тысяч, 40000, 15к, до 100 грн)
         var priceMax: Double? = null
         val priceThousandRegex = Regex("""(?:до\s*)?(\d+)\s*(?:тысяч|тис|тис\.|к|k)""")
-        val pricePlainRegex = Regex("""(?:до\s*)?(\d{4,7})\s*(?:грн|uah)?""")
+        val pricePlainRegex = Regex("""(?:до\s*|бюджет\s*|<=|<)\s*(\d{1,7})\s*(?:грн|uah)?""")
+        val priceFallbackRegex = Regex("""(\d{1,7})\s*(?:грн|uah)""")
 
         val thousandMatch = priceThousandRegex.find(lower)
         if (thousandMatch != null) {
             val num = thousandMatch.groupValues[1].toDoubleOrNull()
             if (num != null) priceMax = num * 1000
         } else {
-            val plainMatch = pricePlainRegex.find(lower)
+            val plainMatch = pricePlainRegex.find(lower) ?: priceFallbackRegex.find(lower)
             if (plainMatch != null) {
                 priceMax = plainMatch.groupValues[1].toDoubleOrNull()
             }

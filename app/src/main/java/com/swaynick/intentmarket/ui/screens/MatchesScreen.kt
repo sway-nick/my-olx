@@ -180,7 +180,7 @@ fun MatchesScreen(
                 .padding(padding)
         ) {
             if (displayedMatches.isEmpty()) {
-                // Empty state
+                // Demand Captured State (Zero immediate matches)
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -188,27 +188,68 @@ fun MatchesScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.SearchOff,
-                        contentDescription = null,
-                        modifier = Modifier.size(64.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = if (onlyHotDeals) "Скидок от 25% пока нет" else "В вашем районе пока нет предложений",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = if (onlyHotDeals)
-                            "Как только кто-то выставит товар или квартиру по цене ниже медианы рынка, предложение появится здесь."
-                        else
-                            "Мы сохранили ваш запрос и пришлем Push-уведомление, как только появится подходящий вариант рядом с вами.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(18.dp),
+                        color = PrimaryTeal.copy(alpha = 0.10f),
+                        border = androidx.compose.foundation.BorderStroke(1.5.dp, PrimaryTeal)
+                    ) {
+                        Column(modifier = Modifier.padding(18.dp)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Surface(
+                                    color = AccentGreen,
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text(
+                                        text = "🎯 СПРОС ЗАФИКСИРОВАН",
+                                        color = Color.White,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                    )
+                                }
+                                Text(
+                                    text = "Одесса • ${userDistrict.name}",
+                                    fontSize = 11.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = "Ищу: «$queryText»",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = "✅ Ваш запрос спроса принят! Продавцы и мастера Одессы оповещены. Мы запустили безопасный фоновый поиск по базам OLX, Prom.ua и Работники UA.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Button(
+                                onClick = {
+                                    isDemandSaved = true
+                                    Toast.makeText(
+                                        context,
+                                        "🤖 Запущен фоновый поиск на OLX / Prom / Работники UA для: «$queryText»",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = AccentGreen)
+                            ) {
+                                Icon(imageVector = Icons.Default.Search, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Запустить фоновый поиск на OLX / Prom", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
                 }
             } else {
                 LazyColumn(

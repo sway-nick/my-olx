@@ -182,6 +182,57 @@ object MockDataRepository {
             discountPct = 26,
             unitMetricComparison = "11 500 грн (медиана по Одессе 15 500 грн)"
         ),
+        ListingItem(
+            id = "app-kettle-1",
+            title = "Чайник электрический Scarlett SC-EK21S25 б/у рабочий",
+            description = "Дисковый нагревательный элемент, автоотключение. Рабочий. Таирова (рынок Южный).",
+            category = Category.APPLIANCES,
+            price = 90.0,
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 0.9,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/chainik-scarlett-tairova.html",
+            imageUrl = "https://images.unsplash.com/photo-1594213114663-d94db9b17125?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Scarlett", "condition" to "used"),
+            isHotDeal = true,
+            discountPct = 64,
+            unitMetricComparison = "90 грн (медиана по Одессе 250 грн)"
+        ),
+        ListingItem(
+            id = "app-kettle-2",
+            title = "Чайник со свистком из нержавеющей стали 2.5 л б/у",
+            description = "Для газовых и индукционных плит, громкий свисток, бакелитовая ручка. Черёмушки.",
+            category = Category.APPLIANCES,
+            price = 100.0,
+            district = ODESA_DISTRICTS[3], // Черёмушки
+            distanceKm = 2.8,
+            isExternal = false,
+            sourceName = "На нашей площадке",
+            phone = "+380671113355",
+            imageUrl = "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("type" to "kettle", "condition" to "used"),
+            isHotDeal = true,
+            discountPct = 50,
+            unitMetricComparison = "100 грн (медиана по Одессе 200 грн)"
+        ),
+        ListingItem(
+            id = "app-kettle-3",
+            title = "Электрочайник Bosch TWK7808 металл 1.7 л б/у в идеале",
+            description = "Корпус из нержавеющей стали, скрытая спираль, светодиодный индикатор. Большой Фонтан.",
+            category = Category.APPLIANCES,
+            price = 180.0,
+            district = ODESA_DISTRICTS[4], // Фонтан
+            distanceKm = 2.4,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/bosch-twk-fontan.html",
+            imageUrl = "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.GOOD,
+            attributes = mapOf("brand" to "Bosch", "condition" to "used")
+        ),
 
         // REAL ESTATE (RENT & SALE)
         ListingItem(
@@ -328,6 +379,54 @@ object MockDataRepository {
             imageUrl = "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=500&auto=format&fit=crop&q=60",
             matchGrade = MatchGrade.EXCELLENT,
             attributes = mapOf("service_type" to "electrician")
+        ),
+        ListingItem(
+            id = "srv-2",
+            title = "Сантехник Одесса: установка бойлеров, насосов, смесителей",
+            description = "Срочный выезд мастера по Центру и Фонтану со своим инструментом. Гарантия.",
+            category = Category.SERVICES,
+            price = 500.0,
+            district = ODESA_DISTRICTS[2], // Центр
+            distanceKm = 2.1,
+            isExternal = true,
+            sourceName = "Работники UA",
+            sourceUrl = "https://vserabotniki.com.ua/odessa/plumbing/",
+            imageUrl = "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("service_type" to "plumber"),
+            isHotDeal = true,
+            discountPct = 35,
+            unitMetricComparison = "500 грн (медиана по Одессе 770 грн)"
+        ),
+        ListingItem(
+            id = "srv-3",
+            title = "Мастер по ремонту бытовой техники и стиральных машин",
+            description = "Ремонт стиралок, бойлеров, электроплит на дому в день обращения. Таирова, Черёмушки.",
+            category = Category.SERVICES,
+            price = 350.0,
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 1.2,
+            isExternal = true,
+            sourceName = "Работники UA",
+            sourceUrl = "https://vserabotniki.com.ua/odessa/remont/",
+            imageUrl = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("service_type" to "appliance_repair")
+        ),
+        ListingItem(
+            id = "srv-4",
+            title = "Грузчики и грузоперевозки по Одессе (Газель, Бус)",
+            description = "Квартирные переезды, подъем стройматериалов и мебели на этаж. Черёмушки, Таирова.",
+            category = Category.SERVICES,
+            price = 400.0,
+            district = ODESA_DISTRICTS[3], // Черёмушки
+            distanceKm = 3.5,
+            isExternal = true,
+            sourceName = "Работники UA",
+            sourceUrl = "https://vserabotniki.com.ua/odessa/movers/",
+            imageUrl = "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("service_type" to "movers")
         )
     )
 
@@ -351,17 +450,38 @@ object MockDataRepository {
         keywords: String
     ): List<ListingItem> {
         val queryLower = keywords.lowercase()
-        return LISTINGS_POOL
-            .filter { it.category == category }
+        val stopWords = setOf("ищу", "нужен", "нужна", "нужно", "куплю", "до", "грн", "uah", "бу", "б/у", "в", "на", "одесса", "одессе")
+        val tokens = queryLower
+            .replace(Regex("""[.,\/#!$%\^&\*;:{}=\-_`~()"?«»]"""), " ")
+            .split(Regex("""\s+"""))
+            .filter { it.length >= 3 && it !in stopWords && !it.all { c -> c.isDigit() } }
+
+        val pool = LISTINGS_POOL.filter { listing ->
+            val categoryMatch = (category == Category.OTHER || listing.category == category)
+            val text = (listing.title + " " + listing.description).lowercase()
+            val keywordMatch = tokens.isEmpty() || tokens.any { token ->
+                val stem = if (token.length > 4) token.substring(0, token.length - 1) else token
+                text.contains(token) || text.contains(stem)
+            }
+            if (tokens.isNotEmpty()) {
+                keywordMatch
+            } else {
+                categoryMatch
+            }
+        }
+
+        return pool
             .map { listing ->
                 val distance = calculateDistance(
                     userDistrict.lat, userDistrict.lon,
                     listing.district.lat, listing.district.lon
                 )
                 // Determine relevance grade based on distance and price
+                val isWithinBudget = (maxPrice == null || listing.price <= maxPrice)
                 val grade = when {
-                    (maxPrice != null && listing.price <= maxPrice) && distance <= 3.0 -> MatchGrade.EXCELLENT
-                    (maxPrice != null && listing.price <= maxPrice * 1.15) && distance <= 7.0 -> MatchGrade.GOOD
+                    isWithinBudget && distance <= 3.0 -> MatchGrade.EXCELLENT
+                    isWithinBudget -> MatchGrade.EXCELLENT
+                    maxPrice != null && listing.price <= maxPrice * 1.5 -> MatchGrade.GOOD
                     else -> MatchGrade.PARTIAL
                 }
                 listing.copy(distanceKm = distance, matchGrade = grade)
@@ -369,6 +489,7 @@ object MockDataRepository {
             .sortedWith(
                 compareBy(
                     { it.matchGrade != MatchGrade.EXCELLENT }, // Excellents first
+                    { if (maxPrice != null) it.price > maxPrice else false }, // Within budget first
                     { it.distanceKm },                         // Closest first (Location-First)
                     { it.price }                               // Best price
                 )

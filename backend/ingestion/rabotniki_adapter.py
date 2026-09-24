@@ -70,6 +70,39 @@ ODESA_SERVICES_SEEDS = [
         "url": "https://www.vserabotniki.com.ua/odessa/inverters/",
         "phone": "+380685554433",
         "service_type": "electrician"
+    },
+    {
+        "title": "Мастер по ремонту бытовой техники и стиральных машин Одесса",
+        "description": "Срочный ремонт стиральных машин, бойлеров, электроплит, духовок на дому. Выезд во все районы Одессы, оригинальные запчасти.",
+        "price": 350.0,
+        "district_name": "Таирова",
+        "lat": 46.3980,
+        "lon": 30.7120,
+        "url": "https://www.vserabotniki.com.ua/odessa/remont-tehniki/",
+        "phone": "+380671239876",
+        "service_type": "appliance_repair"
+    },
+    {
+        "title": "Грузчики и грузоперевозки по Одессе (Газель, Бус)",
+        "description": "Квартирные и офисные переезды, подъем стройматериалов на этаж, вывоз мусора. Трезвые и аккуратные грузчики. Таирова, Центр, Черёмушки.",
+        "price": 400.0,
+        "district_name": "Черёмушки",
+        "lat": 46.4370,
+        "lon": 30.7020,
+        "url": "https://www.vserabotniki.com.ua/odessa/gruzchiki/",
+        "phone": "+380934567812",
+        "service_type": "movers"
+    },
+    {
+        "title": "Муж на час Одесса: мелкий бытовой ремонт, сборка мебели, замки",
+        "description": "Повесить карниз, телевизор, полку, собрать шкаф, починить кран, врезать замок. Быстрый выезд за 45 минут.",
+        "price": 300.0,
+        "district_name": "Большой Фонтан",
+        "lat": 46.4420,
+        "lon": 30.7480,
+        "url": "https://www.vserabotniki.com.ua/odessa/muzh-na-chas/",
+        "phone": "+380509988776",
+        "service_type": "handyman"
     }
 ]
 
