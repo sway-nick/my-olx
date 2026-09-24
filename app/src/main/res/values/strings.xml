@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">IntentMarket</string>
+    <string name="tagline">Умный поиск спроса и предложений</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Главная</string>
+    <string name="nav_saved">Мои запросы</string>
+    <string name="nav_profile">Профиль</string>
+
+    <!-- Home modes -->
+    <string name="mode_demand">🔍 Ищу</string>
+    <string name="mode_supply">📦 Предлагаю</string>
+    
+    <string name="demand_placeholder">Опишите, что вам нужно...\nнапример: «Нужен генератор 5 кВт до 40 000 грн в Одессе»</string>
+    <string name="supply_placeholder">Опишите ваше предложение...\nнапример: «Сдам 2к квартиру в Аркадии 15000 грн» или «Продам генератор Honda 5 кВт»</string>
+    
+    <!-- Actions -->
+    <string name="btn_search_matches">Найти подходящие варианты</string>
+    <string name="btn_smart_form">Открыть умную анкету</string>
+    <string name="btn_publish_supply">Опубликовать и найти покупателей</string>
+    <string name="btn_call_seller">Позвонить продавцу</string>
+    <string name="btn_open_external">Перейти к источнику</string>
+    <string name="btn_save_demand">Сохранить спрос и включить пуш</string>
+    
+    <!-- Badges & Status -->
+    <string name="badge_excellent">Отлично подходит</string>
+    <string name="badge_good">Подходит</string>
+    <string name="badge_partial">Частично подходит</string>
+    <string name="source_internal">На нашей платформе</string>
+    <string name="source_external">Внешний источник</string>
+    <string name="badge_ad">Реклама</string>
+    
+    <!-- Ad interstitial dialog -->
+    <string name="ad_dialog_title">Переход к внешнему источнику</string>
+    <string name="ad_dialog_message">Вы переходите на стороннюю площадку. Сейчас будет показан короткий спонсорский ролик.</string>
+    <string name="ad_dialog_continue">Продолжить</string>
+    <string name="ad_dialog_cancel">Отмена</string>
+</resources>
