@@ -393,3 +393,43 @@ INSERT INTO public.external_listings (
     'FRESH'
 )
 ON CONFLICT (id) DO NOTHING;
+
+-- 7. CLUSTERS & DEDUPLICATION (CROSS-PLATFORM MASTER ENTITIES)
+CREATE TABLE IF NOT EXISTS public.listing_clusters (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    canonical_title TEXT NOT NULL,
+    canonical_description TEXT,
+    category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL,
+    district_name TEXT NOT NULL,
+    complex_name TEXT,
+    location GEOGRAPHY(Point, 4326),
+    rooms INTEGER,
+    floor INTEGER,
+    total_floors INTEGER,
+    area_sqm NUMERIC(6, 1),
+    min_price NUMERIC(12, 2) NOT NULL,
+    max_price NUMERIC(12, 2) NOT NULL,
+    currency TEXT DEFAULT 'UAH',
+    canonical_images TEXT[] DEFAULT '{}',
+    image_phash TEXT,
+    listings_count INTEGER DEFAULT 1,
+    sources TEXT[] DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_clusters_location ON public.listing_clusters USING GIST(location);
+
+ALTER TABLE public.external_listings
+ADD COLUMN IF NOT EXISTS cluster_id UUID REFERENCES public.listing_clusters(id) ON DELETE SET NULL,
+ADD COLUMN IF NOT EXISTS image_phash TEXT;
+
+ALTER TABLE public.listing_clusters ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies WHERE tablename = 'listing_clusters' AND policyname = 'Public read listing clusters'
+    ) THEN
+        CREATE POLICY "Public read listing clusters" ON public.listing_clusters FOR SELECT USING (true);
+    END IF;
+END $$;
