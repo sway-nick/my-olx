@@ -134,6 +134,41 @@ class StealthCrawler:
 
         return synced_count
 
+    def check_listing_status(self, url: str) -> str:
+        """
+        Lightweight stealth status check for an external listing:
+        Returns 'FRESH', 'ARCHIVED' (removed/sold), or 'UNKNOWN' (temporary error)
+        """
+        if not url or not url.startswith("http"):
+            return "FRESH"
+        headers = self.get_stealth_headers()
+        req = urllib.request.Request(url, headers=headers, method="GET")
+        try:
+            with urllib.request.urlopen(req, timeout=7) as resp:
+                if resp.status in (404, 410):
+                    return "ARCHIVED"
+                final_url = resp.geturl()
+                if "closed" in final_url or "archive" in final_url:
+                    return "ARCHIVED"
+                
+                # Check first 8KB of HTML for tombstone markers
+                content = resp.read(8192).decode("utf-8", errors="ignore").lower()
+                tombstones = [
+                    "оголошення неактивне", "объявление неактивно", "больше не доступно",
+                    "товар продано", "товар продан", "товар закінчився", "снято с публикации",
+                    "нет в наличии", "немає в наявності", "квартира сдана", "оголошення видалено"
+                ]
+                for marker in tombstones:
+                    if marker in content:
+                        return "ARCHIVED"
+                return "FRESH"
+        except urllib.error.HTTPError as e:
+            if e.code in (404, 410):
+                return "ARCHIVED"
+            return "UNKNOWN"
+        except Exception:
+            return "UNKNOWN"
+
     @staticmethod
     def _prepare_olx_batch(seeds: List[Dict[str, Any]], category_id: str) -> int:
         batch = []
