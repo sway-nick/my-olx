@@ -11,6 +11,15 @@ import urllib.request
 from datetime import datetime, timezone
 from typing import List, Dict, Any
 
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+if os.path.exists(env_path):
+    with open(env_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                os.environ.setdefault(k.strip(), v.strip())
+
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://gpqjuwcfdkqdmyxplfbs.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
 
@@ -111,6 +120,7 @@ def run_sync():
             "price": item["price"],
             "currency": "UAH",
             "district_name": item["district_name"],
+            "location": f"POINT({item['lon']} {item['lat']})",
             "images": ["https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=500&auto=format&fit=crop&q=60"],
             "category_normalized": CATEGORY_SERVICES,
             "attributes": {"service_type": item["service_type"]},
@@ -119,7 +129,7 @@ def run_sync():
         }
 
         req = urllib.request.Request(
-            f"{SUPABASE_URL}/rest/v1/external_listings",
+            f"{SUPABASE_URL}/rest/v1/external_listings?on_conflict=source_id,external_id",
             data=json.dumps(payload).encode("utf-8"),
             headers=headers,
             method="POST"

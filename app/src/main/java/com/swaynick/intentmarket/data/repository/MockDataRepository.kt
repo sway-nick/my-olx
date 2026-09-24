@@ -8,14 +8,54 @@ import kotlin.math.*
 
 object MockDataRepository {
 
-    val ODESA_DISTRICTS = listOf(
-        District("tairova", "Таирова", 46.3980, 30.7120),
-        District("arcadia", "Аркадия", 46.4350, 30.7600),
-        District("center", "Центр", 46.4825, 30.7233),
-        District("cheremushki", "Черёмушки", 46.4370, 30.7020),
-        District("fontan", "Большой Фонтан", 46.4420, 30.7480),
-        District("kotovskogo", "Пос. Котовского", 46.5750, 30.7950)
+    val ODESA_ADMIN_AREAS = listOf(
+        com.swaynick.intentmarket.domain.model.AdministrativeArea(
+            id = "kyivskyi",
+            name = "Киевский район",
+            subdistricts = listOf(
+                District("tairova", "Таирова", 46.3980, 30.7120, "Киевский район"),
+                District("vuzivskyi", "Вузовский", 46.4150, 30.7200, "Киевский район"),
+                District("chubaivka", "Чубаевка", 46.4250, 30.7200, "Киевский район"),
+                District("chernomorka", "Черноморка", 46.3400, 30.7100, "Киевский район")
+            )
+        ),
+        com.swaynick.intentmarket.domain.model.AdministrativeArea(
+            id = "prymorskyi",
+            name = "Приморский район",
+            subdistricts = listOf(
+                District("arcadia", "Аркадия", 46.4350, 30.7600, "Приморский район"),
+                District("center", "Центр", 46.4825, 30.7233, "Приморский район"),
+                District("fontan", "Большой Фонтан", 46.4420, 30.7480, "Приморский район"),
+                District("frantsuzskyi", "Французский бульвар", 46.4550, 30.7550, "Приморский район"),
+                District("moldavanka", "Молдаванка", 46.4700, 30.7100, "Приморский район")
+            )
+        ),
+        com.swaynick.intentmarket.domain.model.AdministrativeArea(
+            id = "khadzhybeyskyi",
+            name = "Хаджибейский район",
+            subdistricts = listOf(
+                District("cheremushki", "Черёмушки", 46.4370, 30.7020, "Хаджибейский район"),
+                District("zastava", "Застава", 46.4650, 30.6800, "Хаджибейский район"),
+                District("slobodka", "Слободка", 46.4950, 30.7050, "Хаджибейский район"),
+                District("lenposelok", "Ленпосёлок", 46.4750, 30.6400, "Хаджибейский район")
+            )
+        ),
+        com.swaynick.intentmarket.domain.model.AdministrativeArea(
+            id = "peresypskyi",
+            name = "Пересыпский район",
+            subdistricts = listOf(
+                District("kotovskogo", "Пос. Котовского", 46.5750, 30.7950, "Пересыпский район"),
+                District("luzanivka", "Лузановка", 46.5450, 30.7550, "Пересыпский район"),
+                District("peresyp", "Пересыпь", 46.5050, 30.7250, "Пересыпский район")
+            )
+        )
     )
+
+    val ODESA_DISTRICTS: List<District> = ODESA_ADMIN_AREAS.flatMap { it.subdistricts }
+
+    fun findClosestDistrict(lat: Double, lon: Double): District {
+        return ODESA_DISTRICTS.minByOrNull { calculateDistance(lat, lon, it.lat, it.lon) } ?: ODESA_DISTRICTS[0]
+    }
 
     private val LISTINGS_POOL = listOf(
         // POWER GENERATORS

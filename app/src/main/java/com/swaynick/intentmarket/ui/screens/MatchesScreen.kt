@@ -44,13 +44,34 @@ fun MatchesScreen(
         IntentParser.parse(queryText, intentType)
     }
 
-    val matches = remember(parsed, userDistrict) {
-        MockDataRepository.findMatches(
-            category = parsed.category,
-            userDistrict = userDistrict,
-            maxPrice = parsed.priceMax,
-            keywords = queryText
+    var matches by remember {
+        mutableStateOf(
+            MockDataRepository.findMatches(
+                category = parsed.category,
+                userDistrict = userDistrict,
+                maxPrice = parsed.priceMax,
+                keywords = queryText
+            )
         )
+    }
+    var isLoadingCloud by remember { mutableStateOf(true) }
+    var isFromCloud by remember { mutableStateOf(false) }
+
+    LaunchedEffect(parsed, userDistrict) {
+        isLoadingCloud = true
+        val result = com.swaynick.intentmarket.data.repository.SupabaseRepository.matchDemand(
+            category = parsed.category,
+            userLat = userDistrict.lat,
+            userLon = userDistrict.lon,
+            maxPrice = parsed.priceMax
+        )
+        result.onSuccess { cloudMatches ->
+            if (cloudMatches.isNotEmpty()) {
+                matches = cloudMatches
+                isFromCloud = true
+            }
+        }
+        isLoadingCloud = false
     }
 
     var selectedExternalListing by remember { mutableStateOf<ListingItem?>(null) }
@@ -66,11 +87,28 @@ fun MatchesScreen(
                             fontWeight = FontWeight.Bold,
                             fontSize = 17.sp
                         )
-                        Text(
-                            text = "Локация: ${userDistrict.name} • Найдено: ${matches.size}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "Локация: ${userDistrict.name} • ${matches.size} шт.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            if (isFromCloud) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(4.dp),
+                                    color = PrimaryTeal.copy(alpha = 0.15f)
+                                ) {
+                                    Text(
+                                        text = "⚡ Cloud PostGIS",
+                                        color = PrimaryTeal,
+                                        fontSize = 9.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 },
                 navigationIcon = {

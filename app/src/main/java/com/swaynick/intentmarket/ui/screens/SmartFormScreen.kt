@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -41,6 +42,22 @@ fun SmartFormScreen(
         IntentParser.parse(initialText.ifBlank { "Генератор 5 кВт" }, initialType)
     }
 
+    // Photo attachments list
+    var attachedPhotos by remember {
+        mutableStateOf(
+            if (initialType == IntentType.SUPPLY) listOf("https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=60") else emptyList()
+        )
+    }
+
+    // System Photo Picker launcher
+    val photoPickerLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        if (uris.isNotEmpty()) {
+            attachedPhotos = attachedPhotos + uris.map { it.toString() }
+        }
+    }
+
     var intentType by remember { mutableStateOf(initialType) }
     var selectedCategory by remember { mutableStateOf(parsed.category) }
     var powerKw by remember { mutableStateOf(parsed.attributes["power_kw"] ?: "5.0") }
@@ -49,13 +66,6 @@ fun SmartFormScreen(
     var priceText by remember { mutableStateOf(parsed.priceMax?.toInt()?.toString() ?: "35000") }
     var selectedDistrict by remember { mutableStateOf(parsed.targetDistrict ?: MockDataRepository.ODESA_DISTRICTS[0]) }
     var isDistrictExpanded by remember { mutableStateOf(false) }
-
-    // Mock photo attachments list
-    var attachedPhotos by remember {
-        mutableStateOf(
-            if (initialType == IntentType.SUPPLY) listOf("photo_sample_1.jpg", "photo_sample_2.jpg") else emptyList()
-        )
-    }
 
     Scaffold(
         topBar = {
@@ -201,23 +211,32 @@ fun SmartFormScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = selectedDistrict.name, fontWeight = FontWeight.SemiBold)
-                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
-                }
-                DropdownMenu(
-                    expanded = isDistrictExpanded,
-                    onDismissRequest = { isDistrictExpanded = false }
-                ) {
-                    MockDataRepository.ODESA_DISTRICTS.forEach { district ->
-                        DropdownMenuItem(
-                            text = { Text(district.name) },
-                            onClick = {
-                                selectedDistrict = district
-                                isDistrictExpanded = false
-                            }
+                    Column {
+                        Text(text = selectedDistrict.name, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = selectedDistrict.parentArea ?: "Одесса",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+                    Text(
+                        text = "Выбрать район",
+                        color = PrimaryTeal,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp
+                    )
                 }
+            }
+
+            if (isDistrictExpanded) {
+                com.swaynick.intentmarket.ui.components.OdesaLocationDialog(
+                    currentDistrict = selectedDistrict,
+                    onDistrictSelected = {
+                        selectedDistrict = it
+                        isDistrictExpanded = false
+                    },
+                    onDismissRequest = { isDistrictExpanded = false }
+                )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -240,23 +259,34 @@ fun SmartFormScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Photo Upload Section
-            Text(
-                text = "Фотографии (${attachedPhotos.size})",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Фотографии (${attachedPhotos.size})",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Supabase Storage Ready",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = PrimaryTeal
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                // Add Photo Button
+                // Add Photo Button (Launches system photo picker)
                 item {
                     Surface(
                         modifier = Modifier
-                            .size(72.dp)
+                            .size(76.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                             .clickable {
-                                attachedPhotos = attachedPhotos + "photo_${attachedPhotos.size + 1}.jpg"
+                                photoPickerLauncher.launch("image/*")
                             },
                         color = MaterialTheme.colorScheme.surfaceVariant
                     ) {
@@ -265,28 +295,40 @@ fun SmartFormScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(imageVector = Icons.Default.AddAPhoto, contentDescription = null, tint = PrimaryTeal)
-                            Text(text = "Добавить", fontSize = 10.sp, fontWeight = FontWeight.Medium)
+                            Text(text = "Выбрать", fontSize = 10.sp, fontWeight = FontWeight.Medium)
                         }
                     }
                 }
 
-                // Existing Photos
-                items(attachedPhotos) { photoName ->
+                // Selected / Attached Photos
+                items(attachedPhotos) { photoUri ->
                     Surface(
                         modifier = Modifier
-                            .size(72.dp)
+                            .size(76.dp)
                             .clip(RoundedCornerShape(12.dp)),
-                        color = SecondaryIndigo.copy(alpha = 0.2f)
+                        color = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         Box(contentAlignment = Alignment.Center) {
-                            Icon(imageVector = Icons.Default.Image, contentDescription = null, tint = SecondaryIndigo)
+                            coil.compose.AsyncImage(
+                                model = photoUri,
+                                contentDescription = null,
+                                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
                             IconButton(
-                                onClick = { attachedPhotos = attachedPhotos.filter { it != photoName } },
+                                onClick = { attachedPhotos = attachedPhotos.filter { it != photoUri } },
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
-                                    .size(24.dp)
+                                    .padding(2.dp)
+                                    .size(22.dp)
+                                    .background(Color.Black.copy(alpha = 0.6f), CircleShape)
                             ) {
-                                Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = Color.Red, modifier = Modifier.size(14.dp))
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Удалить",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(12.dp)
+                                )
                             }
                         }
                     }

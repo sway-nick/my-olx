@@ -17,7 +17,14 @@ data class District(
     val id: String,
     val name: String,
     val lat: Double,
-    val lon: Double
+    val lon: Double,
+    val parentArea: String? = null
+)
+
+data class AdministrativeArea(
+    val id: String,
+    val name: String,
+    val subdistricts: List<District>
 )
 
 enum class MatchGrade(val title: String) {

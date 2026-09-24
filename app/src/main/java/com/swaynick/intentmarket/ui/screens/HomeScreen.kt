@@ -132,7 +132,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Ваш район поиска (Одесса)",
+                        text = "Локация поиска • ${selectedDistrict.parentArea ?: "Одесса"}",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -143,32 +143,31 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                DropdownMenu(
-                    expanded = isDistrictExpanded,
-                    onDismissRequest = { isDistrictExpanded = false }
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = PrimaryTeal.copy(alpha = 0.12f),
+                    modifier = Modifier.clip(RoundedCornerShape(8.dp))
                 ) {
-                    MockDataRepository.ODESA_DISTRICTS.forEach { district ->
-                        DropdownMenuItem(
-                            text = { Text(district.name, fontWeight = if (district == selectedDistrict) FontWeight.Bold else FontWeight.Normal) },
-                            onClick = {
-                                selectedDistrict = district
-                                isDistrictExpanded = false
-                            },
-                            leadingIcon = {
-                                if (district == selectedDistrict) {
-                                    Icon(Icons.Default.Check, contentDescription = null, tint = PrimaryTeal)
-                                }
-                            }
-                        )
-                    }
+                    Text(
+                        text = "Выбрать",
+                        color = PrimaryTeal,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
                 }
             }
+        }
+
+        if (isDistrictExpanded) {
+            com.swaynick.intentmarket.ui.components.OdesaLocationDialog(
+                currentDistrict = selectedDistrict,
+                onDistrictSelected = {
+                    selectedDistrict = it
+                    isDistrictExpanded = false
+                },
+                onDismissRequest = { isDistrictExpanded = false }
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))

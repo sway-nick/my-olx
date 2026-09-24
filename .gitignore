@@ -13,6 +13,8 @@ app/build/
 *.apk
 *.aab
 backend/__pycache__/
+**/__pycache__/
+.kotlin/
 backend/.venv/
 *.env
 backend/.env
