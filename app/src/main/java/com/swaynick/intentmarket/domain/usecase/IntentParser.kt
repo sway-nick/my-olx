@@ -12,19 +12,49 @@ object IntentParser {
         val lower = text.lowercase()
         val attributes = mutableMapOf<String, String>()
 
-        // 1. Detect Category
+        // 1. Detect Category across universal niches
         val category = when {
-            lower.contains("генератор") || lower.contains("генератори") || lower.contains("квт") || lower.contains("kw") -> {
+            lower.contains("генератор") || lower.contains("генератори") || lower.contains("квт") || lower.contains("kw") || lower.contains("ecoflow") -> {
                 Category.POWER_GENERATORS
+            }
+            lower.contains("iphone") || lower.contains("айфон") || lower.contains("samsung") || lower.contains("смартфон") || lower.contains("телефон") -> {
+                Category.SMARTPHONES
+            }
+            lower.contains("ноутбук") || lower.contains("macbook") || lower.contains("макбук") || lower.contains("компьютер") -> {
+                Category.LAPTOPS_PC
+            }
+            lower.contains("стиральн") || lower.contains("холодильник") || lower.contains("кондиционер") || lower.contains("пылесос") -> {
+                Category.APPLIANCES
             }
             lower.contains("квартир") || lower.contains("аренд") || lower.contains("оренд") || lower.contains("сдам") || lower.contains("сниму") -> {
                 Category.APARTMENT_RENT
             }
-            lower.contains("электрик") || lower.contains("електрик") || lower.contains("ремонт") || lower.contains("услуг") || lower.contains("послуг") -> {
+            lower.contains("купить квартиру") || lower.contains("продажа квартир") || lower.contains("продам квартиру") -> {
+                Category.APARTMENT_SALE
+            }
+            lower.contains("диван") || lower.contains("мебел") || lower.contains("шкаф") || lower.contains("кровать") || lower.contains("стол") -> {
+                Category.HOME_FURNITURE
+            }
+            lower.contains("коляск") || lower.contains("детск") || lower.contains("автокресл") || lower.contains("игрушк") -> {
+                Category.KIDS
+            }
+            lower.contains("велосипед") || lower.contains("самокат") || lower.contains("тренажер") || lower.contains("рыбалк") -> {
+                Category.SPORTS
+            }
+            lower.contains("авто") || lower.contains("машин") || lower.contains("шин") || lower.contains("резин") || lower.contains("диск") -> {
+                Category.TRANSPORT_AUTO
+            }
+            lower.contains("электрик") || lower.contains("електрик") || lower.contains("ремонт") || lower.contains("услуг") || lower.contains("послуг") || lower.contains("сантехник") -> {
                 Category.SERVICES
             }
-            lower.contains("телефон") || lower.contains("ноутбук") || lower.contains("iphone") || lower.contains("айфон") -> {
-                Category.ELECTRONICS
+            lower.contains("одежд") || lower.contains("обув") || lower.contains("куртк") || lower.contains("кроссовк") -> {
+                Category.FASHION
+            }
+            lower.contains("кот") || lower.contains("собак") || lower.contains("щенок") || lower.contains("корм") -> {
+                Category.ANIMALS
+            }
+            lower.contains("работ") || lower.contains("ваканси") || lower.contains("водитель") || lower.contains("курьер") -> {
+                Category.JOBS
             }
             else -> Category.OTHER
         }

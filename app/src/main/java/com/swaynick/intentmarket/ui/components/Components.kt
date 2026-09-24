@@ -78,14 +78,14 @@ fun ModeSelector(
                         imageVector = Icons.Default.Search,
                         contentDescription = null,
                         tint = demandTextColor,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Ищу / Куплю",
+                        text = "Ищу",
                         fontWeight = if (isDemand) FontWeight.Bold else FontWeight.Medium,
                         color = demandTextColor,
-                        fontSize = 15.sp
+                        fontSize = 13.sp
                     )
                 }
             }
@@ -115,14 +115,51 @@ fun ModeSelector(
                         imageVector = Icons.Default.AddCircleOutline,
                         contentDescription = null,
                         tint = supplyTextColor,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Предлагаю / Сдам",
+                        text = "Продам",
                         fontWeight = if (isSupply) FontWeight.Bold else FontWeight.Medium,
                         color = supplyTextColor,
-                        fontSize = 15.sp
+                        fontSize = 13.sp
+                    )
+                }
+            }
+
+            // "🔥 Хорошая цена" Button
+            val isHot = selectedType == IntentType.HOT_DEALS
+            val hotBg by animateColorAsState(
+                targetValue = if (isHot) Color(0xFFFF6B00) else Color.Transparent,
+                animationSpec = tween(250), label = "hotBg"
+            )
+            val hotTextColor = if (isHot) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+
+            Box(
+                modifier = Modifier
+                    .weight(1.2f)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(hotBg)
+                    .clickable { onTypeSelected(IntentType.HOT_DEALS) },
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocalFireDepartment,
+                        contentDescription = null,
+                        tint = hotTextColor,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Скидки -25%",
+                        fontWeight = if (isHot) FontWeight.Bold else FontWeight.Medium,
+                        color = hotTextColor,
+                        fontSize = 12.sp
                     )
                 }
             }
@@ -148,30 +185,52 @@ fun MatchCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Top Row: Badges (Relevance & Distance)
+            // Top Row: Badges (Relevance & Distance & Hot Deal)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Match Grade Badge
-                val (gradeColor, gradeText) = when (listing.matchGrade) {
-                    MatchGrade.EXCELLENT -> AccentGreen to "Отлично подходит"
-                    MatchGrade.GOOD -> PrimaryTeal to "Подходит"
-                    MatchGrade.PARTIAL -> AccentAmber to "Частично подходит"
-                }
-
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = gradeColor.copy(alpha = 0.15f)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Text(
-                        text = gradeText,
-                        color = gradeColor,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
+                    // Match Grade Badge
+                    val (gradeColor, gradeText) = when (listing.matchGrade) {
+                        MatchGrade.EXCELLENT -> AccentGreen to "Отлично подходит"
+                        MatchGrade.GOOD -> PrimaryTeal to "Подходит"
+                        MatchGrade.PARTIAL -> AccentAmber to "Частично подходит"
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = gradeColor.copy(alpha = 0.15f)
+                    ) {
+                        Text(
+                            text = gradeText,
+                            color = gradeColor,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 11.sp,
+                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+                        )
+                    }
+
+                    // Hot Deal Badge
+                    if (listing.isHotDeal) {
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color(0xFFFF6B00).copy(alpha = 0.15f),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFF6B00).copy(alpha = 0.4f))
+                        ) {
+                            Text(
+                                text = "🔥 -${listing.discountPct ?: 25}%",
+                                color = Color(0xFFE65100),
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 11.sp,
+                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+                            )
+                        }
+                    }
                 }
 
                 // Distance Badge (Location-First)
@@ -221,9 +280,20 @@ fun MatchCard(
                     Text(
                         text = "${listing.price.toInt()} ${listing.currency}",
                         style = MaterialTheme.typography.titleLarge,
-                        color = PrimaryTeal,
+                        color = if (listing.isHotDeal) Color(0xFFE65100) else PrimaryTeal,
                         fontWeight = FontWeight.ExtraBold
                     )
+                    if (listing.unitMetricComparison != null) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = listing.unitMetricComparison,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color(0xFFE65100),
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
 

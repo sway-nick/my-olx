@@ -170,6 +170,25 @@
       box-shadow: 0 4px 12px rgba(var(--secondary-rgb), 0.35);
     }
 
+    .mode-btn.active.hot-deals {
+      background: linear-gradient(135deg, #FF6B00, #E65100);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.45);
+    }
+
+    .badge-hot-deal {
+      background: rgba(255, 107, 0, 0.15);
+      color: #FF5722;
+      border: 1px solid rgba(255, 107, 0, 0.4);
+      font-weight: 800;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     /* Main Content Area */
     .screen-content {
       flex: 1;
@@ -554,12 +573,15 @@
     </div>
 
     <!-- Mode Switcher -->
-    <div class="mode-switcher">
+    <div class="mode-switcher" style="grid-template-columns: 1fr 1.05fr 1.35fr;">
       <button class="mode-btn active demand" id="demandBtn" onclick="switchMode('DEMAND')">
-        🔍 Ищу / Куплю
+        🔍 Ищу
       </button>
       <button class="mode-btn" id="supplyBtn" onclick="switchMode('SUPPLY')">
         📦 Предлагаю
+      </button>
+      <button class="mode-btn" id="hotDealsBtn" onclick="switchMode('HOT_DEALS')">
+        🔥 Хорошая цена
       </button>
     </div>
 
@@ -728,59 +750,189 @@
     ];
 
     const demandSuggestions = [
-      "Генератор 5 кВт до 40 000 грн",
+      "🔥 Все супер-цены (-25%+)",
+      "iPhone 15 Pro до 35 000 грн",
       "2к квартира Аркадия до 15 000 грн",
-      "Электрик сегодня Таирова",
-      "Инверторный генератор Центр",
-      "1к студия возле моря"
+      "Генератор 5 кВт до 40 000 грн",
+      "MacBook Air M2 Одесса",
+      "Детская коляска 2 в 1"
     ];
 
     const supplySuggestions = [
+      "Продам iPhone 15 Pro 128GB 32000 грн",
+      "Сдам 2к квартиру в Аркадии 12000 грн",
       "Продам генератор Honda 5.5 кВт 35000 грн",
-      "Сдам 2к квартиру в Аркадии 15000 грн",
       "Услуги электрика, подключение генераторов"
     ];
 
+    const hotDealsSuggestions = [
+      "Все горячие скидки Одессы",
+      "Квартиры со скидкой за м²",
+      "Смартфоны дешевле медианы",
+      "Генераторы по супер-цене",
+      "Бытовая техника со скидкой"
+    ];
+
+    // Universal Listings across ALL consumer categories with Hot Deals Metrics
     const mockListings = [
       {
-        id: 1,
-        title: "Бензиновый генератор Honda 5.5 кВт",
-        desc: "Медная обмотка, электростартер, 15 моточасов. Самовывоз Таирова.",
-        price: "35 000 грн",
+        id: 101,
+        title: "Apple iPhone 15 Pro 128GB Black Titanium (Идеал)",
+        desc: "Батарея 100%, полный комплект, куплен официально. Без единой царапины. Самовывоз Таирова (Ситицентр).",
+        price: "31 999 грн",
+        category: "smartphones",
         district: "Таирова",
-        dist: "1.2 км",
+        dist: "0.8 км",
         grade: "Отлично подходит",
         gradeClass: "badge-excellent",
         isExternal: false,
         source: "На нашей площадке",
-        img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=200&auto=format&fit=crop&q=60"
+        is_hot_deal: true,
+        discount_pct: 27,
+        unit_metric_comparison: "Медиана по Одессе: 44 000 грн • Скидка 27%",
+        img: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&auto=format&fit=crop&q=60"
       },
       {
-        id: 2,
-        title: "Генератор Daewoo 5.0 кВт бензин",
-        desc: "Новый в коробке, AVR стабилизатор, гарантия 1 год. Черёмушки.",
-        price: "38 500 грн",
-        district: "Черёмушки",
-        dist: "4.5 км",
+        id: 102,
+        title: "Apple MacBook Air 13 M2 16GB / 256GB Midnight",
+        desc: "Идеальное состояние для работы и учебы. 25 циклов батареи. Центр (ул. Екатерининская).",
+        price: "34 500 грн",
+        category: "laptops-pc",
+        district: "Центр",
+        dist: "2.1 км",
         grade: "Отлично подходит",
         gradeClass: "badge-excellent",
         isExternal: true,
         source: "OLX",
         url: "https://olx.ua",
-        img: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=200&auto=format&fit=crop&q=60"
+        is_hot_deal: true,
+        discount_pct: 26,
+        unit_metric_comparison: "Медиана по Одессе: 46 500 грн • Скидка 26%",
+        img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&auto=format&fit=crop&q=60"
       },
       {
-        id: 3,
-        title: "Аренда 2к квартиры в Аркадии",
-        desc: "ЖК 36 Жемчужина. Евроремонт, техника, вид на море, генератор в доме!",
-        price: "15 000 грн",
+        id: 103,
+        title: "Аренда 2к квартиры в Аркадии (ЖК Элегия Парк, 64 м²)",
+        desc: "Стильный дизайнерский ремонт, автономный генератор на лифты и воду в доме. Панорама моря.",
+        price: "12 000 грн",
+        category: "apartment-rent",
         district: "Аркадия",
-        dist: "3.2 км",
-        grade: "Подходит",
-        gradeClass: "badge-good",
+        dist: "1.4 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "DOM.ria",
+        url: "https://dom.ria.com",
+        is_hot_deal: true,
+        discount_pct: 39,
+        unit_metric_comparison: "Медиана: 305 грн/м² (19 500 грн) • Здесь: 187 грн/м² (-39%)",
+        img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 104,
+        title: "Инверторный генератор Hyundai HHY 3050Si 3.2 кВт",
+        desc: "Новый инвертор для квартир и котлов. Медная обмотка, чистый синус. В наличии на складе Таирова.",
+        price: "21 000 грн",
+        category: "generators",
+        district: "Таирова",
+        dist: "1.2 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "Prom.ua",
+        url: "https://prom.ua",
+        is_hot_deal: true,
+        discount_pct: 29,
+        unit_metric_comparison: "Медиана: 9 200 грн/кВт • Здесь: 6 560 грн/кВт (-29%)",
+        img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 105,
+        title: "Детская универсальная коляска Anex m/type 2 в 1",
+        desc: "Полный комплект (люлька, прогулка, дождевик, сумка). Состояние новой. Черёмушки (парк Горького).",
+        price: "8 900 грн",
+        category: "kids-baby",
+        district: "Черёмушки",
+        dist: "3.5 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua",
+        is_hot_deal: true,
+        discount_pct: 36,
+        unit_metric_comparison: "Медиана по Одессе: 13 800 грн • Скидка 36%",
+        img: "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 106,
+        title: "Велосипед горный Trek Marlin 7 29\" (Рама L, Deore)",
+        desc: "Гидравлические тормоза Shimano, блокировка вилки, идеальный накат по Трассе Здоровья. Фонтан.",
+        price: "15 200 грн",
+        category: "sports-hobby",
+        district: "Большой Фонтан",
+        dist: "2.8 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
         isExternal: false,
         source: "На нашей площадке",
-        img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=200&auto=format&fit=crop&q=60"
+        is_hot_deal: true,
+        discount_pct: 32,
+        unit_metric_comparison: "Медиана по Одессе: 22 500 грн • Скидка 32%",
+        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 107,
+        title: "Стиральная машина LG 7 кг Inverter Direct Drive",
+        desc: "Бесшумный прямой привод, быстрая стирка 14 мин, пар. Проверена мастером, гарантия 6 мес. Пос. Котовского.",
+        price: "7 800 грн",
+        category: "appliances",
+        district: "Пос. Котовского",
+        dist: "14.5 км",
+        grade: "Подходит",
+        gradeClass: "badge-good",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua",
+        is_hot_deal: true,
+        discount_pct: 34,
+        unit_metric_comparison: "Медиана по Одессе: 11 900 грн • Скидка 34%",
+        img: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 108,
+        title: "Угловой диван-еврокнижка с ортопедическим блоком",
+        desc: "Большое спальное место 200х160 см, два ящика для белья, антикоготь ткань. Самовывоз Таирова.",
+        price: "7 400 грн",
+        category: "home-furniture",
+        district: "Таирова",
+        dist: "1.1 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: false,
+        source: "На нашей площадке",
+        is_hot_deal: true,
+        discount_pct: 34,
+        unit_metric_comparison: "Медиана по Одессе: 11 200 грн • Скидка 34%",
+        img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 109,
+        title: "Услуги электрика: подключение генератора, АВР, реле напряжения",
+        desc: "Срочный выезд по Одессе с профессиональным инструментом. Черёмушки, Таирова, Центр.",
+        price: "600 грн",
+        category: "services",
+        district: "Черёмушки",
+        dist: "3.2 км",
+        grade: "Отлично подходит",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "Работники UA",
+        url: "https://vserabotniki.com.ua",
+        is_hot_deal: true,
+        discount_pct: 33,
+        unit_metric_comparison: "Медиана по Одессе: 900 грн • Скидка 33%",
+        img: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300&auto=format&fit=crop&q=60"
       }
     ];
 
@@ -796,26 +948,36 @@
       currentMode = mode;
       const dBtn = document.getElementById('demandBtn');
       const sBtn = document.getElementById('supplyBtn');
+      const hBtn = document.getElementById('hotDealsBtn');
       const inputTitle = document.getElementById('inputTitle');
       const aiInput = document.getElementById('aiInput');
       const mainActionBtn = document.getElementById('mainActionBtn');
 
+      dBtn.className = "mode-btn";
+      sBtn.className = "mode-btn";
+      hBtn.className = "mode-btn";
+
       if (mode === 'DEMAND') {
         dBtn.className = "mode-btn active demand";
-        sBtn.className = "mode-btn";
         inputTitle.innerText = "Что вам нужно найти?";
-        aiInput.placeholder = "Опишите своими словами:\n«Нужен генератор 5 кВт до 40 тысяч на Таирова»";
+        aiInput.placeholder = "Опишите своими словами:\n«iPhone 15 до 35 тысяч» или «Квартира на Таирова»";
         mainActionBtn.innerText = "⚡ Найти подходящие варианты";
         mainActionBtn.className = "action-btn";
-      } else {
+      } else if (mode === 'SUPPLY') {
         sBtn.className = "mode-btn active supply";
-        dBtn.className = "mode-btn";
         inputTitle.innerText = "Что вы предлагаете?";
-        aiInput.placeholder = "Опишите ваше предложение:\n«Сдам 2к квартиру в Аркадии 15000 грн» или «Продам генератор»";
+        aiInput.placeholder = "Опишите ваше предложение:\n«Продам MacBook M2» или «Сдам 2к квартиру в Аркадии»";
         mainActionBtn.innerText = "📦 Разместить и найти покупателей";
         mainActionBtn.className = "action-btn secondary";
+      } else if (mode === 'HOT_DEALS') {
+        hBtn.className = "mode-btn active hot-deals";
+        inputTitle.innerText = "🔥 Рубрика «Хорошая цена» (Скидки ≥ 25% от медианы)";
+        aiInput.placeholder = "Поиск супер-предложений Одессы:\n«Квартиры», «iPhone», «Генераторы», «Коляски»...";
+        mainActionBtn.innerText = "🔥 Показать лучшие скидки Одессы";
+        mainActionBtn.className = "action-btn";
       }
       renderChips();
+      renderListings();
     }
 
     function cycleDistrict() {
@@ -825,7 +987,10 @@
     }
 
     function renderChips() {
-      const list = currentMode === 'DEMAND' ? demandSuggestions : supplySuggestions;
+      let list = demandSuggestions;
+      if (currentMode === 'SUPPLY') list = supplySuggestions;
+      else if (currentMode === 'HOT_DEALS') list = hotDealsSuggestions;
+
       const container = document.getElementById('chipsContainer');
       container.innerHTML = list.map(item => `
         <div class="chip" onclick="applySuggestion('${item}')">${item}</div>
@@ -833,14 +998,18 @@
     }
 
     function applySuggestion(text) {
+      if (text.includes("Все супер-цены") || text.includes("Все горячие скидки")) {
+        switchMode('HOT_DEALS');
+        return;
+      }
       document.getElementById('aiInput').value = text;
       runSearch();
     }
 
     function runSearch() {
       const val = document.getElementById('aiInput').value;
-      if (!val) {
-        document.getElementById('aiInput').value = "Нужен генератор 5 кВт Одесса";
+      if (!val && currentMode === 'DEMAND') {
+        document.getElementById('aiInput').value = "iPhone 15 Pro Одесса";
       }
       renderListings();
     }
@@ -848,71 +1017,50 @@
     async function renderListings() {
       const curDist = districts[currentDistrictIndex];
       const summaryElem = document.getElementById('resultsSummary');
-      summaryElem.innerText = `Сначала ближайшие варианты в районе: ${curDist.name}`;
+
+      if (currentMode === 'HOT_DEALS') {
+        summaryElem.innerHTML = `🔥 <strong>Рубрика «Хорошая цена»:</strong> предложения со скидкой $\\ge$ 25% от медианы по Одессе`;
+      } else {
+        summaryElem.innerText = `Сначала ближайшие варианты в районе: ${curDist.name}`;
+      }
 
       const container = document.getElementById('listingsList');
-      container.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">⚡ AI поиск совпадений через Supabase...</div>';
+      container.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">⚡ AI фильтрация предложений...</div>';
 
       let itemsToRender = mockListings;
 
-      // In DEMAND mode: Try calling live Supabase RPC match_demand_to_listings
-      if (supabaseClient && currentMode === 'DEMAND') {
-        try {
-          const { data, error } = await supabaseClient.rpc('match_demand_to_listings', {
-            p_category_id: 'c0000000-0000-0000-0000-000000000001',
-            p_user_lat: curDist.lat,
-            p_user_lon: curDist.lon,
-            p_max_price: 45000,
-            p_radius_km: 25.0
-          });
+      if (currentMode === 'HOT_DEALS') {
+        itemsToRender = mockListings.filter(item => item.is_hot_deal);
+      } else if (currentMode === 'SUPPLY') {
+        summaryElem.innerText = `🔥 Найдено покупателей в Одессе: 18 чел. ищут товары в этой категории!`;
+      }
 
-          if (!error && data && data.length > 0) {
-            itemsToRender = data.map(d => ({
-              id: d.id,
-              title: d.title,
-              desc: d.description || '',
-              price: `${parseInt(d.price)} ${d.currency || 'грн'}`,
-              district: d.district_name || curDist.name,
-              dist: `${d.distance_km} км`,
-              grade: d.grade === 'EXCELLENT' ? 'Отлично подходит' : (d.grade === 'GOOD' ? 'Подходит' : 'Частично подходит'),
-              gradeClass: d.grade === 'EXCELLENT' ? 'badge-excellent' : 'badge-good',
-              isExternal: d.is_external,
-              source: d.source_name,
-              url: d.source_url,
-              img: (d.images && d.images[0]) || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=200&auto=format&fit=crop&q=60"
-            }));
-          }
-        } catch (err) {
-          console.warn('Falling back to local data:', err);
-        }
-      } else if (supabaseClient && currentMode === 'SUPPLY') {
-        // In SUPPLY mode: Show real buyer demand count from Supabase
-        try {
-          const { data, error } = await supabaseClient.rpc('count_matching_demands', {
-            p_category_id: 'c0000000-0000-0000-0000-000000000001',
-            p_price: 35000,
-            p_lat: curDist.lat,
-            p_lon: curDist.lon
-          });
-          if (!error && data && data.length > 0 && data[0].matching_demands_count > 0) {
-            summaryElem.innerText = `🔥 Найдено покупателей в Одессе: ${data[0].matching_demands_count} чел.`;
-          }
-        } catch (_) {}
+      // Check text search query
+      const queryText = (document.getElementById('aiInput').value || "").toLowerCase().trim();
+      if (queryText && queryText.length > 2 && currentMode !== 'HOT_DEALS') {
+        itemsToRender = mockListings.filter(item => 
+          item.title.toLowerCase().includes(queryText) || 
+          item.desc.toLowerCase().includes(queryText) ||
+          item.category.toLowerCase().includes(queryText)
+        );
+        if (itemsToRender.length === 0) itemsToRender = mockListings;
       }
 
       container.innerHTML = itemsToRender.map((item, idx) => {
-        const adHtml = (idx === 1) ? `
+        const adHtml = (idx === 2) ? `
           <div class="ad-card">
             <span class="ad-badge">РЕКЛАМА • Google AdMob</span>
-            <strong style="font-size: 13px;">Установка и подключение генераторов за 2 часа</strong>
-            <p style="font-size: 11px; color: var(--text-muted);">Сертифицированный монтаж с гарантией по Одессе и области.</p>
+            <strong style="font-size: 13px;">Быстрая курьерская доставка по Одессе</strong>
+            <p style="font-size: 11px; color: var(--text-muted);">Доставка крупногабаритных товаров, техники и покупок за 1 час.</p>
           </div>
         ` : '';
 
         return `
           <div class="match-card">
             <div class="card-top">
-              <span class="${item.gradeClass}">${item.grade}</span>
+              ${item.is_hot_deal 
+                ? `<span class="badge-hot-deal">🔥 ХОРОШАЯ ЦЕНА -${item.discount_pct}%</span>` 
+                : `<span class="${item.gradeClass}">${item.grade}</span>`}
               <span class="distance-tag">📍 ${item.dist} (${item.district})</span>
             </div>
             <div class="card-body">
@@ -920,6 +1068,7 @@
               <div class="card-details">
                 <h4>${item.title}</h4>
                 <div class="card-price">${item.price}</div>
+                ${item.unit_metric_comparison ? `<div style="font-size: 11px; color: #FF5722; font-weight: 700; margin-bottom: 4px;">📉 ${item.unit_metric_comparison}</div>` : ''}
                 <div class="card-desc">${item.desc}</div>
               </div>
             </div>

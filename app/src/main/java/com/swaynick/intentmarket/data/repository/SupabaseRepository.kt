@@ -18,11 +18,22 @@ object SupabaseRepository {
     const val SUPABASE_URL = "https://gpqjuwcfdkqdmyxplfbs.supabase.co"
     const val SUPABASE_ANON_KEY = "sb_publishable_nbP4Szi9LyDh4BY15fsJUg_Q_RJkaqd"
 
-    private val CATEGORY_UUID_MAP = mapOf(
+    val CATEGORY_UUID_MAP = mapOf(
         Category.POWER_GENERATORS to "c0000000-0000-0000-0000-000000000001",
         Category.APARTMENT_RENT to "c0000000-0000-0000-0000-000000000002",
+        Category.APARTMENT_SALE to "c0000000-0000-0000-0000-000000000020",
         Category.SERVICES to "c0000000-0000-0000-0000-000000000003",
         Category.ELECTRONICS to "c0000000-0000-0000-0000-000000000004",
+        Category.SMARTPHONES to "c0000000-0000-0000-0000-000000000010",
+        Category.LAPTOPS_PC to "c0000000-0000-0000-0000-000000000011",
+        Category.APPLIANCES to "c0000000-0000-0000-0000-000000000012",
+        Category.TRANSPORT_AUTO to "c0000000-0000-0000-0000-000000000050",
+        Category.HOME_FURNITURE to "c0000000-0000-0000-0000-000000000060",
+        Category.KIDS to "c0000000-0000-0000-0000-000000000070",
+        Category.SPORTS to "c0000000-0000-0000-0000-000000000080",
+        Category.FASHION to "c0000000-0000-0000-0000-000000000090",
+        Category.ANIMALS to "c0000000-0000-0000-0000-000000000100",
+        Category.JOBS to "c0000000-0000-0000-0000-000000000110",
         Category.OTHER to "c0000000-0000-0000-0000-000000000001"
     )
 
@@ -126,4 +137,104 @@ object SupabaseRepository {
             Result.failure(e)
         }
     }
+
+    /**
+     * Calls Supabase RPC `get_hot_deals`
+     * Returns listings that are >= 25% cheaper than the relative median in Odesa.
+     */
+    suspend fun getHotDeals(
+        userLat: Double = 46.4825,
+        userLon: Double = 30.7233,
+        categoryId: String? = null,
+        minDiscountPct: Double = 25.0
+    ): Result<List<ListingItem>> = withContext(Dispatchers.IO) {
+        try {
+            val rpcUrl = URL("$SUPABASE_URL/rest/v1/rpc/get_hot_deals")
+            val conn = (rpcUrl.openConnection() as HttpURLConnection).apply {
+                requestMethod = "POST"
+                connectTimeout = 8000
+                readTimeout = 8000
+                setRequestProperty("apikey", SUPABASE_ANON_KEY)
+                setRequestProperty("Authorization", "Bearer $SUPABASE_ANON_KEY")
+                setRequestProperty("Content-Type", "application/json")
+                doOutput = true
+            }
+
+            val payload = JSONObject().apply {
+                put("p_user_lat", userLat)
+                put("p_user_lon", userLon)
+                put("p_min_discount_pct", minDiscountPct)
+                if (categoryId != null) {
+                    put("p_category_id", categoryId)
+                }
+            }
+
+            OutputStreamWriter(conn.outputStream, "UTF-8").use { writer ->
+                writer.write(payload.toString())
+                writer.flush()
+            }
+
+            val responseCode = conn.responseCode
+            if (responseCode in 200..299) {
+                val reader = BufferedReader(InputStreamReader(conn.inputStream, "UTF-8"))
+                val responseStr = reader.readText()
+                reader.close()
+
+                val jsonArray = JSONArray(responseStr)
+                val items = mutableListOf<ListingItem>()
+
+                for (i in 0 until jsonArray.length()) {
+                    val obj = jsonArray.getJSONObject(i)
+                    val id = obj.optString("id", "hot-$i")
+                    val title = obj.optString("title", "Без названия")
+                    val desc = obj.optString("description", "")
+                    val price = obj.optDouble("price", 0.0)
+                    val currency = obj.optString("currency", "грн")
+                    val distKm = obj.optDouble("dist_km", 0.0)
+                    val srcName = obj.optString("src_name", "На нашей площадке")
+                    val srcUrl = if (obj.has("src_url") && !obj.isNull("src_url")) obj.getString("src_url") else null
+                    val districtName = obj.optString("district_name", "Одесса")
+                    val discountPct = obj.optInt("discount_pct", 25)
+                    val medianPrice = obj.optDouble("median_price", 0.0)
+                    val unitMetric = obj.optString("unit_metric", "грн/шт")
+
+                    val imagesArray = obj.optJSONArray("images")
+                    val firstImage = if (imagesArray != null && imagesArray.length() > 0) imagesArray.getString(0) else null
+
+                    val unitComparison = if (medianPrice > 0) {
+                        "${price.toInt()} $unitMetric (медиана ${medianPrice.toInt()} $unitMetric)"
+                    } else null
+
+                    items.add(
+                        ListingItem(
+                            id = id,
+                            title = title,
+                            description = desc,
+                            category = Category.OTHER,
+                            price = price,
+                            currency = currency,
+                            district = District(districtName.lowercase(), districtName, userLat, userLon),
+                            distanceKm = distKm,
+                            isExternal = srcUrl != null,
+                            sourceName = srcName,
+                            sourceUrl = srcUrl,
+                            imageUrl = firstImage,
+                            matchGrade = MatchGrade.EXCELLENT,
+                            isHotDeal = true,
+                            discountPct = discountPct,
+                            unitMetricComparison = unitComparison
+                        )
+                    )
+                }
+
+                Result.success(items)
+            } else {
+                val errorStream = conn.errorStream?.let { BufferedReader(InputStreamReader(it)).readText() }
+                Result.failure(Exception("Supabase HTTP $responseCode: $errorStream"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
+

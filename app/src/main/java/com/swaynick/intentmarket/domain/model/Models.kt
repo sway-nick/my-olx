@@ -1,15 +1,27 @@
 package com.swaynick.intentmarket.domain.model
 
 enum class IntentType {
-    DEMAND, // «Ищу / Куплю / Нужен»
-    SUPPLY  // «Предлагаю / Продам / Сдам»
+    DEMAND,     // «Ищу / Куплю / Нужен»
+    SUPPLY,     // «Предлагаю / Продам / Сдам»
+    HOT_DEALS   // «🔥 Хорошая цена (скидка от 25%)»
 }
 
 enum class Category(val displayNameRu: String, val displayNameUa: String) {
-    POWER_GENERATORS("Генераторы", "Генератори"),
-    APARTMENT_RENT("Аренда квартир", "Оренда квартир"),
+    SMARTPHONES("Смартфоны", "Смартфони"),
+    LAPTOPS_PC("Ноутбуки и ПК", "Ноутбуки та ПК"),
+    APPLIANCES("Бытовая техника", "Побутова техніка"),
     ELECTRONICS("Электроника", "Електроніка"),
+    APARTMENT_RENT("Аренда квартир", "Оренда квартир"),
+    APARTMENT_SALE("Продажа квартир", "Продаж квартир"),
+    POWER_GENERATORS("Генераторы", "Генератори"),
     SERVICES("Услуги и ремонт", "Послуги та ремонт"),
+    TRANSPORT_AUTO("Транспорт и авто", "Транспорт та авто"),
+    HOME_FURNITURE("Дом и мебель", "Дім та меблі"),
+    KIDS("Детский мир", "Дитячий світ"),
+    SPORTS("Спорт и хобби", "Спорт та хобі"),
+    FASHION("Мода и одежда", "Мода та одяг"),
+    ANIMALS("Животные", "Тварини"),
+    JOBS("Работа", "Робота"),
     OTHER("Другое", "Інше")
 }
 
@@ -48,7 +60,10 @@ data class ListingItem(
     val phone: String? = null,
     val imageUrl: String? = null,
     val matchGrade: MatchGrade = MatchGrade.GOOD,
-    val attributes: Map<String, String> = emptyMap()
+    val attributes: Map<String, String> = emptyMap(),
+    val isHotDeal: Boolean = false,
+    val discountPct: Int? = null,
+    val unitMetricComparison: String? = null
 )
 
 data class ParsedIntent(

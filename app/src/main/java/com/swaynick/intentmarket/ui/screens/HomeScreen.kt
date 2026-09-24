@@ -41,20 +41,26 @@ fun HomeScreen(
     var isDistrictExpanded by remember { mutableStateOf(false) }
 
     val quickSuggestions = remember(selectedType) {
-        if (selectedType == IntentType.DEMAND) {
-            listOf(
+        when (selectedType) {
+            IntentType.DEMAND -> listOf(
                 "Генератор 5 кВт до 40 000 грн",
                 "2к квартира Аркадия до 15 000 грн",
+                "iPhone 15 Pro Одесса",
                 "Электрик сегодня Таирова",
-                "Инверторный генератор Центр",
-                "1к квартира возле моря"
+                "MacBook Air M2 Центр"
             )
-        } else {
-            listOf(
+            IntentType.SUPPLY -> listOf(
                 "Продам генератор Honda 5.5 кВт 35000 грн",
                 "Сдам 2к квартиру в Аркадии 15000 грн",
-                "Услуги электрика, подключение генераторов",
-                "Сдам 1к квартиру студию на Таирова 9000 грн"
+                "Продам iPhone 15 Pro 128GB Neverlock",
+                "Услуги электрика, подключение генераторов"
+            )
+            IntentType.HOT_DEALS -> listOf(
+                "🔥 iPhone 15 Pro со скидкой 28%",
+                "🔥 Квартира Аркадия 222 грн/м²",
+                "🔥 Генератор Hyundai 3 818 грн/кВт",
+                "🔥 MacBook Air M2 со скидкой 26%",
+                "🔥 Стиралка Bosch со скидкой 26%"
             )
         }
     }
@@ -182,7 +188,11 @@ fun HomeScreen(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = if (selectedType == IntentType.DEMAND) "Что вам нужно?" else "Что вы предлагаете?",
+                    text = when (selectedType) {
+                        IntentType.DEMAND -> "Что вам нужно?"
+                        IntentType.SUPPLY -> "Что вы предлагаете?"
+                        IntentType.HOT_DEALS -> "🔥 Рубрика «Хорошая цена» (-25%+)"
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -193,10 +203,11 @@ fun HomeScreen(
                     onValueChange = { inputText = it },
                     placeholder = {
                         Text(
-                            text = if (selectedType == IntentType.DEMAND)
-                                "Опишите своими словами:\n«Нужен генератор 5 кВт до 40 тысяч на Таирова»"
-                            else
-                                "Опишите ваше предложение:\n«Сдам 2к квартиру в Аркадии 15000 грн»",
+                            text = when (selectedType) {
+                                IntentType.DEMAND -> "Опишите своими словами:\n«Нужен генератор 5 кВт до 40 тысяч на Таирова»"
+                                IntentType.SUPPLY -> "Опишите ваше предложение:\n«Сдам 2к квартиру в Аркадии 15000 грн»"
+                                IntentType.HOT_DEALS -> "Искать предложения со скидкой от 25%:\n«iPhone, квартира в Аркадии, генератор...»"
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
@@ -217,7 +228,9 @@ fun HomeScreen(
                 // Action Buttons
                 Button(
                     onClick = {
-                        val query = inputText.ifBlank { "Генератор 5 кВт Одесса" }
+                        val query = inputText.ifBlank {
+                            if (selectedType == IntentType.HOT_DEALS) "Все скидки Одесса" else "Генератор 5 кВт Одесса"
+                        }
                         onSearchMatches(query, selectedType, selectedDistrict)
                     },
                     modifier = Modifier
@@ -225,16 +238,28 @@ fun HomeScreen(
                         .height(52.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (selectedType == IntentType.DEMAND) PrimaryTeal else SecondaryIndigo
+                        containerColor = when (selectedType) {
+                            IntentType.DEMAND -> PrimaryTeal
+                            IntentType.SUPPLY -> SecondaryIndigo
+                            IntentType.HOT_DEALS -> Color(0xFFFF6B00)
+                        }
                     )
                 ) {
                     Icon(
-                        imageVector = if (selectedType == IntentType.DEMAND) Icons.Default.Bolt else Icons.Default.CheckCircle,
+                        imageVector = when (selectedType) {
+                            IntentType.DEMAND -> Icons.Default.Bolt
+                            IntentType.SUPPLY -> Icons.Default.CheckCircle
+                            IntentType.HOT_DEALS -> Icons.Default.LocalFireDepartment
+                        },
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (selectedType == IntentType.DEMAND) "Найти подходящие варианты" else "Разместить и найти покупателей",
+                        text = when (selectedType) {
+                            IntentType.DEMAND -> "Найти подходящие варианты"
+                            IntentType.SUPPLY -> "Разместить и найти покупателей"
+                            IntentType.HOT_DEALS -> "Показать предложения с Хорошей ценой 🔥"
+                        },
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp
                     )

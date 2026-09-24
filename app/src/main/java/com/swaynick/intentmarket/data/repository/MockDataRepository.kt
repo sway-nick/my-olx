@@ -58,13 +58,13 @@ object MockDataRepository {
     }
 
     private val LISTINGS_POOL = listOf(
-        // POWER GENERATORS
+        // POWER GENERATORS & ENERGY
         ListingItem(
             id = "gen-1",
-            title = "Бензиновый генератор Honda 5.5 кВт",
+            title = "Бензиновый генератор Hyundai 5.5 кВт HHY7050FE",
             description = "Отличное состояние, медная обмотка, электростартер. Работал 15 моточасов. Самовывоз Таирова.",
             category = Category.POWER_GENERATORS,
-            price = 35000.0,
+            price = 21000.0,
             district = ODESA_DISTRICTS[0], // Таирова
             distanceKm = 1.2,
             isExternal = false,
@@ -72,11 +72,14 @@ object MockDataRepository {
             phone = "+380671234567",
             imageUrl = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&auto=format&fit=crop&q=60",
             matchGrade = MatchGrade.EXCELLENT,
-            attributes = mapOf("power_kw" to "5.5", "fuel" to "petrol", "starter" to "electric")
+            attributes = mapOf("power_kw" to "5.5", "fuel" to "petrol", "starter" to "electric"),
+            isHotDeal = true,
+            discountPct = 27,
+            unitMetricComparison = "3 818 грн/кВт (медиана 5 250 грн/кВт)"
         ),
         ListingItem(
             id = "gen-2",
-            title = "Генератор Daewoo 5.0 кВт бензин",
+            title = "Генератор Daewoo 5.0 кВт бензин GDA 6500E",
             description = "Новый в коробке, гарантия 1 год. 2 розетки 220V, AVR стабилизатор.",
             category = Category.POWER_GENERATORS,
             price = 38500.0,
@@ -91,69 +94,132 @@ object MockDataRepository {
         ),
         ListingItem(
             id = "gen-3",
-            title = "Дизельный генератор Hyundai 6.0 кВт",
-            description = "Экономный расход 1.4 л/ч, профессиональная серия. Черёмушки.",
+            title = "Зарядная станция EcoFlow RIVER 2 Pro 768Wh",
+            description = "Быстрая зарядка за 70 мин, LiFePO4 батарея на 3000 циклов. Официальная гарантия.",
             category = Category.POWER_GENERATORS,
-            price = 45000.0,
-            district = ODESA_DISTRICTS[3], // Черёмушки
-            distanceKm = 4.8,
+            price = 23900.0,
+            district = ODESA_DISTRICTS[2], // Центр
+            distanceKm = 6.2,
             isExternal = true,
             sourceName = "Prom",
-            sourceUrl = "https://prom.ua/p12345-generator-hyundai.html",
+            sourceUrl = "https://prom.ua/p12345-ecoflow.html",
             imageUrl = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&auto=format&fit=crop&q=60",
             matchGrade = MatchGrade.GOOD,
-            attributes = mapOf("power_kw" to "6.0", "fuel" to "diesel")
-        ),
-        ListingItem(
-            id = "gen-4",
-            title = "Инверторный генератор 2.5 кВт",
-            description = "Компактный, тихий, подходит для котлов и чувствительной электроники.",
-            category = Category.POWER_GENERATORS,
-            price = 22000.0,
-            district = ODESA_DISTRICTS[2], // Центр
-            distanceKm = 8.1,
-            isExternal = false,
-            sourceName = "На нашей площадке",
-            phone = "+380509876543",
-            imageUrl = "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=500&auto=format&fit=crop&q=60",
-            matchGrade = MatchGrade.PARTIAL,
-            attributes = mapOf("power_kw" to "2.5", "fuel" to "petrol")
+            attributes = mapOf("capacity_wh" to "768")
         ),
 
-        // APARTMENT RENT
+        // SMARTPHONES & TABLETS
         ListingItem(
-            id = "rent-1",
-            title = "Аренда 2к квартиры в Аркадии с видом на море",
-            description = "ЖК 36 Жемчужина. Евроремонт, вся техника, посудомойка, генератор в доме! 14 этаж.",
-            category = Category.APARTMENT_RENT,
-            price = 15000.0,
+            id = "phone-1",
+            title = "Apple iPhone 15 Pro 128GB Natural Titanium",
+            description = "Идеальное состояние, 100% батарея, Neverlock. Комплект с коробкой и чехлом.",
+            category = Category.SMARTPHONES,
+            price = 28500.0,
             district = ODESA_DISTRICTS[1], // Аркадия
-            distanceKm = 3.2,
+            distanceKm = 3.1,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/iphone-15-pro-ID888.html",
+            imageUrl = "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Apple", "memory_gb" to "128"),
+            isHotDeal = true,
+            discountPct = 28,
+            unitMetricComparison = "28 500 грн (медиана по Одессе 39 500 грн)"
+        ),
+        ListingItem(
+            id = "phone-2",
+            title = "Samsung Galaxy S24 Ultra 12/256GB Titanium Gray",
+            description = "Официал, Snapdragon 8 Gen 3, гарантия до конца года. В защитной пленке.",
+            category = Category.SMARTPHONES,
+            price = 37000.0,
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 1.4,
             isExternal = false,
             sourceName = "На нашей площадке",
-            phone = "+380631112233",
+            phone = "+380671112233",
+            imageUrl = "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.GOOD,
+            attributes = mapOf("brand" to "Samsung", "memory_gb" to "256")
+        ),
+
+        // LAPTOPS & COMPUTERS
+        ListingItem(
+            id = "lap-1",
+            title = "Apple MacBook Air 13\" M2 16GB / 256GB Midnight",
+            description = "Состояние нового, 38 циклов зарядки, кастомная версия на 16 ГБ RAM. Одесса Центр.",
+            category = Category.LAPTOPS_PC,
+            price = 32000.0,
+            district = ODESA_DISTRICTS[2], // Центр
+            distanceKm = 5.0,
+            isExternal = false,
+            sourceName = "На нашей площадке",
+            phone = "+380503334455",
+            imageUrl = "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Apple", "ram_gb" to "16"),
+            isHotDeal = true,
+            discountPct = 26,
+            unitMetricComparison = "32 000 грн (медиана по Одессе 43 000 грн)"
+        ),
+
+        // APPLIANCES
+        ListingItem(
+            id = "app-1",
+            title = "Стиральная машина Bosch Serie 6 EcoSilence Drive 8 кг",
+            description = "Инверторный мотор, бесшумная работа, пар, 1400 об/мин. Продажа в связи с переездом.",
+            category = Category.APPLIANCES,
+            price = 11500.0,
+            district = ODESA_DISTRICTS[3], // Черёмушки
+            distanceKm = 4.2,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/bosch-washing-machine-ID555.html",
+            imageUrl = "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Bosch", "capacity_kg" to "8"),
+            isHotDeal = true,
+            discountPct = 26,
+            unitMetricComparison = "11 500 грн (медиана по Одессе 15 500 грн)"
+        ),
+
+        // REAL ESTATE (RENT & SALE)
+        ListingItem(
+            id = "rent-1",
+            title = "Аренда 2к квартиры 54м² в Аркадии, ЖК 36 Жемчужина",
+            description = "Евроремонт, вся техника, посудомойка, генератор на лифты и воду в доме! 14 этаж.",
+            category = Category.APARTMENT_RENT,
+            price = 12000.0,
+            district = ODESA_DISTRICTS[1], // Аркадия
+            distanceKm = 3.2,
+            isExternal = true,
+            sourceName = "DOM.ria",
+            sourceUrl = "https://dom.ria.com/realty_rent-123.html",
             imageUrl = "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&auto=format&fit=crop&q=60",
             matchGrade = MatchGrade.EXCELLENT,
-            attributes = mapOf("rooms" to "2", "floor" to "14", "generator_in_building" to "true")
+            attributes = mapOf("rooms" to "2", "area_sqm" to "54", "floor" to "14", "generator_in_building" to "true"),
+            isHotDeal = true,
+            discountPct = 28,
+            unitMetricComparison = "222 грн/м² (медиана по Аркадии 310 грн/м²)"
         ),
         ListingItem(
             id = "rent-2",
-            title = "1-комнатная студия в Аркадии посуточно / долгосрочно",
-            description = "Стильная студия возле моря. Полная комплектация, балкон, автономное отопление.",
+            title = "1-комнатная студия 32м² в Аркадии возле моря",
+            description = "Стильная студия, балкон, автономное отопление, скоростной Wi-Fi.",
             category = Category.APARTMENT_RENT,
             price = 11000.0,
             district = ODESA_DISTRICTS[1], // Аркадия
             distanceKm = 3.5,
             isExternal = true,
             sourceName = "DOM.ria",
-            sourceUrl = "https://dom.ria.com/realty_rent-123.html",
+            sourceUrl = "https://dom.ria.com/realty_rent-456.html",
             imageUrl = "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&auto=format&fit=crop&q=60",
             matchGrade = MatchGrade.GOOD,
-            attributes = mapOf("rooms" to "1", "sea_view" to "true")
+            attributes = mapOf("rooms" to "1", "area_sqm" to "32", "sea_view" to "true")
         ),
         ListingItem(
             id = "rent-3",
-            title = "Уютная 2к квартира на Таирова, Ак. Королёва",
+            title = "Уютная 2к квартира 48м² на Таирова, Ак. Королёва",
             description = "Раздельные комнаты, чистая, теплая, рядом рынок «Южный» и школы. 5/9 этаж.",
             category = Category.APARTMENT_RENT,
             price = 9500.0,
@@ -164,7 +230,87 @@ object MockDataRepository {
             phone = "+380974445566",
             imageUrl = "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&auto=format&fit=crop&q=60",
             matchGrade = MatchGrade.EXCELLENT,
-            attributes = mapOf("rooms" to "2", "floor" to "5")
+            attributes = mapOf("rooms" to "2", "area_sqm" to "48", "floor" to "5")
+        ),
+
+        // FURNITURE & HOME
+        ListingItem(
+            id = "furn-1",
+            title = "Большой угловой диван с ортопедическим матрасом",
+            description = "Ткань антикоготь, короб для белья, спальное место 200х160. Состояние нового.",
+            category = Category.HOME_FURNITURE,
+            price = 7500.0,
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 1.1,
+            isExternal = false,
+            sourceName = "На нашей площадке",
+            phone = "+380677778899",
+            imageUrl = "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("type" to "sofa"),
+            isHotDeal = true,
+            discountPct = 31,
+            unitMetricComparison = "7 500 грн (медиана по Одессе 10 800 грн)"
+        ),
+
+        // KIDS & BABY
+        ListingItem(
+            id = "kids-1",
+            title = "Универсальная детская коляска Anex e/type 2 в 1",
+            description = "Экокожа, отличная амортизация, полный комплект: дождевик, москитка, рюкзак.",
+            category = Category.KIDS,
+            price = 8500.0,
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 1.8,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/anex-etype-ID777.html",
+            imageUrl = "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("type" to "stroller"),
+            isHotDeal = true,
+            discountPct = 32,
+            unitMetricComparison = "8 500 грн (медиана по Одессе 12 500 грн)"
+        ),
+
+        // SPORTS & HOBBY
+        ListingItem(
+            id = "sport-1",
+            title = "Горный велосипед Pride Marvel 29\" гидравлика Shimano",
+            description = "Алюминиевая рама L (19\"), дисковая гидравлика Shimano MT200, вилка с локаутом.",
+            category = Category.SPORTS,
+            price = 9200.0,
+            district = ODESA_DISTRICTS[1], // Аркадия (Трасса Здоровья)
+            distanceKm = 3.6,
+            isExternal = false,
+            sourceName = "На нашей площадке",
+            phone = "+380931234599",
+            imageUrl = "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("wheel_size" to "29", "brakes" to "hydraulic"),
+            isHotDeal = true,
+            discountPct = 29,
+            unitMetricComparison = "9 200 грн (медиана по Одессе 13 000 грн)"
+        ),
+
+        // TRANSPORT & AUTO
+        ListingItem(
+            id = "auto-1",
+            title = "Комплект зимних шин Michelin Alpin 6 205/55 R16 (4 шт.)",
+            description = "Остаток протектора 7 мм, без шишек и порезов, производство Германия. Цена за комплект.",
+            category = Category.TRANSPORT_AUTO,
+            price = 6000.0,
+            district = ODESA_DISTRICTS[3], // Застава / Хаджибейский
+            distanceKm = 5.2,
+            isExternal = true,
+            sourceName = "AUTO.ria",
+            sourceUrl = "https://auto.ria.com/tires/michelin-16-123.html",
+            imageUrl = "https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.GOOD,
+            attributes = mapOf("radius" to "R16", "season" to "winter"),
+            isHotDeal = true,
+            discountPct = 29,
+            unitMetricComparison = "1 500 грн/шт (медиана 2 100 грн/шт)"
         ),
 
         // SERVICES
@@ -226,6 +372,24 @@ object MockDataRepository {
                     { it.distanceKm },                         // Closest first (Location-First)
                     { it.price }                               // Best price
                 )
+            )
+    }
+
+    // Get all hot deals (>=25% discount relative to median)
+    fun getHotDeals(userDistrict: District, category: Category? = null): List<ListingItem> {
+        return LISTINGS_POOL
+            .filter { it.isHotDeal && (category == null || category == Category.OTHER || it.category == category) }
+            .map { listing ->
+                val distance = calculateDistance(
+                    userDistrict.lat, userDistrict.lon,
+                    listing.district.lat, listing.district.lon
+                )
+                listing.copy(distanceKm = distance)
+            }
+            .sortedWith(
+                compareByDescending<ListingItem> { it.discountPct ?: 0 }
+                    .thenBy { it.distanceKm }
+                    .thenBy { it.price }
             )
     }
 
