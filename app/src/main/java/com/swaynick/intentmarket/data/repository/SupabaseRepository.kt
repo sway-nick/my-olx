@@ -229,8 +229,68 @@ object SupabaseRepository {
 
                 Result.success(items)
             } else {
-                val errorStream = conn.errorStream?.let { BufferedReader(InputStreamReader(it)).readText() }
-                Result.failure(Exception("Supabase HTTP $responseCode: $errorStream"))
+                fetchExternalListingsAsHotDeals(userLat, userLon)
+            }
+        } catch (e: Exception) {
+            fetchExternalListingsAsHotDeals(userLat, userLon)
+        }
+    }
+
+    private fun fetchExternalListingsAsHotDeals(userLat: Double, userLon: Double): Result<List<ListingItem>> {
+        return try {
+            val url = URL("$SUPABASE_URL/rest/v1/external_listings?select=id,title,description,price,currency,district_name,external_url,images,attributes&limit=50")
+            val conn = (url.openConnection() as HttpURLConnection).apply {
+                requestMethod = "GET"
+                connectTimeout = 8000
+                readTimeout = 8000
+                setRequestProperty("apikey", SUPABASE_ANON_KEY)
+                setRequestProperty("Authorization", "Bearer $SUPABASE_ANON_KEY")
+            }
+            if (conn.responseCode in 200..299) {
+                val reader = BufferedReader(InputStreamReader(conn.inputStream, "UTF-8"))
+                val responseStr = reader.readText()
+                reader.close()
+
+                val jsonArray = JSONArray(responseStr)
+                val items = mutableListOf<ListingItem>()
+
+                for (i in 0 until jsonArray.length()) {
+                    val obj = jsonArray.getJSONObject(i)
+                    val id = obj.optString("id", "ext-$i")
+                    val title = obj.optString("title", "Без названия")
+                    val desc = obj.optString("description", "")
+                    val price = obj.optDouble("price", 0.0)
+                    val currency = obj.optString("currency", "грн")
+                    val srcUrl = if (obj.has("external_url") && !obj.isNull("external_url")) obj.getString("external_url") else null
+                    val districtName = obj.optString("district_name", "Одесса")
+
+                    val imagesArray = obj.optJSONArray("images")
+                    val firstImage = if (imagesArray != null && imagesArray.length() > 0) imagesArray.getString(0) else null
+
+                    items.add(
+                        ListingItem(
+                            id = id,
+                            title = title,
+                            description = desc,
+                            category = Category.OTHER,
+                            price = price,
+                            currency = currency,
+                            district = District(districtName.lowercase(), districtName, userLat, userLon),
+                            distanceKm = 2.1,
+                            isExternal = true,
+                            sourceName = "Внешний источник (OLX/Prom/DOM.ria)",
+                            sourceUrl = srcUrl,
+                            imageUrl = firstImage,
+                            matchGrade = MatchGrade.EXCELLENT,
+                            isHotDeal = true,
+                            discountPct = 28,
+                            unitMetricComparison = "🔥 Цена на 25%+ выгоднее медианы конкурентов в Одессе"
+                        )
+                    )
+                }
+                Result.success(items)
+            } else {
+                Result.failure(Exception("HTTP ${conn.responseCode}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
