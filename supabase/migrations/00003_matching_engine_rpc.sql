@@ -137,10 +137,7 @@ BEGIN
             ELSE 'PARTIAL'
         END AS grade
     FROM scored_offers s
-    ORDER BY 
-        (grade = 'EXCELLENT') DESC,
-        s.dist_km ASC,
-        s.price ASC;
+    ORDER BY s.calculated_score DESC, s.dist_km ASC, s.price ASC;
 END;
 $$;
 
