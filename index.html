@@ -566,13 +566,24 @@
     <!-- Scrollable Screen Content -->
     <div class="screen-content" id="screenContent">
 
-      <!-- District Selector -->
-      <div class="district-card" onclick="cycleDistrict()">
-        <div class="district-icon">📍</div>
-        <div class="district-info">
-          <small>Ваш район (нажмите для смены)</small>
-          <strong id="districtLabel">Таирова (Одесса)</strong>
+      <!-- Location Controls (OLX Style + GPS) -->
+      <div style="display: flex; gap: 8px;">
+        <!-- District Picker Button -->
+        <div class="district-card" style="flex: 2;" onclick="openLocationModal()">
+          <div class="district-icon">📍</div>
+          <div class="district-info">
+            <small>Локация поиска</small>
+            <strong id="districtLabel">Одесса • Таирова</strong>
+          </div>
         </div>
+
+        <!-- 1-Click GPS Button -->
+        <button class="district-card" style="flex: 1; justify-content: center; cursor: pointer; background: rgba(var(--primary-rgb), 0.12); border-color: var(--primary);" onclick="detectGPSLocation()">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+            <span style="font-size: 18px;">🎯</span>
+            <small style="font-weight: 700; color: var(--primary); font-size: 11px;">Где я (GPS)</small>
+          </div>
+        </button>
       </div>
 
       <!-- Natural Language Input -->
@@ -622,6 +633,75 @@
           <button class="modal-btn primary" onclick="confirmAdRedirect()">Смотреть и перейти</button>
         </div>
       </div>
+    </div>
+
+    <!-- OLX-Style Cascading Location Modal -->
+    <div class="modal-overlay" id="locationModal">
+      <div class="modal-box" style="max-height: 80vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 17px;">📍 Выберите район (Одесса)</h3>
+          <button onclick="closeLocationModal()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;">✕</button>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted);">Иерархический выбор района и микрорайона как на OLX:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;" id="districtsListContainer">
+          <!-- Populated by JS -->
+        </div>
+
+        <button class="modal-btn cancel" style="width: 100%; margin-top: 10px;" onclick="closeLocationModal()">Закрыть</button>
+      </div>
+    </div>
+
+    <!-- Smart Form Modal with Supabase Photo Upload -->
+    <div class="modal-overlay" id="smartFormModal">
+      <div class="modal-box" style="max-height: 85vh; overflow-y: auto; max-width: 380px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 17px;">✨ Умная анкета • AI</h3>
+          <button onclick="closeSmartFormModal()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;">✕</button>
+        </div>
+        
+        <div style="background: rgba(var(--primary-rgb), 0.12); padding: 10px; border-radius: 12px; font-size: 12px;">
+          Параметры заполняются автоматически из вашего описания.
+        </div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 700;">Категория</label>
+          <select id="sfCategory" style="width: 100%; height: 40px; margin-top: 4px; border-radius: 10px; background: var(--surface-variant); color: var(--text); border: 1px solid var(--border); padding: 0 10px;">
+            <option value="generators">Генераторы</option>
+            <option value="apartment-rent">Аренда квартир</option>
+            <option value="services">Услуги и ремонт</option>
+            <option value="electronics">Электроника</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 700;">Характеристики</label>
+          <input type="text" id="sfAttr" value="5.0 кВт • Бензин" style="width: 100%; height: 40px; margin-top: 4px; border-radius: 10px; background: var(--surface-variant); color: var(--text); border: 1px solid var(--border); padding: 0 10px;" />
+        </div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 700;">Цена / Бюджет (грн)</label>
+          <input type="number" id="sfPrice" value="38500" style="width: 100%; height: 40px; margin-top: 4px; border-radius: 10px; background: var(--surface-variant); color: var(--text); border: 1px solid var(--border); padding: 0 10px;" />
+        </div>
+
+        <!-- Real Supabase Photo Upload Section -->
+        <div>
+          <label style="font-size: 12px; font-weight: 700;">Фотографии (Загрузка в Supabase Storage)</label>
+          <div style="display: flex; gap: 8px; margin-top: 6px; align-items: center; flex-wrap: wrap;" id="uploadedPhotosContainer">
+            <label style="width: 64px; height: 64px; border: 1px dashed var(--primary); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: var(--surface-variant);">
+              <span style="font-size: 20px;">📷</span>
+              <small style="font-size: 9px; color: var(--primary); font-weight: 700;">+ Фото</small>
+              <input type="file" id="realPhotoInput" accept="image/*" style="display: none;" onchange="uploadPhotoToSupabase(event)" />
+            </label>
+          </div>
+          <div id="uploadStatusText" style="font-size: 11px; color: var(--text-muted); margin-top: 4px;"></div>
+        </div>
+
+        <button class="action-btn" style="width: 100%; margin-top: 8px;" onclick="submitSmartForm()">
+          🚀 Опубликовать / Запустить подбор
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Supabase JS Client -->
@@ -855,6 +935,174 @@
       }).join('');
     }
 
+    // OLX-Style Cascading Districts Structure
+    const olxDistrictsHierarchy = [
+      {
+        adminDistrict: "Киевский район",
+        icon: "🏢",
+        microdistricts: [
+          { name: "Таирова", lat: 46.3980, lon: 30.7120 },
+          { name: "Вузовский", lat: 46.4150, lon: 30.7250 },
+          { name: "Черноморка", lat: 46.3600, lon: 30.7050 }
+        ]
+      },
+      {
+        adminDistrict: "Приморский район",
+        icon: "🏖️",
+        microdistricts: [
+          { name: "Аркадия", lat: 46.4350, lon: 30.7600 },
+          { name: "Центр (Дерибасовская)", lat: 46.4825, lon: 30.7233 },
+          { name: "Большой Фонтан", lat: 46.4420, lon: 30.7480 },
+          { name: "Французский бульвар", lat: 46.4550, lon: 30.7550 }
+        ]
+      },
+      {
+        adminDistrict: "Хаджибейский (Малиновский)",
+        icon: "🛠️",
+        microdistricts: [
+          { name: "Черёмушки", lat: 46.4370, lon: 30.7020 },
+          { name: "Застава", lat: 46.4650, lon: 30.6850 },
+          { name: "Ближние Мельницы", lat: 46.4550, lon: 30.7100 }
+        ]
+      },
+      {
+        adminDistrict: "Пересыпский (Суворовский)",
+        icon: "🚢",
+        microdistricts: [
+          { name: "Пос. Котовского", lat: 46.5750, lon: 30.7950 },
+          { name: "Лузановка", lat: 46.5400, lon: 30.7600 }
+        ]
+      }
+    ];
+
+    function openLocationModal() {
+      const container = document.getElementById('districtsListContainer');
+      container.innerHTML = olxDistrictsHierarchy.map(group => `
+        <div style="background: var(--surface-variant); border-radius: 12px; padding: 10px;">
+          <strong style="font-size: 13px; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+            <span>${group.icon}</span> ${group.adminDistrict}
+          </strong>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+            ${group.microdistricts.map(m => `
+              <button onclick="selectDistrict('${m.name}', ${m.lat}, ${m.lon})" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 12px; cursor: pointer; font-weight: 500;">
+                ${m.name}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('locationModal').style.display = 'flex';
+    }
+
+    function closeLocationModal() {
+      document.getElementById('locationModal').style.display = 'none';
+    }
+
+    function selectDistrict(name, lat, lon) {
+      document.getElementById('districtLabel').innerText = `Одесса • ${name}`;
+      // Update coordinates
+      districts[0] = { name, lat, lon };
+      currentDistrictIndex = 0;
+      closeLocationModal();
+      renderListings();
+    }
+
+    // 1-Click GPS Auto Detection
+    function detectGPSLocation() {
+      if (!navigator.geolocation) {
+        alert("Геолокация не поддерживается вашим браузером");
+        return;
+      }
+
+      document.getElementById('districtLabel').innerText = "⏳ Определение GPS...";
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const uLat = pos.coords.latitude;
+          const uLon = pos.coords.longitude;
+
+          // Find closest district in Odesa
+          let closest = districts[0];
+          let minDist = 999999;
+          districts.forEach(d => {
+            const dist = Math.hypot(d.lat - uLat, d.lon - uLon);
+            if (dist < minDist) {
+              minDist = dist;
+              closest = d;
+            }
+          });
+
+          document.getElementById('districtLabel').innerText = `🎯 GPS • ${closest.name}`;
+          districts[0] = { name: closest.name, lat: uLat, lon: uLon };
+          currentDistrictIndex = 0;
+          renderListings();
+        },
+        (err) => {
+          console.warn("GPS error:", err);
+          document.getElementById('districtLabel').innerText = "Одесса • Таирова";
+          alert("Не удалось получить доступ к GPS. Выберите район из списка.");
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
+    // Smart Form Modal & Real Supabase Photo Upload
+    function openSmartFormAlert() {
+      document.getElementById('smartFormModal').style.display = 'flex';
+    }
+
+    function closeSmartFormModal() {
+      document.getElementById('smartFormModal').style.display = 'none';
+    }
+
+    async function uploadPhotoToSupabase(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const statusElem = document.getElementById('uploadStatusText');
+      statusElem.innerText = "⏳ Загрузка фото в Supabase Storage...";
+
+      if (!supabaseClient) {
+        statusElem.innerText = "⚠️ Supabase клиент не подключен";
+        return;
+      }
+
+      try {
+        const filePath = `user_uploads/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '')}`;
+        const { data, error } = await supabaseClient.storage
+          .from('listing-photos')
+          .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+        if (error) throw error;
+
+        const { data: { publicUrl } } = supabaseClient.storage
+          .from('listing-photos')
+          .getPublicUrl(filePath);
+
+        statusElem.innerText = "✅ Фото успешно загружено в Supabase!";
+
+        // Add photo thumbnail
+        const container = document.getElementById('uploadedPhotosContainer');
+        const imgThumb = document.createElement('img');
+        imgThumb.src = publicUrl;
+        imgThumb.style.cssText = "width: 64px; height: 64px; border-radius: 12px; object-fit: cover; border: 2px solid var(--accent-green);";
+        container.appendChild(imgThumb);
+
+      } catch (err) {
+        console.error("Upload error:", err);
+        statusElem.innerText = `❌ Ошибка: ${err.message || 'не удалось загрузить'}`;
+      }
+    }
+
+    function submitSmartForm() {
+      const cat = document.getElementById('sfCategory').value;
+      const attr = document.getElementById('sfAttr').value;
+      const price = document.getElementById('sfPrice').value;
+      document.getElementById('aiInput').value = `${attr} за ${price} грн`;
+      closeSmartFormModal();
+      runSearch();
+    }
+
     function openAdModal(source, url) {
       pendingRedirectUrl = url || "https://olx.ua";
       document.getElementById('modalDesc').innerText = `Объявление размещено на ${source}. Перед бесплатным переходом мы покажем спонсорский рекламный ролик Google AdMob.`;
@@ -868,10 +1116,6 @@
     function confirmAdRedirect() {
       closeAdModal();
       window.open(pendingRedirectUrl, '_blank');
-    }
-
-    function openSmartFormAlert() {
-      alert("✨ Умная анкета: нейросеть автоматически заполняет поля категории, мощности (кВт), комнатности и цены. Доступна загрузка до 10 фотографий.");
     }
 
     // Init
