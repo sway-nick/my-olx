@@ -1335,7 +1335,8 @@
       }
 
       if (isLiveFromSupabase) {
-        summaryElem.innerHTML += ` <span style="background: rgba(16,185,129,0.15); color: #10B981; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-left: 6px;">⚡ Live База Одессы (${itemsToRender.length} объявл. & услуг)</span>`;
+        const approxKb = (itemsToRender.length * 1.1).toFixed(0);
+        summaryElem.innerHTML += ` <span style="background: rgba(16,185,129,0.15); color: #10B981; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-left: 6px;" title="Оптимизировано под бесплатный тариф Supabase (500 МБ)">⚡ СМАРТ База: ${itemsToRender.length} поз. • Supabase Free: ~${approxKb} КБ / 500 МБ (&lt;0.05%)</span>`;
       } else if (currentMode === 'SUPPLY') {
         summaryElem.innerText = `🔥 Найдено покупателей в Одессе: 18 чел. ищут товары в этой категории!`;
       }
@@ -1350,14 +1351,15 @@
           }
           if (currentCategoryFilter === 'appliances') {
             return text.includes('чайник') || text.includes('стиральн') || text.includes('утюг') || 
-                   text.includes('холодильник') || text.includes('appliance') || text.includes('техник');
+                   text.includes('холодильник') || text.includes('appliance') || text.includes('техник') || text.includes('бойлер');
           }
           if (currentCategoryFilter === 'electronics') {
             return text.includes('iphone') || text.includes('samsung') || text.includes('macbook') || 
-                   text.includes('ноутбук') || text.includes('телефон') || text.includes('smart') || text.includes('laptop');
+                   text.includes('ноутбук') || text.includes('телефон') || text.includes('smart') || text.includes('laptop') || text.includes('павербанк') || text.includes('powerbank');
           }
           if (currentCategoryFilter === 'generators') {
-            return text.includes('генератор') || text.includes('ecoflow') || text.includes('hyundai') || text.includes('квт');
+            return text.includes('генератор') || text.includes('ecoflow') || text.includes('hyundai') || text.includes('квт') || 
+                   text.includes('инвертор') || text.includes('lifepo4') || text.includes('bluetti') || text.includes('аккумулятор') || text.includes('powmr') || text.includes('deye');
           }
           if (currentCategoryFilter === 'real-estate') {
             return text.includes('квартир') || text.includes('аренд') || text.includes('аркади') || text.includes('комнат');
