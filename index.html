@@ -1342,41 +1342,42 @@
       }, 150);
     }
 
+    let cachedSupabaseData = null;
+    let cachedSupabaseCount = 0;
+
     async function renderListings() {
       const curDist = districts[currentDistrictIndex];
       const summaryElem = document.getElementById('resultsSummary');
       const queryRaw = (document.getElementById('aiInput').value || "").trim();
-
-      if (currentMode === 'HOT_DEALS') {
-        summaryElem.innerHTML = queryRaw 
-          ? `🔥 <strong>Рубрика «Хорошая цена»:</strong> скидки $\\ge$ 25% по запросу «${queryRaw}»`
-          : `🔥 <strong>Рубрика «Хорошая цена»:</strong> предложения со скидкой $\\ge$ 25% от медианы по Одессе`;
-      } else {
-        summaryElem.innerText = `Сначала ближайшие варианты в районе: ${curDist.name}`;
-      }
 
       const container = document.getElementById('listingsList');
       container.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">⚡ AI фильтрация предложений...</div>';
 
       let itemsToRender = [];
       let isLiveFromSupabase = false;
-
       let totalInDatabase = 0;
 
       // 1. Fetch live pool from Supabase or fallback to mockListings
       if (supabaseClient) {
         try {
-          const { data, error, count } = await supabaseClient
-            .from('external_listings')
-            .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized', { count: 'exact' })
-            .order('last_verified_at', { ascending: false })
-            .limit(3000);
+          if (!cachedSupabaseData) {
+            const { data, error, count } = await supabaseClient
+              .from('external_listings')
+              .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized', { count: 'exact' })
+              .order('last_verified_at', { ascending: false })
+              .limit(3000);
 
-          if (!error && data && data.length > 0) {
-            totalInDatabase = count || data.length;
+            if (!error && data && data.length > 0) {
+              cachedSupabaseData = data;
+              cachedSupabaseCount = count || data.length;
+            }
+          }
+
+          if (cachedSupabaseData && cachedSupabaseData.length > 0) {
+            totalInDatabase = cachedSupabaseCount;
             const activeLoc = districts[currentDistrictIndex] || districts[0];
 
-            const liveItems = data.map(row => {
+            const liveItems = cachedSupabaseData.map(row => {
               const priceNum = Math.round(row.price || 0);
               const titleL = (row.title || '').toLowerCase();
               let isHot = false;
@@ -1478,17 +1479,29 @@
         itemsToRender = mockListings;
       }
 
+      // Format summary line atomically (no duplicate appending)
+      let summaryText = '';
+      if (currentMode === 'HOT_DEALS') {
+        summaryText = queryRaw 
+          ? `🔥 <strong>Рубрика «Хорошая цена»:</strong> скидки &ge; 25% по запросу «${queryRaw}»`
+          : `🔥 <strong>Рубрика «Хорошая цена»:</strong> предложения со скидкой &ge; 25% от медианы по Одессе`;
+      } else if (currentMode === 'SUPPLY') {
+        summaryText = `🔥 Найдено покупателей в Одессе: 18 чел. ищут товары в этой категории!`;
+      } else {
+        summaryText = `Сначала ближайшие варианты в районе: ${curDist.name}`;
+      }
+
+      let badgeHtml = '';
       if (isLiveFromSupabase) {
         const displayTotal = totalInDatabase || itemsToRender.length;
         const approxMb = ((displayTotal * 1.1) / 1024).toFixed(2);
-        summaryElem.innerHTML += ` <span style="background: rgba(16,185,129,0.15); color: #10B981; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-left: 6px;" title="Оптимизировано под бесплатный тариф Supabase (500 МБ)">⚡ База Одессы: ${displayTotal.toLocaleString()} поз. • Хранилище: ~${approxMb} МБ / 500 МБ</span>`;
+        badgeHtml = ` <span style="background: rgba(16,185,129,0.15); color: #10B981; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-left: 6px;" title="Оптимизировано под бесплатный тариф Supabase (500 МБ)">⚡ База Одессы: ${displayTotal.toLocaleString()} поз. • Хранилище: ~${approxMb} МБ / 500 МБ</span>`;
         const headerDbStats = document.getElementById('headerDbStats');
         if (headerDbStats) {
           headerDbStats.innerText = `${displayTotal.toLocaleString()} предложений • База Одессы`;
         }
-      } else if (currentMode === 'SUPPLY') {
-        summaryElem.innerText = `🔥 Найдено покупателей в Одессе: 18 чел. ищут товары в этой категории!`;
       }
+      summaryElem.innerHTML = summaryText + badgeHtml;
 
       // 2. Category Tab Filtering
       if (currentCategoryFilter && currentCategoryFilter !== 'all') {
@@ -1838,7 +1851,7 @@
         `;
       }
 
-      const cardsHtml = itemsToRender.map((item, idx) => {
+      let cardsHtml = itemsToRender.map((item, idx) => {
         const adHtml = (idx === 2) ? `
           <div class="ad-card">
             <span class="ad-badge">РЕКЛАМА • Google AdMob</span>
