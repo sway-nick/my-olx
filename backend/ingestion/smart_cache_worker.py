@@ -140,10 +140,31 @@ def upsert_compressed_batch(batch: List[Dict[str, Any]]) -> int:
     }
 
     prepared = []
+    seen_keys = set()
     now_iso = datetime.now(timezone.utc).isoformat()
+
+    valid_sources = {
+        "e0000000-0000-0000-0000-000000000001",
+        "e0000000-0000-0000-0000-000000000002",
+        "e0000000-0000-0000-0000-000000000003",
+        "e0000000-0000-0000-0000-000000000004",
+        "e0000000-0000-0000-0000-000000000005"
+    }
 
     for item in batch:
         item_copy = dict(item)
+        src = item_copy.get("source_id", "e0000000-0000-0000-0000-000000000001")
+        if src not in valid_sources:
+            src = "e0000000-0000-0000-0000-000000000001"
+        item_copy["source_id"] = src
+
+        ext_id = str(item_copy.get("external_id", "")).strip()
+        if not ext_id:
+            continue
+        key = (src, ext_id)
+        if key in seen_keys:
+            continue
+        seen_keys.add(key)
         
         # 1. Coordinate point conversion
         lat = item_copy.pop("lat", None)
@@ -168,9 +189,9 @@ def upsert_compressed_batch(batch: List[Dict[str, Any]]) -> int:
     # Upsert in chunks of 50
     chunk_size = 50
     synced = 0
+    url = f"{SUPABASE_URL}/rest/v1/external_listings?on_conflict=source_id,external_id"
     for i in range(0, len(prepared), chunk_size):
         chunk = prepared[i:i + chunk_size]
-        url = f"{SUPABASE_URL}/rest/v1/external_listings?on_conflict=source_id,external_id"
         req = urllib.request.Request(
             url,
             data=json.dumps(chunk).encode("utf-8"),
@@ -182,7 +203,20 @@ def upsert_compressed_batch(batch: List[Dict[str, Any]]) -> int:
                 if resp.status in (200, 201):
                     synced += len(chunk)
         except Exception as e:
-            print(f"  ❌ Ошибка загрузки пачки: {e}")
+            # Fallback to item-by-item upsert if batch encounters a conflicting row
+            for single_item in chunk:
+                try:
+                    s_req = urllib.request.Request(
+                        url,
+                        data=json.dumps([single_item]).encode("utf-8"),
+                        headers=headers,
+                        method="POST"
+                    )
+                    with urllib.request.urlopen(s_req, timeout=10) as s_resp:
+                        if s_resp.status in (200, 201):
+                            synced += 1
+                except Exception:
+                    pass
 
     return synced
 
