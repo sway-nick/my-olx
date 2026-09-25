@@ -582,10 +582,30 @@ object MockDataRepository {
             )
     }
 
-    // Get all hot deals (>=25% discount relative to median)
-    fun getHotDeals(userDistrict: District, category: Category? = null): List<ListingItem> {
+    // Get hot deals (>=25% discount relative to median) matching user query and category
+    fun getHotDeals(
+        userDistrict: District,
+        category: Category? = null,
+        keywords: String = ""
+    ): List<ListingItem> {
+        val queryLower = keywords.lowercase().trim()
+        val stopWords = setOf("ищу", "нужен", "нужна", "нужно", "куплю", "до", "грн", "uah", "бу", "б/у", "в", "на", "одесса", "одессе")
+        val tokens = queryLower
+            .replace(Regex("""[.,\/#!$%\^&\*;:{}=\-_`~()"?«»]"""), " ")
+            .split(Regex("""\s+"""))
+            .filter { it.length >= 3 && it !in stopWords && !it.all { c -> c.isDigit() } }
+
         return LISTINGS_POOL
-            .filter { it.isHotDeal && (category == null || category == Category.OTHER || it.category == category) }
+            .filter { listing ->
+                val hotDealMatch = listing.isHotDeal
+                val categoryMatch = (category == null || category == Category.OTHER || listing.category == category)
+                val text = (listing.title + " " + listing.description).lowercase()
+                val keywordMatch = tokens.isEmpty() || tokens.all { token ->
+                    val stem = if (token.length > 4) token.substring(0, token.length - 1) else token
+                    text.contains(token) || text.contains(stem)
+                }
+                hotDealMatch && categoryMatch && keywordMatch
+            }
             .map { listing ->
                 val distance = calculateDistance(
                     userDistrict.lat, userDistrict.lon,

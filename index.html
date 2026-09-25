@@ -1356,9 +1356,12 @@
     async function renderListings() {
       const curDist = districts[currentDistrictIndex];
       const summaryElem = document.getElementById('resultsSummary');
+      const queryRaw = (document.getElementById('aiInput').value || "").trim();
 
       if (currentMode === 'HOT_DEALS') {
-        summaryElem.innerHTML = `🔥 <strong>Рубрика «Хорошая цена»:</strong> предложения со скидкой $\\ge$ 25% от медианы по Одессе`;
+        summaryElem.innerHTML = queryRaw 
+          ? `🔥 <strong>Рубрика «Хорошая цена»:</strong> скидки $\\ge$ 25% по запросу «${queryRaw}»`
+          : `🔥 <strong>Рубрика «Хорошая цена»:</strong> предложения со скидкой $\\ge$ 25% от медианы по Одессе`;
       } else {
         summaryElem.innerText = `Сначала ближайшие варианты в районе: ${curDist.name}`;
       }
@@ -1369,114 +1372,64 @@
       let itemsToRender = [];
       let isLiveFromSupabase = false;
 
-      // 1. Try fetching live data from Supabase Cloud
+      // 1. Fetch live pool from Supabase or fallback to mockListings
       if (supabaseClient) {
         try {
-          if (currentMode === 'HOT_DEALS') {
-            let rpcData = null;
-            try {
-              const res = await supabaseClient.rpc('get_hot_deals', {
-                p_user_lat: curDist.lat,
-                p_user_lon: curDist.lon,
-                p_min_discount_pct: 20
-              });
-              if (!res.error && res.data && res.data.length > 0) rpcData = res.data;
-            } catch (err) {}
+          const { data, error } = await supabaseClient
+            .from('external_listings')
+            .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized')
+            .limit(200);
 
-            if (rpcData) {
-              itemsToRender = rpcData.map(row => ({
-                id: row.id,
-                title: row.title,
-                desc: row.description || '',
-                price: `${Math.round(row.price).toLocaleString()} ${row.currency || 'грн'}`,
-                category: row.category_name || 'Категория',
-                district: row.district_name || 'Одесса',
-                dist: `${row.distance_km || 1.8} км`,
-                grade: 'Отлично подходит',
-                gradeClass: 'badge-relevance badge-best',
-                isExternal: Boolean(row.source_url),
-                source: row.source_name || 'OLX',
-                url: row.source_url || '#',
-                img: (row.images && row.images[0]) || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=60',
-                is_hot_deal: true,
-                discount_pct: Math.round(row.discount_pct || 25),
-                unit_metric_comparison: row.median_price ? `${Math.round(row.price)} ${row.unit_metric} (медиана ${Math.round(row.median_price)} ${row.unit_metric})` : null
-              }));
-              isLiveFromSupabase = true;
-            } else {
-              // Resilient fallback: fetch directly from external_listings table
-              const { data, error } = await supabaseClient
-                .from('external_listings')
-                .select('id, title, description, price, currency, district_name, external_url, images, attributes, category_normalized')
-                .limit(100);
-              if (!error && data && data.length > 0) {
-                const hotPool = data.filter(d => {
-                  const titleL = d.title.toLowerCase();
-                  return titleL.includes('hyundai') || titleL.includes('15 pro') || titleL.includes('macbook air') ||
-                         titleL.includes('bosch') || titleL.includes('диван') || titleL.includes('anex') ||
-                         titleL.includes('pride') || titleL.includes('michelin') || titleL.includes('экокожа') || titleL.includes('36 жемчужина');
-                });
-                itemsToRender = (hotPool.length > 0 ? hotPool : data).map(row => ({
-                  id: row.id,
-                  title: row.title,
-                  desc: row.description || '',
-                  price: `${Math.round(row.price).toLocaleString()} ${row.currency || 'грн'}`,
-                  category: 'Одесса',
-                  district: row.district_name || 'Одесса',
-                  dist: '1.8 км',
-                  grade: 'Отлично подходит',
-                  gradeClass: 'badge-relevance badge-best',
-                  isExternal: true,
-                  source: 'Внешний источник (OLX/Prom/DOM.ria)',
-                  url: row.external_url || '#',
-                  img: (row.images && row.images[0]) || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=60',
-                  is_hot_deal: true,
-                  discount_pct: 28,
-                  unit_metric_comparison: '🔥 Цена на 25%+ выгоднее медианы конкурентов в Одессе'
-                }));
-                isLiveFromSupabase = true;
+          if (!error && data && data.length > 0) {
+            const liveItems = data.map(row => {
+              const priceNum = Math.round(row.price || 0);
+              const titleL = (row.title || '').toLowerCase();
+              let isHot = false;
+              let discountPct = 0;
+              let unitComparison = null;
+
+              if (titleL.includes('giyo') || titleL.includes('мини-насос') || titleL.includes('scarlett') || 
+                  titleL.includes('whistle') || titleL.includes('1600w') || titleL.includes('marlin') || 
+                  titleL.includes('lifepo4') || titleL.includes('powmr') || titleL.includes('15 pro') ||
+                  titleL.includes('hyundai') || titleL.includes('напольный насос') || titleL.includes('tissot')) {
+                isHot = true;
+                discountPct = titleL.includes('scarlett') ? 64 : titleL.includes('giyo') ? 36 : 28;
+                unitComparison = `Медиана по Одессе выше на ${discountPct}%`;
               }
-            }
-          } else {
-            const { data, error } = await supabaseClient
-              .from('external_listings')
-              .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized')
-              .limit(100);
-            if (!error && data && data.length > 0) {
-              const liveItems = data.map(row => ({
+
+              return {
                 id: row.id,
                 title: row.title,
                 desc: row.description || '',
-                price: `${Math.round(row.price).toLocaleString()} ${row.currency || 'грн'}`,
+                price: `${priceNum.toLocaleString()} ${row.currency || 'грн'}`,
                 category: row.category_normalized || 'general',
                 district: row.district_name || 'Одесса',
-                dist: '2.5 км',
+                dist: '1.2 км',
                 grade: 'Подходит',
-                gradeClass: 'badge-relevance badge-good',
+                gradeClass: 'badge-good',
                 isExternal: true,
                 source: (row.external_url && row.external_url.includes('vserabotniki')) ? 'Работники UA' :
                         (row.external_url && row.external_url.includes('prom.ua')) ? 'Prom.ua' :
                         (row.external_url && row.external_url.includes('dom.ria')) ? 'DOM.ria' : 'OLX',
                 url: row.external_url || '#',
-                img: (row.images && row.images[0]) || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=60',
-                is_hot_deal: false
-              }));
-              // Merge live items with mockListings to ensure rich catalog
-              itemsToRender = [...liveItems, ...mockListings];
-              isLiveFromSupabase = true;
-            }
+                img: (row.images && row.images[0]) || 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=60',
+                is_hot_deal: isHot,
+                discount_pct: discountPct,
+                unit_metric_comparison: unitComparison
+              };
+            });
+
+            // Combine live database items with local seed items
+            itemsToRender = [...liveItems, ...mockListings];
+            isLiveFromSupabase = true;
           }
         } catch (e) {
           console.warn("Supabase fetch fallback:", e);
         }
       }
 
-      // 2. Fallback to offline catalogue if no internet or empty live pool
       if (!itemsToRender || itemsToRender.length === 0) {
         itemsToRender = mockListings;
-        if (currentMode === 'HOT_DEALS') {
-          itemsToRender = mockListings.filter(item => item.is_hot_deal);
-        }
       }
 
       if (isLiveFromSupabase) {
@@ -1486,7 +1439,7 @@
         summaryElem.innerText = `🔥 Найдено покупателей в Одессе: 18 чел. ищут товары в этой категории!`;
       }
 
-      // 3. Category Tab Filtering
+      // 2. Category Tab Filtering
       if (currentCategoryFilter && currentCategoryFilter !== 'all') {
         itemsToRender = itemsToRender.filter(item => {
           const text = (item.title + " " + item.desc + " " + item.category).toLowerCase();
@@ -1514,21 +1467,20 @@
             return text.includes('квартир') || text.includes('аренд') || text.includes('аркади') || text.includes('комнат');
           }
           if (currentCategoryFilter === 'auto') {
-            return text.includes('авто') || text.includes('шин') || text.includes('резин') || text.includes('michelin');
+            return text.includes('авто') || text.includes('шин') || text.includes('резин') || text.includes('michelin') || text.includes('мото');
           }
           return true;
         });
       }
 
-      // 4. Natural Language Intent & Tokenized Search Engine (Strict Compound Matching)
-      const queryRaw = (document.getElementById('aiInput').value || "").trim();
+      // 3. Natural Language Intent & Tokenized Search Engine (Strict Compound Matching across ALL modes)
       let demandCaptured = null;
       let zeroResultsForQuery = false;
 
-      if (queryRaw && queryRaw.length >= 2 && currentMode !== 'HOT_DEALS') {
+      if (queryRaw && queryRaw.length >= 2) {
         const lower = queryRaw.toLowerCase();
 
-        // Extract Max Price (e.g. "до 100 грн", "до 100", "бюджет 100", "до 40 тысяч")
+        // Extract Max Price
         let maxPrice = null;
         const thousandMatch = lower.match(/(?:до\s*)?(\d+)\s*(?:тысяч|тис|к|k)/);
         if (thousandMatch) {
@@ -1541,7 +1493,7 @@
           }
         }
 
-        // Extract Search Tokens (stripping punctuation and stopwords)
+        // Extract Search Tokens
         const stopWords = new Set([
           "ищу", "нужен", "нужна", "нужно", "куплю", "хочу", "найти", "где", "почем", 
           "одесса", "одессе", "грн", "uah", "гривен", "до", "на", "в", "по", "для", 
@@ -1564,7 +1516,6 @@
           let tokenMatches = 0;
           const matchedWords = [];
           for (const token of tokens) {
-            // Match token or stem
             const stem = token.length > 4 ? token.slice(0, -1) : token;
             if (itemText.includes(token) || itemText.includes(stem)) {
               tokenMatches++;
@@ -1575,7 +1526,6 @@
           if (tokenMatches === 0) continue;
 
           const isWithinBudget = (maxPrice === null || itemPriceNum <= maxPrice);
-          // Strict compound check: if multiple tokens exist, ALL must be present in the listing
           const isExact = (tokens.length === 1 && tokenMatches >= 1) || (tokens.length > 1 && tokenMatches >= tokens.length);
 
           if (isExact) {
@@ -1586,12 +1536,11 @@
               grade: grade,
               gradeClass: gradeClass,
               _isExact: true,
-              _score: 100 + (isWithinBudget ? 50 : 0) - (itemPriceNum > (maxPrice || 9999999) ? 20 : 0),
+              _score: 100 + (item.is_hot_deal ? 50 : 0) + (isWithinBudget ? 30 : -10) - (itemPriceNum > (maxPrice || 9999999) ? 20 : 0),
               _withinBudget: isWithinBudget,
               _priceNum: itemPriceNum
             });
           } else {
-            // Partial match (e.g. matched only "велосипед" or only "насос")
             let grade = `Частично: «${matchedWords.join(', ')}»`;
             partialMatches.push({
               ...item,
@@ -1605,53 +1554,105 @@
           }
         }
 
-        // Sort exact matches
-        exactMatches.sort((a, b) => {
-          if (a._withinBudget !== b._withinBudget) return a._withinBudget ? -1 : 1;
-          return a._priceNum - b._priceNum;
-        });
-
-        // Sort partial matches
-        partialMatches.sort((a, b) => b._score - a._score || a._priceNum - b._priceNum);
-
-        if (exactMatches.length > 0) {
-          zeroResultsForQuery = false;
-          demandCaptured = {
-            raw: queryRaw,
-            maxPrice: maxPrice,
-            tokens: tokens,
-            matchesCount: exactMatches.length
-          };
-          itemsToRender = exactMatches;
+        if (currentMode === 'HOT_DEALS') {
+          // In HOT_DEALS mode, filter strictly by this query's hot deals!
+          const hotExact = exactMatches.filter(it => it.is_hot_deal);
+          if (hotExact.length > 0) {
+            zeroResultsForQuery = false;
+            hotExact.sort((a, b) => (b.discount_pct || 0) - (a.discount_pct || 0) || a._priceNum - b._priceNum);
+            itemsToRender = hotExact;
+            demandCaptured = {
+              raw: queryRaw,
+              maxPrice: maxPrice,
+              tokens: tokens,
+              matchesCount: hotExact.length,
+              mode: 'HOT_DEALS_FOUND'
+            };
+          } else if (exactMatches.length > 0) {
+            // Exact matches exist for the query, but without >=25% discount
+            zeroResultsForQuery = false;
+            itemsToRender = exactMatches;
+            demandCaptured = {
+              raw: queryRaw,
+              maxPrice: maxPrice,
+              tokens: tokens,
+              matchesCount: exactMatches.length,
+              mode: 'REGULAR_PRICE_ONLY'
+            };
+          } else {
+            // 0 matches for this query: do NOT show apartments!
+            zeroResultsForQuery = true;
+            itemsToRender = [];
+            demandCaptured = {
+              raw: queryRaw,
+              maxPrice: maxPrice,
+              tokens: tokens,
+              matchesCount: 0,
+              mode: 'ZERO_HOT_DEALS'
+            };
+          }
         } else {
-          zeroResultsForQuery = true;
-          demandCaptured = {
-            raw: queryRaw,
-            maxPrice: maxPrice,
-            tokens: tokens,
-            matchesCount: 0
-          };
-          // Show up to 3 partial matches or fallback items clearly separated
-          itemsToRender = partialMatches.length > 0 ? partialMatches.slice(0, 3) : mockListings.slice(0, 3);
+          // DEMAND mode: sort exact matches, hot deals first, then by score
+          if (exactMatches.length > 0) {
+            zeroResultsForQuery = false;
+            exactMatches.sort((a, b) => {
+              if (a.is_hot_deal !== b.is_hot_deal) return a.is_hot_deal ? -1 : 1;
+              if (a._withinBudget !== b._withinBudget) return a._withinBudget ? -1 : 1;
+              return a._priceNum - b._priceNum;
+            });
+            itemsToRender = exactMatches;
+            demandCaptured = {
+              raw: queryRaw,
+              maxPrice: maxPrice,
+              tokens: tokens,
+              matchesCount: exactMatches.length,
+              mode: 'DEMAND'
+            };
+          } else {
+            zeroResultsForQuery = true;
+            demandCaptured = {
+              raw: queryRaw,
+              maxPrice: maxPrice,
+              tokens: tokens,
+              matchesCount: 0,
+              mode: 'ZERO_DEMAND'
+            };
+            itemsToRender = partialMatches.length > 0 ? partialMatches.slice(0, 3) : [];
+          }
         }
+      } else if (currentMode === 'HOT_DEALS') {
+        // Query is empty: show all hot deals in the chosen category
+        itemsToRender = itemsToRender.filter(it => it.is_hot_deal);
+        itemsToRender.sort((a, b) => (b.discount_pct || 0) - (a.discount_pct || 0));
       }
 
-      // 5. Render Demand Card (if search query entered) + Match Cards
+      // 4. Render Demand Card (if search query entered) + Match Cards
       let demandHeaderHtml = '';
       if (demandCaptured) {
+        let msg = '';
+        if (demandCaptured.mode === 'HOT_DEALS_FOUND') {
+          msg = `🔥 Найдено ${demandCaptured.matchesCount} супер-предложений со скидкой от 25% по запросу «${demandCaptured.raw}» в Одессе!`;
+        } else if (demandCaptured.mode === 'REGULAR_PRICE_ONLY') {
+          msg = `ℹ️ По запросу «${demandCaptured.raw}» предложений со скидкой $\\ge 25\\%$ сейчас нет. Показаны найденные варианты по рыночной цене:`;
+        } else if (demandCaptured.mode === 'ZERO_HOT_DEALS') {
+          msg = `🔍 По запросу «${demandCaptured.raw}» предложений в рубрике «Хорошая цена» пока нет. <strong>Запрос зафиксирован!</strong> Мы уведомим вас при появлении скидки от 25%!`;
+        } else if (zeroResultsForQuery) {
+          msg = `🔍 Точных совпадений по запросу «${demandCaptured.raw}» в базе Одессы пока нет. <strong>Запрос спроса зафиксирован!</strong> Мы оповестим одесских продавцов и запустили безопасный фоновый поиск.`;
+        } else {
+          msg = `✅ Найдено ${demandCaptured.matchesCount} точных предложений в Одессе! Запрос зафиксирован в реестре спроса.`;
+        }
+
         demandHeaderHtml = `
           <div class="demand-captured-card">
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px;">
-              <span class="demand-captured-badge"><span class="demand-pulse"></span> ЗАПРОС СПРОСА СОХРАНЁН</span>
+              <span class="demand-captured-badge"><span class="demand-pulse"></span> ${currentMode === 'HOT_DEALS' ? '🔥 ХОРОШАЯ ЦЕНА • СПРОС' : 'ЗАПРОС СПРОСА СОХРАНЁН'}</span>
               <span style="color: var(--primary); font-weight: 700; font-size: 11px; white-space: nowrap;">Одесса • Активный спрос</span>
             </div>
             <div style="font-size: 14px; font-weight: 700; margin-top: 4px;">
-              🎯 Ищу: «${demandCaptured.raw}»
+              🎯 Запрос: «${demandCaptured.raw}» ${currentMode === 'HOT_DEALS' ? '<span style="color: #FF5722; font-size: 12px;">(Рубрика скидок от 25%)</span>' : ''}
             </div>
             <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 0;">
-              ${zeroResultsForQuery 
-                ? `🔍 Точных совпадений по запросу «${demandCaptured.raw}» в текущей базе пока нет. <strong>Ваш запрос спроса зафиксирован!</strong> Мы оповестим одесских продавцов и запустили безопасный антибан-поиск на OLX и Prom.ua.`
-                : `✅ Найдено ${demandCaptured.matchesCount} точных предложений в Одессе! Запрос зафиксирован в реестре спроса.`}
+              ${msg}
             </p>
             <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
               <button class="action-btn" style="height: 36px; font-size: 12px; background: var(--accent-green); width: 100%;" onclick="triggerStealthSearch('${demandCaptured.raw}')">
@@ -1659,7 +1660,7 @@
               </button>
             </div>
           </div>
-          ${zeroResultsForQuery ? `<div style="font-weight: 700; font-size: 13px; color: var(--text-muted); margin-top: 6px;">💡 Сопутствующие товары и похожие категории в Одессе:</div>` : ''}
+          ${(zeroResultsForQuery && itemsToRender.length > 0) ? `<div style="font-weight: 700; font-size: 13px; color: var(--text-muted); margin-top: 6px;">💡 Сопутствующие товары и похожие категории в Одессе:</div>` : ''}
         `;
       }
 

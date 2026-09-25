@@ -50,7 +50,11 @@ fun MatchesScreen(
     var matches by remember {
         mutableStateOf(
             if (intentType == IntentType.HOT_DEALS) {
-                MockDataRepository.getHotDeals(userDistrict)
+                MockDataRepository.getHotDeals(
+                    userDistrict = userDistrict,
+                    category = parsed.category,
+                    keywords = queryText
+                )
             } else {
                 MockDataRepository.findMatches(
                     category = parsed.category,
@@ -73,8 +77,23 @@ fun MatchesScreen(
                 minDiscountPct = 25.0
             )
             result.onSuccess { cloudMatches ->
-                if (cloudMatches.isNotEmpty()) {
-                    matches = cloudMatches
+                val filteredCloud = if (queryText.isNotBlank()) {
+                    val stopWords = setOf("ищу", "нужен", "нужна", "нужно", "куплю", "до", "грн", "uah", "бу", "б/у", "в", "на", "одесса", "одессе")
+                    val tokens = queryText.lowercase()
+                        .replace(Regex("""[.,\/#!$%\^&\*;:{}=\-_`~()"?«»]"""), " ")
+                        .split(Regex("""\s+"""))
+                        .filter { it.length >= 3 && it !in stopWords && !it.all { c -> c.isDigit() } }
+                    cloudMatches.filter { item ->
+                        val text = (item.title + " " + item.description).lowercase()
+                        tokens.isEmpty() || tokens.all { t ->
+                            val stem = if (t.length > 4) t.substring(0, t.length - 1) else t
+                            text.contains(t) || text.contains(stem)
+                        }
+                    }
+                } else cloudMatches
+
+                if (filteredCloud.isNotEmpty()) {
+                    matches = filteredCloud
                     isFromCloud = true
                 }
             }
