@@ -55,106 +55,141 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
       justify-content: flex-start;
-      padding: 16px 8px;
+      padding: 0;
+      margin: 0;
       transition: background 0.3s ease, color 0.3s ease;
       overflow-x: hidden;
+      overflow-y: auto;
     }
 
-    /* Device Mockup Wrapper - Fully Adaptive */
-    .device-container {
+    /* Modern Fluid Responsive Application Container (Desktop, Tablet & Mobile) */
+    .app-container, .device-container {
       width: 100%;
-      max-width: 430px;
-      height: 94vh;
-      max-height: 890px;
-      min-height: 580px;
-      background: var(--surface);
-      border: 3px solid var(--phone-border);
-      border-radius: 40px;
-      box-shadow: var(--shadow);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      background: var(--bg);
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      margin: 0;
+      padding: 0;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
     }
 
-    @media (max-width: 480px) {
-      body {
-        padding: 0;
-        margin: 0;
-        background: var(--surface);
-      }
-      .device-container {
-        max-width: 100%;
-        width: 100%;
-        height: 100vh;
-        height: 100dvh;
-        border-radius: 0;
-        border: none;
-        box-shadow: none;
-      }
-    }
-
-    /* Top Status Bar */
-    .status-bar {
-      height: 34px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 20px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      z-index: 10;
-      flex-shrink: 0;
-    }
-
-    .island {
-      width: 84px;
-      height: 18px;
-      background: #000;
-      border-radius: 10px;
-    }
-
-    /* App Header - Responsive Width */
+    /* Modern Sticky Top Navigation Header */
     .app-header {
-      padding: 6px 18px 10px 18px;
+      background: rgba(17, 24, 39, 0.95);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      padding: 12px 24px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="light"] .app-header {
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 1360px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
+      gap: 16px;
     }
 
     .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       min-width: 0;
-      flex: 1;
+    }
+
+    .brand-logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #fff;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.35);
     }
 
     .app-brand h1 {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       line-height: 1.2;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .app-brand p {
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--text-muted);
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .header-stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-variant);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .header-stat-pill .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      display: inline-block;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    @media (max-width: 680px) {
+      .header-stat-pill {
+        display: none;
+      }
+      .app-brand p {
+        display: none;
+      }
+      .app-header {
+        padding: 10px 14px;
+      }
     }
 
     .theme-btn {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: var(--surface-variant);
       border: 1px solid var(--border);
@@ -163,38 +198,57 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 17px;
       flex-shrink: 0;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--primary);
+      transform: scale(1.05);
     }
 
     /* Mode Switcher: Ищу vs Предлагаю vs Хорошая цена */
-    .mode-switcher {
-      margin: 4px 16px 8px 16px;
-      background: var(--surface-variant);
-      border-radius: 28px;
-      padding: 3px;
+    .mode-switcher-bar {
+      width: 100%;
+      max-width: 1360px;
+      margin: 16px auto 0 auto;
+      padding: 0 20px;
       display: flex;
-      gap: 3px;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .mode-switcher {
+      width: 100%;
+      max-width: 580px;
+      background: var(--surface-variant);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
       flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
     }
 
     .mode-btn {
       flex: 1;
-      height: 40px;
+      height: 42px;
       border: none;
       background: transparent;
       color: var(--text-muted);
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 700;
-      border-radius: 22px;
+      border-radius: 24px;
       cursor: pointer;
       transition: all 0.25s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
       white-space: nowrap;
-      padding: 0 4px;
+      padding: 0 8px;
     }
 
     @media (max-width: 380px) {
@@ -248,42 +302,52 @@
 
     /* Main Content Area */
     .screen-content {
+      width: 100%;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 18px 20px 60px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-sizing: border-box;
       flex: 1;
-      overflow-y: auto;
-      padding: 8px 16px 20px 16px;
+    }
+
+    /* Search & Location Hero */
+    .search-section {
       display: flex;
       flex-direction: column;
       gap: 14px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border) transparent;
+      width: 100%;
     }
 
-    .screen-content::-webkit-scrollbar {
-      width: 4px;
-    }
-    .screen-content::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .screen-content::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 4px;
+    .location-bar {
+      display: flex;
+      gap: 12px;
+      width: 100%;
     }
 
-    /* District Card */
     .district-card {
       background: var(--surface-variant);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 12px 16px;
+      padding: 12px 18px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       cursor: pointer;
+      transition: all 0.2s ease;
+      flex: 3;
+    }
+
+    .district-card:hover {
+      border-color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.05);
     }
 
     .district-icon {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: rgba(var(--primary-rgb), 0.15);
       color: var(--primary);
@@ -291,16 +355,38 @@
       align-items: center;
       justify-content: center;
       font-size: 18px;
+      flex-shrink: 0;
     }
 
     .district-info small {
       font-size: 11px;
       color: var(--text-muted);
+      display: block;
     }
 
     .district-info strong {
       display: block;
-      font-size: 14px;
+      font-size: 14.5px;
+      font-weight: 700;
+    }
+
+    .gps-btn {
+      flex: 1;
+      justify-content: center;
+      cursor: pointer;
+      background: rgba(var(--primary-rgb), 0.08);
+      border: 1px solid rgba(var(--primary-rgb), 0.3);
+      border-radius: 16px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .gps-btn:hover {
+      background: rgba(var(--primary-rgb), 0.15);
+      border-color: var(--primary);
     }
 
     /* Input Card */
@@ -308,36 +394,53 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 16px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
 
-    .input-card h3 {
-      font-size: 15px;
+    .input-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .input-header h3 {
+      font-size: 16px;
       font-weight: 700;
     }
 
+    .search-input-group {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+    }
+
     .ai-textarea {
-      width: 100%;
-      height: 90px;
+      flex: 1;
+      height: 72px;
       background: var(--surface-variant);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: 14px;
+      padding: 14px 16px;
       color: var(--text);
-      font-size: 14px;
+      font-size: 14.5px;
+      line-height: 1.45;
       resize: none;
       outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .ai-textarea:focus {
       border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
     }
 
     .action-btn {
-      height: 48px;
+      width: 260px;
       border: none;
       border-radius: 14px;
       background: var(--primary);
@@ -349,7 +452,12 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: transform 0.1s ease;
+      flex-shrink: 0;
+      transition: transform 0.1s ease, filter 0.2s ease;
+    }
+
+    .action-btn:hover {
+      filter: brightness(1.08);
     }
 
     .action-btn:active {
@@ -368,14 +476,37 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 6px;
       padding: 4px;
+      transition: color 0.2s ease;
+    }
+
+    .smart-form-link:hover {
+      color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+      .search-input-group {
+        flex-direction: column;
+      }
+      .action-btn {
+        width: 100%;
+        height: 48px;
+      }
+      .ai-textarea {
+        height: 80px;
+      }
     }
 
     /* Chips */
+    .chips-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .chips-title {
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 600;
       color: var(--text-muted);
     }
@@ -386,16 +517,16 @@
       overflow-x: auto;
       overflow-y: hidden;
       padding: 4px 2px 8px 2px;
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
       -webkit-overflow-scrolling: touch;
     }
 
-    .chips-scroll::-webkit-scrollbar {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
-      background: transparent !important;
+    @media (min-width: 1024px) {
+      .chips-scroll {
+        flex-wrap: wrap;
+        overflow-x: visible;
+      }
     }
 
     .chip {
@@ -404,36 +535,85 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 8px 14px;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 500;
       color: var(--text);
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     .chip:hover {
       border-color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.1);
+      color: var(--primary);
     }
 
     /* Results Header */
     .results-banner {
       background: rgba(var(--primary-rgb), 0.12);
       border: 1px solid rgba(var(--primary-rgb), 0.3);
-      border-radius: 14px;
-      padding: 12px;
+      border-radius: 16px;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      width: 100%;
     }
 
     .results-banner-text strong {
       display: block;
-      font-size: 13px;
+      font-size: 14px;
       color: var(--primary);
     }
 
     .results-banner-text small {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--text-muted);
+    }
+
+    /* Modern Responsive CSS Grid for Listings */
+    .listings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
+    @media (max-width: 640px) {
+      .listings-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+    }
+
+    @media (min-width: 1400px) {
+      .listings-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* Demand and Banner Cards Span Full Grid Width */
+    .demand-captured-card {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12), rgba(16, 185, 129, 0.12));
+      border: 1.5px solid var(--primary);
+      border-radius: 18px;
+      padding: 18px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.15);
+    }
+
+    .ad-card {
+      grid-column: 1 / -1;
+      background: var(--surface-variant);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     /* Match Card */
@@ -441,16 +621,26 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 14px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      justify-content: space-between;
+      gap: 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .match-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .card-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
     }
 
     .badge-excellent {
@@ -482,41 +672,71 @@
 
     .card-body {
       display: flex;
+      flex-direction: column;
       gap: 12px;
+      flex: 1;
     }
 
     .card-img {
-      width: 76px;
-      height: 76px;
+      width: 100%;
+      height: 190px;
       border-radius: 12px;
-      object-fit: crop;
+      object-fit: cover;
       background: var(--surface-variant);
     }
 
+    @media (max-width: 520px) {
+      .card-body {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .card-img {
+        width: 90px;
+        height: 90px;
+        flex-shrink: 0;
+        border-radius: 10px;
+      }
+    }
+
+    .card-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
     .card-details h4 {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
-      margin-bottom: 4px;
+      line-height: 1.35;
+      color: var(--text);
     }
 
     .card-price {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 800;
       color: var(--primary);
+      margin-top: 2px;
     }
 
     .card-desc {
-      font-size: 12px;
+      font-size: 12.5px;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-top: 4px;
     }
 
     .card-footer {
       border-top: 1px solid var(--border);
-      padding-top: 10px;
+      padding-top: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
     }
 
     .source-tag {
@@ -525,36 +745,36 @@
     }
 
     .btn-call {
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 10px;
       border: none;
       background: var(--primary);
       color: #fff;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
+      transition: filter 0.2s ease;
+    }
+
+    .btn-call:hover {
+      filter: brightness(1.1);
     }
 
     .btn-external {
-      padding: 6px 12px;
+      padding: 8px 16px;
       border-radius: 10px;
       border: 1px solid var(--primary);
-      background: transparent;
+      background: var(--surface-variant);
       color: var(--primary);
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    /* Ad Banner */
-    .ad-card {
-      background: var(--surface-variant);
-      border: 1px dashed var(--accent-amber);
-      border-radius: 16px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    .btn-external:hover {
+      background: var(--primary);
+      color: #fff;
     }
 
     .ad-badge {
@@ -571,65 +791,59 @@
     /* Category Filter Tabs */
     .category-tabs {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       overflow-x: auto;
       overflow-y: hidden;
-      padding: 6px 4px 10px 4px;
+      padding: 6px 2px 10px 2px;
       margin: 2px 0 6px 0;
       min-height: 52px;
       box-sizing: border-box;
       align-items: center;
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
       -webkit-overflow-scrolling: touch;
     }
-    .category-tabs::-webkit-scrollbar {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
-      background: transparent !important;
+
+    @media (min-width: 1100px) {
+      .category-tabs {
+        flex-wrap: wrap;
+        overflow-x: visible;
+      }
     }
+
     .cat-tab {
       flex-shrink: 0;
-      height: 36px;
+      height: 38px;
       line-height: 1;
-      padding: 0 16px;
+      padding: 0 18px;
       box-sizing: border-box;
-      border-radius: 18px;
+      border-radius: 20px;
       border: 1px solid var(--border);
       background: var(--surface-variant);
       color: var(--text);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       white-space: nowrap;
     }
+
     .cat-tab:hover {
       border-color: var(--primary);
+      color: var(--primary);
     }
+
     .cat-tab.active {
       background: var(--primary);
       color: #fff;
       border-color: var(--primary);
-      box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.3);
+      box-shadow: 0 2px 10px rgba(var(--primary-rgb), 0.35);
     }
 
-    /* Demand Captured Card */
-    .demand-captured-card {
-      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12), rgba(16, 185, 129, 0.12));
-      border: 1.5px solid var(--primary);
-      border-radius: 18px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.15);
-    }
     .demand-captured-badge {
       display: inline-flex;
       align-items: center;
@@ -645,6 +859,7 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
+
     .demand-pulse {
       display: inline-block;
       width: 8px;
@@ -654,6 +869,7 @@
       box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
       animation: demandPulseAnim 1.5s infinite;
     }
+
     @keyframes demandPulseAnim {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
       70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
@@ -662,52 +878,56 @@
 
     /* Modal Dialog */
     .modal-overlay {
-      position: absolute;
+      position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
       display: none;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      z-index: 100;
+      z-index: 9999;
     }
 
     .modal-box {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 20px;
-      max-width: 340px;
+      padding: 24px;
+      max-width: 520px;
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal-box h3 {
-      font-size: 16px;
+      font-size: 17px;
+      font-weight: 700;
     }
 
     .modal-box p {
-      font-size: 13px;
+      font-size: 13.5px;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .modal-actions {
       display: flex;
       gap: 10px;
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     .modal-btn {
       flex: 1;
-      height: 40px;
-      border-radius: 10px;
+      height: 42px;
+      border-radius: 12px;
       border: none;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 13.5px;
       cursor: pointer;
     }
 
@@ -724,75 +944,89 @@
 </head>
 <body>
 
-  <div class="device-container">
-    <!-- Status bar -->
-    <div class="status-bar">
-      <span>9:41</span>
-      <div class="island"></div>
-      <span>5G 100%</span>
-    </div>
-
-    <!-- Header -->
-    <div class="app-header">
-      <div class="app-brand">
-        <h1>СМАРТ Маркет</h1>
-        <p>AI Спрос & Предложение • Одесса</p>
-      </div>
-      <button class="theme-btn" onclick="toggleTheme()" title="Переключить тему">🌓</button>
-    </div>
-
-    <!-- Mode Switcher -->
-    <div class="mode-switcher">
-      <button class="mode-btn active demand" id="demandBtn" onclick="switchMode('DEMAND')">
-        🔍 Ищу
-      </button>
-      <button class="mode-btn" id="supplyBtn" onclick="switchMode('SUPPLY')">
-        📦 Предлагаю
-      </button>
-      <button class="mode-btn" id="hotDealsBtn" onclick="switchMode('HOT_DEALS')">
-        🔥 Хорошая цена
-      </button>
-    </div>
-
-    <!-- Scrollable Screen Content -->
-    <div class="screen-content" id="screenContent">
-
-      <!-- Location Controls (OLX Style + GPS) -->
-      <div style="display: flex; gap: 8px;">
-        <!-- District Picker Button -->
-        <div class="district-card" style="flex: 2;" onclick="openLocationModal()">
-          <div class="district-icon">📍</div>
-          <div class="district-info">
-            <small>Локация поиска</small>
-            <strong id="districtLabel">Одесса • Таирова</strong>
+  <div class="app-container">
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="app-brand">
+          <div class="brand-logo-icon">⚡</div>
+          <div>
+            <h1>СМАРТ Маркет</h1>
+            <p>AI Спрос & Предложение • Одесса</p>
           </div>
         </div>
 
-        <!-- 1-Click GPS Button -->
-        <button class="district-card" style="flex: 1; justify-content: center; cursor: pointer; background: rgba(var(--primary-rgb), 0.12); border-color: var(--primary);" onclick="detectGPSLocation()">
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
-            <span style="font-size: 18px;">🎯</span>
-            <small style="font-weight: 700; color: var(--primary); font-size: 11px;">Где я (GPS)</small>
+        <div class="header-actions">
+          <div class="header-stat-pill" title="Реальная база Одессы: DOM.ria, AUTO.ria, Prom.ua, Работники UA">
+            <span class="live-dot"></span>
+            <span id="headerDbStats">1 290+ предложений • Одесса</span>
           </div>
+          <button class="theme-btn" onclick="toggleTheme()" title="Переключить тему">🌓</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mode Switcher (Ищу / Предлагаю / Хорошая цена) -->
+    <div class="mode-switcher-bar">
+      <div class="mode-switcher">
+        <button class="mode-btn active demand" id="demandBtn" onclick="switchMode('DEMAND')">
+          🔍 Ищу
+        </button>
+        <button class="mode-btn" id="supplyBtn" onclick="switchMode('SUPPLY')">
+          📦 Предлагаю
+        </button>
+        <button class="mode-btn" id="hotDealsBtn" onclick="switchMode('HOT_DEALS')">
+          🔥 Хорошая цена
         </button>
       </div>
+    </div>
 
-      <!-- Natural Language Input -->
-      <div class="input-card">
-        <h3 id="inputTitle">Что вам нужно найти?</h3>
-        <textarea id="aiInput" class="ai-textarea" placeholder="Опишите своими словами:&#10;«Нужен насос велосипедный ручной до 200 грн на Таирова»"></textarea>
-        
-        <button class="action-btn" id="mainActionBtn" onclick="runSearch()">
-          ⚡ Найти подходящие варианты
-        </button>
+    <!-- Main Content Area -->
+    <main class="screen-content" id="screenContent">
 
-        <button class="smart-form-link" onclick="openSmartFormAlert()">
-          ⚙️ Открыть умную анкету с фото
-        </button>
+      <!-- Search & Filters Hero Section -->
+      <div class="search-section">
+        <!-- Location & GPS Bar -->
+        <div class="location-bar">
+          <!-- District Picker Button -->
+          <div class="district-card" onclick="openLocationModal()" title="Выбрать район Одессы">
+            <div class="district-icon">📍</div>
+            <div class="district-info">
+              <small>Локация поиска</small>
+              <strong id="districtLabel">Одесса • Таирова</strong>
+            </div>
+          </div>
+
+          <!-- 1-Click GPS Button -->
+          <button class="gps-btn" onclick="detectGPSLocation()" title="Определить мой район по геолокации">
+            <span style="font-size: 18px;">🎯</span>
+            <div style="text-align: left;">
+              <small style="font-size: 11px; color: var(--text-muted); display: block;">Геопозиция</small>
+              <strong style="font-weight: 700; color: var(--primary); font-size: 13px;">Где я (GPS)</strong>
+            </div>
+          </button>
+        </div>
+
+        <!-- Natural Language AI Search Box -->
+        <div class="input-card">
+          <div class="input-header">
+            <h3 id="inputTitle">Что вам нужно найти?</h3>
+            <button class="smart-form-link" onclick="openSmartFormAlert()">
+              ⚙️ Открыть умную анкету с фото
+            </button>
+          </div>
+          
+          <div class="search-input-group">
+            <textarea id="aiInput" class="ai-textarea" placeholder="Опишите своими словами:&#10;«Купить машину до 10 тыс дол США» или «Аренда 2к квартиры Центр»"></textarea>
+            <button class="action-btn" id="mainActionBtn" onclick="runSearch()">
+              ⚡ Найти подходящие варианты
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Quick Chips -->
-      <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 2px;">
+      <div class="chips-section">
         <span class="chips-title">Популярные запросы:</span>
         <div class="chips-scroll" id="chipsContainer">
           <!-- populated by JS -->
@@ -812,20 +1046,20 @@
       </div>
 
       <!-- Matches Results View -->
-      <div id="resultsArea" style="display: flex; flex-direction: column; gap: 14px;">
+      <div id="resultsArea" style="display: flex; flex-direction: column; gap: 16px;">
         <div class="results-banner">
-          <span style="font-size: 20px;">🎯</span>
+          <span style="font-size: 22px;">🎯</span>
           <div class="results-banner-text">
             <strong>Location-First подбор (Одесса)</strong>
             <small id="resultsSummary">Сначала ближайшие варианты на Таирова</small>
           </div>
         </div>
 
-        <!-- Dynamic Listings Injected by JS -->
-        <div id="listingsList" style="display: flex; flex-direction: column; gap: 14px;"></div>
+        <!-- Dynamic Listings Injected by JS (Responsive CSS Grid) -->
+        <div id="listingsList" class="listings-grid"></div>
       </div>
 
-    </div>
+    </main>
 
     <!-- External Rewarded Ad Modal -->
     <div class="modal-overlay" id="adModal">
@@ -1733,6 +1967,10 @@
       if (isLiveFromSupabase) {
         const approxKb = (itemsToRender.length * 1.1).toFixed(0);
         summaryElem.innerHTML += ` <span style="background: rgba(16,185,129,0.15); color: #10B981; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-left: 6px;" title="Оптимизировано под бесплатный тариф Supabase (500 МБ)">⚡ СМАРТ База: ${itemsToRender.length} поз. • Supabase Free: ~${approxKb} КБ / 500 МБ (&lt;0.05%)</span>`;
+        const headerDbStats = document.getElementById('headerDbStats');
+        if (headerDbStats) {
+          headerDbStats.innerText = `${itemsToRender.length.toLocaleString()} предложений • База Одессы`;
+        }
       } else if (currentMode === 'SUPPLY') {
         summaryElem.innerText = `🔥 Найдено покупателей в Одессе: 18 чел. ищут товары в этой категории!`;
       }
@@ -2391,6 +2629,17 @@
           catBox.scrollLeft += e.deltaY;
         }
       }, { passive: false });
+    }
+
+    // Enter key support for desktop keyboards
+    const aiInputEl = document.getElementById('aiInput');
+    if (aiInputEl) {
+      aiInputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          runSearch();
+        }
+      });
     }
 
     // Init
