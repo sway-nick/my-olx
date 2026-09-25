@@ -1434,7 +1434,8 @@
           const { data, error } = await supabaseClient
             .from('external_listings')
             .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized')
-            .limit(200);
+            .order('last_verified_at', { ascending: false })
+            .limit(1000);
 
           if (!error && data && data.length > 0) {
             const liveItems = data.map(row => {

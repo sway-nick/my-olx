@@ -238,7 +238,7 @@ object SupabaseRepository {
 
     private fun fetchExternalListingsAsHotDeals(userLat: Double, userLon: Double): Result<List<ListingItem>> {
         return try {
-            val url = URL("$SUPABASE_URL/rest/v1/external_listings?select=id,title,description,price,currency,district_name,external_url,images,attributes&limit=50")
+            val url = URL("$SUPABASE_URL/rest/v1/external_listings?select=id,title,description,price,currency,district_name,external_url,images,attributes&order=last_verified_at.desc&limit=500")
             val conn = (url.openConnection() as HttpURLConnection).apply {
                 requestMethod = "GET"
                 connectTimeout = 8000
