@@ -498,11 +498,63 @@
       }
     }
 
+    @media (max-width: 480px) {
+      .screen-content {
+        padding: 12px 14px 60px 14px;
+      }
+      .location-bar {
+        gap: 8px;
+      }
+      .district-card {
+        padding: 10px 12px;
+        gap: 8px;
+        border-radius: 14px;
+      }
+      .district-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+      }
+      .district-info strong {
+        font-size: 13px;
+      }
+      .gps-btn {
+        padding: 10px 12px;
+        border-radius: 14px;
+      }
+      .gps-btn strong {
+        font-size: 12px;
+      }
+      .input-card {
+        padding: 14px;
+        border-radius: 16px;
+      }
+      .input-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .modal-box {
+        padding: 18px 16px;
+        border-radius: 20px;
+      }
+      .card-footer {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .btn-external, .btn-call {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
     /* Chips */
     .chips-section {
       display: flex;
       flex-direction: column;
       gap: 8px;
+      min-width: 0;
+      max-width: 100%;
     }
 
     .chips-title {
@@ -520,6 +572,8 @@
       scrollbar-width: thin;
       scrollbar-color: var(--border) transparent;
       -webkit-overflow-scrolling: touch;
+      min-width: 0;
+      max-width: 100%;
     }
 
     @media (min-width: 1024px) {
@@ -574,15 +628,21 @@
     /* Modern Responsive CSS Grid for Listings */
     .listings-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
       width: 100%;
     }
 
     @media (max-width: 640px) {
       .listings-grid {
         grid-template-columns: 1fr;
-        gap: 14px;
+        gap: 12px;
+      }
+    }
+
+    @media (min-width: 1024px) and (max-width: 1399px) {
+      .listings-grid {
+        grid-template-columns: repeat(3, 1fr);
       }
     }
 
@@ -802,6 +862,8 @@
       scrollbar-width: thin;
       scrollbar-color: var(--border) transparent;
       -webkit-overflow-scrolling: touch;
+      min-width: 0;
+      max-width: 100%;
     }
 
     @media (min-width: 1100px) {
@@ -1193,610 +1255,8 @@
       "Бытовая техника со скидкой"
     ];
 
-    // Universal Listings across ALL consumer categories with Hot Deals Metrics
-    const mockListings = [
-      {
-        id: 101,
-        title: "Apple iPhone 15 Pro 128GB Black Titanium (Идеал)",
-        desc: "Батарея 100%, полный комплект, куплен официально. Без единой царапины. Самовывоз Таирова (Ситицентр).",
-        price: "31 999 грн",
-        category: "smartphones",
-        district: "Таирова",
-        dist: "0.8 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: false,
-        source: "На нашей площадке",
-        is_hot_deal: true,
-        discount_pct: 27,
-        unit_metric_comparison: "Медиана по Одессе: 44 000 грн • Скидка 27%",
-        img: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 130,
-        title: "Apple iPhone 11 128GB Black (Neverlock, АКБ 88%)",
-        desc: "Отличное состояние, True Tone, Face ID работают идеально. Комплект с чехлом и кабелем. Таирова (Люстдорфская дор.).",
-        price: "8 400 грн",
-        category: "smartphones",
-        district: "Таирова",
-        dist: "0.9 км",
-        grade: "Точное совпадение",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua/d/obyavlenie/iphone-11-128gb-tairova.html",
-        is_hot_deal: true,
-        discount_pct: 26,
-        unit_metric_comparison: "Медиана по Одессе: 11 500 грн • Скидка 26%",
-        img: "https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 131,
-        title: "Samsung Galaxy A54 5G 8/128GB Awesome Graphite",
-        desc: "Super AMOLED 120Hz, влагозащита IP67, аккумулятор 5000 mAh. В идеале, наклеено бронестекло. Центр (Дерибасовская).",
-        price: "7 900 грн",
-        category: "smartphones",
-        district: "Центр",
-        dist: "1.2 км",
-        grade: "Точное совпадение",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua/d/obyavlenie/samsung-a54-center.html",
-        is_hot_deal: true,
-        discount_pct: 32,
-        unit_metric_comparison: "Медиана по Одессе: 11 800 грн • Скидка 32%",
-        img: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 132,
-        title: "Xiaomi Redmi Note 12 Pro 8/256GB Midnight Black",
-        desc: "Камера 50 Мп с оптической стабилизацией (OIS), турбо-зарядка 67W. Полный магазинный комплект. Черёмушки.",
-        price: "6 700 грн",
-        category: "smartphones",
-        district: "Черёмушки",
-        dist: "2.3 км",
-        grade: "Точное совпадение",
-        gradeClass: "badge-excellent",
-        isExternal: false,
-        source: "На нашей площадке",
-        is_hot_deal: true,
-        discount_pct: 28,
-        unit_metric_comparison: "Медиана по Одессе: 9 300 грн • Скидка 28%",
-        img: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 133,
-        title: "Google Pixel 6a 6/128GB Charcoal (Neverlock)",
-        desc: "Топовая камера Google с ночным режимом Night Sight, чистый Android 14. Состояние нового. Аркадия.",
-        price: "7 500 грн",
-        category: "smartphones",
-        district: "Аркадия",
-        dist: "1.6 км",
-        grade: "Точное совпадение",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua/d/obyavlenie/pixel-6a-arkadia.html",
-        is_hot_deal: true,
-        discount_pct: 25,
-        unit_metric_comparison: "Медиана по Одессе: 10 000 грн • Скидка 25%",
-        img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 134,
-        title: "Apple iPhone XR 64GB Coral (Neverlock, АКБ 86%)",
-        desc: "Все функции (Face ID, True Tone) исправны, корпус без царапин. В защитном стекле. Таирова.",
-        price: "6 200 грн",
-        category: "smartphones",
-        district: "Таирова",
-        dist: "0.7 км",
-        grade: "Точное совпадение",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua/d/obyavlenie/iphone-xr-tairova.html",
-        is_hot_deal: true,
-        discount_pct: 30,
-        unit_metric_comparison: "Медиана по Одессе: 8 900 грн • Скидка 30%",
-        img: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 102,
-        title: "Apple MacBook Air 13 M2 16GB / 256GB Midnight",
-        desc: "Идеальное состояние для работы и учебы. 25 циклов батареи. Центр (ул. Екатерининская).",
-        price: "34 500 грн",
-        category: "laptops-pc",
-        district: "Центр",
-        dist: "2.1 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: true,
-        discount_pct: 26,
-        unit_metric_comparison: "Медиана по Одессе: 46 500 грн • Скидка 26%",
-        img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 103,
-        title: "Аренда 2к квартиры в Аркадии (ЖК Элегия Парк, 64 м²)",
-        desc: "Стильный дизайнерский ремонт, автономный генератор на лифты и воду в доме. Панорама моря.",
-        price: "12 000 грн",
-        category: "apartment-rent",
-        district: "Аркадия",
-        dist: "1.4 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "DOM.ria",
-        url: "https://dom.ria.com",
-        is_hot_deal: true,
-        discount_pct: 39,
-        unit_metric_comparison: "Медиана: 305 грн/м² (19 500 грн) • Здесь: 187 грн/м² (-39%)",
-        img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 120,
-        title: "Аренда 2-комнатной квартиры 65 м² Центр (ул. Дерибасовская / Горсад)",
-        desc: "Аренда 2-к квартиры в самом сердце Одессы. Автономное отопление, вся мебель, кондиционеры, закрытый одесский дворик.",
-        price: "13 500 грн",
-        category: "apartment-rent",
-        district: "Центр",
-        dist: "0.5 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "DOM.ria",
-        url: "https://dom.ria.com",
-        is_hot_deal: true,
-        discount_pct: 27,
-        unit_metric_comparison: "Медиана Центра: 18 500 грн • Скидка 27%",
-        img: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 121,
-        title: "2к квартира-лофт в Центре (ул. Греческая / Дерибасовская, 58 м²)",
-        desc: "Долгосрочная аренда двухкомнатной квартиры с ремонтом. Тихий центр, оптоволоконный интернет при отключениях света.",
-        price: "12 000 грн",
-        category: "apartment-rent",
-        district: "Центр",
-        dist: "0.6 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "DOM.ria",
-        url: "https://dom.ria.com",
-        is_hot_deal: true,
-        discount_pct: 35,
-        unit_metric_comparison: "Медиана Центра: 18 500 грн • Скидка 35%",
-        img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 104,
-        title: "Инверторный генератор Hyundai HHY 3050Si 3.2 кВт",
-        desc: "Новый инвертор для квартир и котлов. Медная обмотка, чистый синус. В наличии на складе Таирова.",
-        price: "21 000 грн",
-        category: "generators",
-        district: "Таирова",
-        dist: "1.2 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "Prom.ua",
-        url: "https://prom.ua",
-        is_hot_deal: true,
-        discount_pct: 29,
-        unit_metric_comparison: "Медиана: 9 200 грн/кВт • Здесь: 6 560 грн/кВт (-29%)",
-        img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 105,
-        title: "Детская универсальная коляска Anex m/type 2 в 1",
-        desc: "Полный комплект (люлька, прогулка, дождевик, сумка). Состояние новой. Черёмушки (парк Горького).",
-        price: "8 900 грн",
-        category: "kids-baby",
-        district: "Черёмушки",
-        dist: "3.5 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: true,
-        discount_pct: 36,
-        unit_metric_comparison: "Медиана по Одессе: 13 800 грн • Скидка 36%",
-        img: "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 106,
-        title: "Велосипед горный Trek Marlin 7 29\" (Рама L, Deore)",
-        desc: "Гидравлические тормоза Shimano, блокировка вилки, идеальный накат по Трассе Здоровья. Фонтан.",
-        price: "15 200 грн",
-        category: "sports-hobby",
-        district: "Большой Фонтан",
-        dist: "2.8 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: false,
-        source: "На нашей площадке",
-        is_hot_deal: true,
-        discount_pct: 32,
-        unit_metric_comparison: "Медиана по Одессе: 22 500 грн • Скидка 32%",
-        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 107,
-        title: "Стиральная машина LG 7 кг Inverter Direct Drive",
-        desc: "Бесшумный прямой привод, быстрая стирка 14 мин, пар. Проверена мастером, гарантия 6 мес. Пос. Котовского.",
-        price: "7 800 грн",
-        category: "appliances",
-        district: "Пос. Котовского",
-        dist: "14.5 км",
-        grade: "Подходит",
-        gradeClass: "badge-good",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: true,
-        discount_pct: 34,
-        unit_metric_comparison: "Медиана по Одессе: 11 900 грн • Скидка 34%",
-        img: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 108,
-        title: "Угловой диван-еврокнижка с ортопедическим блоком",
-        desc: "Большое спальное место 200х160 см, два ящика для белья, антикоготь ткань. Самовывоз Таирова.",
-        price: "7 400 грн",
-        category: "home-furniture",
-        district: "Таирова",
-        dist: "1.1 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: false,
-        source: "На нашей площадке",
-        is_hot_deal: true,
-        discount_pct: 34,
-        unit_metric_comparison: "Медиана по Одессе: 11 200 грн • Скидка 34%",
-        img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 109,
-        title: "Услуги электрика: подключение генератора, АВР, реле напряжения",
-        desc: "Срочный выезд по Одессе с профессиональным инструментом. Черёмушки, Таирова, Центр.",
-        price: "600 грн",
-        category: "services",
-        district: "Черёмушки",
-        dist: "3.2 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "Работники UA",
-        url: "https://vserabotniki.com.ua",
-        is_hot_deal: true,
-        discount_pct: 33,
-        unit_metric_comparison: "Медиана по Одессе: 900 грн • Скидка 33%",
-        img: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 110,
-        title: "Чайник электрический Scarlett SC-EK21S25 б/у рабочий",
-        desc: "Дисковый нагревательный элемент, автоотключение, фильтр от накипи. Полностью рабочий. Таирова (рынок Южный).",
-        price: "90 грн",
-        category: "appliances",
-        district: "Таирова",
-        dist: "0.9 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: true,
-        discount_pct: 64,
-        unit_metric_comparison: "Медиана по Одессе: 250 грн • Скидка 64%",
-        img: "https://images.unsplash.com/photo-1594213114663-d94db9b17125?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 111,
-        title: "Чайник со свистком из нержавеющей стали 2.5 л б/у",
-        desc: "Подходит для газа и индукции, свистит громко, бакелитовая ненагревающаяся ручка. Черёмушки (парк Горького).",
-        price: "100 грн",
-        category: "appliances",
-        district: "Черёмушки",
-        dist: "2.8 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: false,
-        source: "На нашей площадке",
-        is_hot_deal: true,
-        discount_pct: 50,
-        unit_metric_comparison: "Медиана по Одессе: 200 грн • Скидка 50%",
-        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 112,
-        title: "Электрочайник Bosch TWK7808 металл 1.7 л б/у в идеале",
-        desc: "Корпус из нержавеющей стали, скрытая спираль, светодиодный индикатор. Большой Фонтан.",
-        price: "180 грн",
-        category: "appliances",
-        district: "Большой Фонтан",
-        dist: "2.4 км",
-        grade: "Подходит",
-        gradeClass: "badge-good",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: true,
-        discount_pct: 45,
-        unit_metric_comparison: "Медиана по Одессе: 330 грн • Скидка 45%",
-        img: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 113,
-        title: "Сантехник Одесса: установка бойлеров, гидрофоров, смесителей",
-        desc: "Срочный выезд мастера в любой район Одессы со своим специнструментом. Гарантия на работу. Центр, Фонтан.",
-        price: "500 грн",
-        category: "services",
-        district: "Центр",
-        dist: "2.1 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "Работники UA",
-        url: "https://vserabotniki.com.ua",
-        is_hot_deal: true,
-        discount_pct: 35,
-        unit_metric_comparison: "Медиана по Одессе: 770 грн • Скидка 35%",
-        img: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 114,
-        title: "Мастер по ремонту бытовой техники и стиральных машин",
-        desc: "Ремонт на дому за 1 визит: стиралки, бойлеры, духовые шкафы, холодильники. Таирова, Черёмушки, Центр.",
-        price: "350 грн",
-        category: "services",
-        district: "Таирова",
-        dist: "1.2 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "Работники UA",
-        url: "https://vserabotniki.com.ua",
-        is_hot_deal: true,
-        discount_pct: 30,
-        unit_metric_comparison: "Медиана по Одессе: 500 грн • Скидка 30%",
-        img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 115,
-        title: "Грузчики и грузоперевозки по Одессе (Газель, Бус)",
-        desc: "Переезды, подъем стройматериалов и мебели на этаж, вывоз строительного мусора. Бригада 2-4 чел.",
-        price: "400 грн",
-        category: "services",
-        district: "Черёмушки",
-        dist: "3.5 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "Работники UA",
-        url: "https://vserabotniki.com.ua",
-        is_hot_deal: false,
-        img: "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 116,
-        title: "Насос велосипедный ручной со шлангом и манометром Giyo",
-        desc: "Универсальный ручной велосипедный насос. Автониппель (Schrader) и Presta. Давление до 8 bar. Таирова.",
-        price: "160 грн",
-        category: "sports",
-        district: "Таирова",
-        dist: "0.9 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: true,
-        discount_pct: 36,
-        unit_metric_comparison: "Медиана по Одессе: 250 грн • Скидка 36%",
-        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 117,
-        title: "Велосипедный насос ножной универсальный с манометром",
-        desc: "Надёжный ножной насос для велосипеда, мячей и шин. Металлический корпус, переходники. Черёмушки.",
-        price: "220 грн",
-        category: "sports",
-        district: "Черёмушки",
-        dist: "2.8 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "Prom.ua",
-        url: "https://prom.ua",
-        is_hot_deal: false,
-        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 118,
-        title: "Компактный мини-насос на раму велосипеда алюминиевый",
-        desc: "Легкий портативный велосипедный насос с креплением на раму. Центр Одессы.",
-        price: "195 грн",
-        category: "sports",
-        district: "Центр",
-        dist: "2.5 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: true,
-        discount_pct: 25,
-        unit_metric_comparison: "Медиана по Одессе: 260 грн • Скидка 25%",
-        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 119,
-        title: "Напольный насос велосипедный высокого давления до 11 bar",
-        desc: "Профессиональный стационарный велонасос для шоссейных и горных велосипедов. Аркадия.",
-        price: "340 грн",
-        category: "sports",
-        district: "Аркадия",
-        dist: "1.8 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: true,
-        discount_pct: 28,
-        unit_metric_comparison: "Медиана по Одессе: 470 грн • Скидка 28%",
-        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 120,
-        title: "Nissan Leaf 30 kWh Acenta 2016",
-        desc: "Батарея 10 из 12 делений (SOH 82%), запас хода 160-180 км. Порты CHAdeMO и Type 1. Камера, климат-контроль. Одесса Центр.",
-        price: "8 900 $",
-        currency: "USD",
-        category: "auto",
-        district: "Центр",
-        dist: "2.1 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "AUTO.ria",
-        url: "https://auto.ria.com",
-        is_hot_deal: true,
-        discount_pct: 26,
-        unit_metric_comparison: "Медиана по Одессе: 12 000 $ • Скидка 26%",
-        img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 121,
-        title: "Renault Megane 1.5 dCi Bose Edition 2015 Универсал",
-        desc: "Экономичный надежный дизель K9K (расход 4.8 л), панорамная крыша, акустика Bose, бесключевой доступ. Таирова.",
-        price: "7 800 $",
-        currency: "USD",
-        category: "auto",
-        district: "Таирова",
-        dist: "1.1 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: true,
-        discount_pct: 28,
-        unit_metric_comparison: "Медиана по Одессе: 10 800 $ • Скидка 28%",
-        img: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 122,
-        title: "Ford Focus 2.0 AT Titanium 2016",
-        desc: "Свежепригнан, чистый 2016 год, 2.0 бензин на надежном классическом автомате. Кожа, люк, SYNC 3, климат. Аркадия.",
-        price: "8 200 $",
-        currency: "USD",
-        category: "auto",
-        district: "Аркадия",
-        dist: "2.8 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "AUTO.ria",
-        url: "https://auto.ria.com",
-        is_hot_deal: true,
-        discount_pct: 25,
-        unit_metric_comparison: "Медиана по Одессе: 11 000 $ • Скидка 25%",
-        img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 123,
-        title: "Skoda Octavia A5 FL 1.6 MPI Газ/Бензин 2012",
-        desc: "Простой надежный атмосферный двигатель 1.6 MPI, установлен газ Евро-4, обслужена ходовая, кондиционер. Черёмушки.",
-        price: "6 900 $",
-        currency: "USD",
-        category: "auto",
-        district: "Черёмушки",
-        dist: "3.2 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: false,
-        source: "На нашей площадке",
-        is_hot_deal: false,
-        img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 124,
-        title: "Volkswagen Golf 7 1.6 TDI 2014",
-        desc: "Отличное состояние, родной пробег 185 тыс км, 2-зонный климат, адаптивный круиз, мультируль, чистый салон. Центр.",
-        price: "9 200 $",
-        currency: "USD",
-        category: "auto",
-        district: "Центр",
-        dist: "3.8 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "OLX",
-        url: "https://olx.ua",
-        is_hot_deal: false,
-        img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 125,
-        title: "Chevrolet Cruze 1.4 Turbo LTZ 2015",
-        desc: "Максимальная комплектация LTZ, кожаный салон, кнопка Start/Stop, люк, литые диски R17. Большой Фонтан.",
-        price: "6 500 $",
-        currency: "USD",
-        category: "auto",
-        district: "Большой Фонтан",
-        dist: "2.4 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: false,
-        source: "На нашей площадке",
-        is_hot_deal: true,
-        discount_pct: 31,
-        unit_metric_comparison: "Медиана по Одессе: 9 400 $ • Скидка 31%",
-        img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 126,
-        title: "Toyota Corolla 1.6 Dual VVT-i 2012 Official",
-        desc: "Официальная машина, второй владелец, надежный мотор 1.6, 6-ступка, кондиционер, подогревы сидений. Приморский.",
-        price: "8 700 $",
-        currency: "USD",
-        category: "auto",
-        district: "Центр",
-        dist: "4.2 км",
-        grade: "Отлично подходит",
-        gradeClass: "badge-excellent",
-        isExternal: true,
-        source: "AUTO.ria",
-        url: "https://auto.ria.com",
-        is_hot_deal: false,
-        img: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=300&auto=format&fit=crop&q=60"
-      },
-      {
-        id: 127,
-        title: "Volkswagen Passat B8 2.0 TDI 2017 Official",
-        desc: "Официальный седан бизнес-класса, сервисная книжка, без ДТП. Кожаный салон, 3-зонный климат, LED фары. Таирова.",
-        price: "15 800 $",
-        currency: "USD",
-        category: "auto",
-        district: "Таирова",
-        dist: "1.4 км",
-        grade: "Выше бюджета",
-        gradeClass: "badge-good",
-        isExternal: true,
-        source: "AUTO.ria",
-        url: "https://auto.ria.com",
-        is_hot_deal: false,
-        img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=300&auto=format&fit=crop&q=60"
-      }
-    ];
+    // 100% Authentic Live Listings from Supabase (Zero Mock Data)
+    const mockListings = [];
 
     let pendingRedirectUrl = "";
 
@@ -1908,7 +1368,7 @@
         try {
           const { data, error, count } = await supabaseClient
             .from('external_listings')
-            .select('id, title, description, price, currency, district_name, lat, lon, external_url, images, attributes, source_id, category_normalized', { count: 'exact' })
+            .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized', { count: 'exact' })
             .order('last_verified_at', { ascending: false })
             .limit(3000);
 
@@ -2405,15 +1865,24 @@
               </div>
             </div>
             <div class="card-footer">
-              <span class="source-tag">${item.isExternal ? '🌐 ' + item.source : '✅ На нашей площадке'}</span>
-              ${item.isExternal 
-                ? `<button class="btn-external" onclick="openAdModal('${item.source}', '${item.url}', '${(item.title || '').replace(/'/g, "\\'")}')">Открыть источник</button>`
-                : `<button class="btn-call" onclick="alert('Вызов продавца / мастера: +380671234567')">📞 Позвонить</button>`}
+              <span class="source-tag">🌐 ${item.source || 'Одесса'}</span>
+              <button class="btn-external" onclick="openAdModal('${item.source || 'Источник'}', '${item.url}', '${(item.title || '').replace(/'/g, "\\'")}')">Открыть источник</button>
             </div>
           </div>
           ${adHtml}
         `;
       }).join('');
+
+      if (itemsToRender.length === 0) {
+        cardsHtml = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: var(--surface); border: 1px dashed var(--border); border-radius: 20px; margin-top: 10px;">
+            <div style="font-size: 40px; margin-bottom: 12px;">🔍</div>
+            <strong style="font-size: 16px; color: var(--text);">Ничего не найдено в базе Одессы</strong>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">Попробуйте изменить поисковый запрос или выбрать другой район Одессы.</p>
+            <button class="modal-btn primary" style="max-width: 220px; margin: 16px auto 0 auto; display: block;" onclick="document.getElementById('aiInput').value=''; renderListings();">Сбросить фильтры</button>
+          </div>
+        `;
+      }
 
       container.innerHTML = demandHeaderHtml + cardsHtml;
     }
