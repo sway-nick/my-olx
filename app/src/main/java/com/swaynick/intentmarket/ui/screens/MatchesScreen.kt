@@ -403,12 +403,46 @@ fun MatchesScreen(
             onDismiss = { selectedExternalListing = null },
             onConfirm = { listing ->
                 selectedExternalListing = null
-                // Open external URL in browser / native deep link
-                listing.sourceUrl?.let { url ->
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                val targetUrl = resolveLiveMarketplaceUrl(listing.sourceName, listing.title, listing.sourceUrl)
+                try {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl)).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
                     context.startActivity(browserIntent)
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Не удалось открыть ссылку: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         )
+    }
+}
+
+private fun resolveLiveMarketplaceUrl(sourceName: String, title: String, rawUrl: String?): String {
+    if (rawUrl != null && !rawUrl.contains("ID") && !rawUrl.contains("smart-") && rawUrl.length > 25 && !rawUrl.endsWith("olx.ua") && !rawUrl.endsWith("olx.ua/")) {
+        return rawUrl
+    }
+    val cleanTitle = title
+        .replace(Regex("""\(.*?\)"""), "")
+        .replace(Regex("""[^\p{L}\p{N}\s]"""), " ")
+        .trim()
+        .split(Regex("""\s+"""))
+        .filter { it.length >= 2 }
+        .take(3)
+        .joinToString(" ")
+
+    val enc = java.net.URLEncoder.encode(cleanTitle, "UTF-8")
+    val slug = cleanTitle.lowercase().replace(Regex("""\s+"""), "-")
+
+    return when {
+        sourceName.contains("AUTO", ignoreCase = true) || rawUrl?.contains("auto.ria") == true ->
+            "https://auto.ria.com/uk/search/?target=search&category_id=1&city[0]=1&q=$enc"
+        sourceName.contains("DOM", ignoreCase = true) || rawUrl?.contains("dom.ria") == true ->
+            "https://dom.ria.com/uk/search/?category=1&city=1"
+        sourceName.contains("Prom", ignoreCase = true) || rawUrl?.contains("prom.ua") == true ->
+            "https://prom.ua/search?search_term=$enc"
+        sourceName.contains("Работники", ignoreCase = true) || rawUrl?.contains("vserabotniki") == true ->
+            "https://vserabotniki.com.ua/odessa/"
+        else ->
+            "https://www.olx.ua/odessa/q-$slug/"
     }
 }
