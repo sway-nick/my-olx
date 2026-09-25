@@ -283,6 +283,42 @@ object MockDataRepository {
             matchGrade = MatchGrade.EXCELLENT,
             attributes = mapOf("rooms" to "2", "area_sqm" to "48", "floor" to "5")
         ),
+        ListingItem(
+            id = "rent-center-2k-1",
+            title = "Аренда 2-комнатной квартиры 65м² Центр (ул. Дерибасовская / Горсад)",
+            description = "Просторная двухкомнатная квартира в самом центре Одессы. Автономное отопление, вся техника, тихий одесский дворик.",
+            category = Category.APARTMENT_RENT,
+            price = 13500.0,
+            district = ODESA_DISTRICTS[2], // Центр
+            distanceKm = 0.5,
+            isExternal = true,
+            sourceName = "DOM.ria",
+            sourceUrl = "https://dom.ria.com/realty_rent-center-2k.html",
+            imageUrl = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("rooms" to "2", "area_sqm" to "65", "type" to "rent"),
+            isHotDeal = true,
+            discountPct = 27,
+            unitMetricComparison = "13 500 грн (медиана центра 18 500 грн • -27%)"
+        ),
+        ListingItem(
+            id = "rent-center-2k-2",
+            title = "2к квартира-лофт в Центре (ул. Греческая / Дерибасовская, 58м²)",
+            description = "Долгосрочная аренда двухкомнатной квартиры с ремонтом. Тихий центр, оптоволоконный интернет при отключениях света.",
+            category = Category.APARTMENT_RENT,
+            price = 12000.0,
+            district = ODESA_DISTRICTS[2], // Центр
+            distanceKm = 0.6,
+            isExternal = true,
+            sourceName = "DOM.ria",
+            sourceUrl = "https://dom.ria.com/realty_rent-center-loft.html",
+            imageUrl = "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("rooms" to "2", "area_sqm" to "58", "type" to "rent"),
+            isHotDeal = true,
+            discountPct = 35,
+            unitMetricComparison = "12 000 грн (медиана центра 18 500 грн • -35%)"
+        ),
 
         // FURNITURE & HOME
         ListingItem(
@@ -538,13 +574,28 @@ object MockDataRepository {
             .split(Regex("""\s+"""))
             .filter { it.length >= 3 && it !in stopWords && !it.all { c -> c.isDigit() } }
 
-        // Strict compound matching: requires all tokens to match
+        val synonymGroups = listOf(
+            setOf("2к", "2-к", "2-комн", "2 комн", "двухкомнатн", "2-комнатн", "двухкомнатная", "двухкомнатной", "двухкомнатную"),
+            setOf("1к", "1-к", "1-комн", "1 комн", "однокомнатн", "1-комнатн", "однокомнатная", "однокомнатной", "студи", "студия"),
+            setOf("3к", "3-к", "3-комн", "3 комн", "трехкомнатн", "трёхкомнатн", "3-комнатн"),
+            setOf("центр", "дерибасовск", "горсад", "греческ", "ришельевск", "пушкинск"),
+            setOf("аренд", "аренда", "снять", "сниму", "сдам", "сдается", "долгосрочн")
+        )
+
+        // Strict compound matching: requires all tokens or their synonyms to match
         val exactMatches = LISTINGS_POOL.filter { listing ->
+            val categoryMatch = (category == Category.OTHER || listing.category == category)
             val text = (listing.title + " " + listing.description).lowercase()
-            tokens.isEmpty() || tokens.all { token ->
+            val tokenMatch = tokens.isEmpty() || tokens.all { token ->
                 val stem = if (token.length > 4) token.substring(0, token.length - 1) else token
-                text.contains(token) || text.contains(stem)
+                if (text.contains(token) || text.contains(stem)) {
+                    true
+                } else {
+                    val group = synonymGroups.firstOrNull { syns -> syns.any { s -> token.contains(s) || s.contains(token) || (stem.length >= 3 && s.contains(stem)) } }
+                    group != null && group.any { syn -> text.contains(syn) }
+                }
             }
+            categoryMatch && tokenMatch
         }
 
         val pool = if (exactMatches.isNotEmpty()) {
@@ -595,6 +646,14 @@ object MockDataRepository {
             .split(Regex("""\s+"""))
             .filter { it.length >= 3 && it !in stopWords && !it.all { c -> c.isDigit() } }
 
+        val synonymGroups = listOf(
+            setOf("2к", "2-к", "2-комн", "2 комн", "двухкомнатн", "2-комнатн", "двухкомнатная", "двухкомнатной", "двухкомнатную"),
+            setOf("1к", "1-к", "1-комн", "1 комн", "однокомнатн", "1-комнатн", "однокомнатная", "однокомнатной", "студи", "студия"),
+            setOf("3к", "3-к", "3-комн", "3 комн", "трехкомнатн", "трёхкомнатн", "3-комнатн"),
+            setOf("центр", "дерибасовск", "горсад", "греческ", "ришельевск", "пушкинск"),
+            setOf("аренд", "аренда", "снять", "сниму", "сдам", "сдается", "долгосрочн")
+        )
+
         return LISTINGS_POOL
             .filter { listing ->
                 val hotDealMatch = listing.isHotDeal
@@ -602,7 +661,12 @@ object MockDataRepository {
                 val text = (listing.title + " " + listing.description).lowercase()
                 val keywordMatch = tokens.isEmpty() || tokens.all { token ->
                     val stem = if (token.length > 4) token.substring(0, token.length - 1) else token
-                    text.contains(token) || text.contains(stem)
+                    if (text.contains(token) || text.contains(stem)) {
+                        true
+                    } else {
+                        val group = synonymGroups.firstOrNull { syns -> syns.any { s -> token.contains(s) || s.contains(token) || (stem.length >= 3 && s.contains(stem)) } }
+                        group != null && group.any { syn -> text.contains(syn) }
+                    }
                 }
                 hotDealMatch && categoryMatch && keywordMatch
             }
