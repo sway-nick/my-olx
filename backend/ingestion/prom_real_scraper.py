@@ -56,17 +56,92 @@ ODESA_DISTRICTS = [
 def parse_prom_html(html: str, category_id: str) -> List[Dict[str, Any]]:
     listings = []
 
-    # Prom products have data-qaid="product_name" and data-qaid="product_price"
+    # 1. Primary: Extract from Schema.org Product JSON-LD (gives exact direct URL, HD image, price, title)
+    json_lds = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL)
+    for block in json_lds:
+        try:
+            data = json.loads(block)
+            if isinstance(data, dict) and data.get('@type') == 'Product':
+                title = str(data.get('name', '')).strip()[:100]
+                url = str(data.get('url', '')).strip()
+                if not title or not url or not url.startswith('http'):
+                    continue
+
+                # Real product image from Prom CDN
+                raw_imgs = data.get('image', [])
+                images = []
+                if isinstance(raw_imgs, list):
+                    for img in raw_imgs:
+                        if isinstance(img, str) and img.startswith('http'):
+                            images.append(re.sub(r'_w\d+_h\d+_', '_w640_h640_', img))
+                elif isinstance(raw_imgs, str) and raw_imgs.startswith('http'):
+                    images.append(re.sub(r'_w\d+_h\d+_', '_w640_h640_', raw_imgs))
+
+                if not images:
+                    continue
+
+                # Exact product price
+                price_val = 0.0
+                curr = 'UAH'
+                offers = data.get('offers')
+                if isinstance(offers, dict):
+                    price_val = float(offers.get('price', 0) or 0)
+                    curr = offers.get('priceCurrency', 'UAH')
+                elif isinstance(offers, list) and len(offers) > 0 and isinstance(offers[0], dict):
+                    price_val = float(offers[0].get('price', 0) or 0)
+                    curr = offers[0].get('priceCurrency', 'UAH')
+
+                id_m = re.search(r'p(\d+)-', url)
+                ext_id = f"prom-{id_m.group(1)}" if id_m else f"prom-{abs(hash(url)) % 10000000}"
+
+                dist_meta = ODESA_DISTRICTS[len(listings) % len(ODESA_DISTRICTS)]
+                raw_desc = str(data.get('description', '')).strip()
+                desc = raw_desc[:220] if raw_desc else f"В наличии в Одессе ({dist_meta['name']}). Официальная гарантия, быстрая доставка или самовывоз."
+
+                listings.append({
+                    "source_id": PROM_SOURCE_ID,
+                    "external_id": ext_id,
+                    "external_url": url,
+                    "title": title,
+                    "description": desc,
+                    "price": price_val,
+                    "currency": curr,
+                    "district_name": dist_meta["name"],
+                    "lat": dist_meta["lat"],
+                    "lon": dist_meta["lon"],
+                    "images": images[:2],
+                    "category_normalized": category_id,
+                    "attributes": {
+                        "source": "Prom.ua Real Direct Product",
+                        "in_stock": True
+                    }
+                })
+        except Exception:
+            continue
+
+    if listings:
+        return listings
+
+    # 2. Fallback regex if JSON-LD is absent
     names = re.findall(r'data-qaid="product_name">([^<]+)</span>', html)
     prices = re.findall(r'data-qaid="product_price"[^>]*data-qaprice="([^"]+)"', html)
-    links = re.findall(r'href="(/ua/p\d+-[^"]+\.html)"', html) or re.findall(r'href="(/p\d+-[^"]+\.html)"', html)
-    # Deduplicate links in order
+    links = re.findall(r'href="((?:/ua)?/p\d+-[^"]+\.html)"', html)
+    img_matches = re.findall(r'(https://images\.prom\.ua/\d+_[^"]+\.(?:jpg|jpeg|png|webp))', html)
+
     clean_links = []
     seen = set()
     for l in links:
         if l not in seen:
             seen.add(l)
             clean_links.append(l)
+
+    clean_imgs = []
+    seen_img = set()
+    for img in img_matches:
+        c_img = re.sub(r'_w\d+_h\d+_', '_w640_h640_', img)
+        if c_img not in seen_img:
+            seen_img.add(c_img)
+            clean_imgs.append(c_img)
 
     count = min(len(names), len(prices))
     for i in range(count):
@@ -83,6 +158,7 @@ def parse_prom_html(html: str, category_id: str) -> List[Dict[str, Any]]:
         ext_id = f"prom-{id_m.group(1)}" if id_m else f"prom-{abs(hash(title + str(i))) % 10000000}"
 
         dist_meta = ODESA_DISTRICTS[i % len(ODESA_DISTRICTS)]
+        prod_img = [clean_imgs[i]] if i < len(clean_imgs) else []
 
         listings.append({
             "source_id": PROM_SOURCE_ID,
@@ -95,10 +171,10 @@ def parse_prom_html(html: str, category_id: str) -> List[Dict[str, Any]]:
             "district_name": dist_meta["name"],
             "lat": dist_meta["lat"],
             "lon": dist_meta["lon"],
-            "images": ["https://images.unsplash.com/photo-1558441719-8b449c6ff673?w=500&auto=format&fit=crop&q=60"],
+            "images": prod_img,
             "category_normalized": category_id,
             "attributes": {
-                "source": "Prom.ua Real Crawler",
+                "source": "Prom.ua Real Direct Product",
                 "in_stock": True
             }
         })
