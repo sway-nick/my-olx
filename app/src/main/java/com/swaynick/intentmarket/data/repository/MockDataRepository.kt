@@ -468,6 +468,7 @@ object MockDataRepository {
             description = "Остаток протектора 7 мм, без шишек и порезов, производство Германия. Цена за комплект.",
             category = Category.TRANSPORT_AUTO,
             price = 6000.0,
+            currency = "грн",
             district = ODESA_DISTRICTS[3], // Застава / Хаджибейский
             distanceKm = 5.2,
             isExternal = true,
@@ -479,6 +480,130 @@ object MockDataRepository {
             isHotDeal = true,
             discountPct = 29,
             unitMetricComparison = "1 500 грн/шт (медиана 2 100 грн/шт)"
+        ),
+        ListingItem(
+            id = "auto-2",
+            title = "Nissan Leaf 30 kWh Acenta 2016",
+            description = "Батарея 10 из 12 делений (SOH 82%), запас хода 160-180 км. Порты CHAdeMO и Type 1. Камера, климат-контроль. Одесса Центр.",
+            category = Category.TRANSPORT_AUTO,
+            price = 8900.0,
+            currency = "USD",
+            district = ODESA_DISTRICTS[2], // Центр
+            distanceKm = 2.1,
+            isExternal = true,
+            sourceName = "AUTO.ria",
+            sourceUrl = "https://auto.ria.com/auto_nissan_leaf_ID101.html",
+            imageUrl = "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Nissan", "year" to "2016", "fuel" to "electric"),
+            isHotDeal = true,
+            discountPct = 26,
+            unitMetricComparison = "8 900 $ (медиана по Одессе 12 000 $)"
+        ),
+        ListingItem(
+            id = "auto-3",
+            title = "Renault Megane 1.5 dCi Bose Edition 2015 Универсал",
+            description = "Экономичный надежный дизель K9K (расход 4.8 л), панорамная крыша, акустика Bose, бесключевой доступ. Таирова.",
+            category = Category.TRANSPORT_AUTO,
+            price = 7800.0,
+            currency = "USD",
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 1.1,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/renault-megane-2015-ID102.html",
+            imageUrl = "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Renault", "year" to "2015", "fuel" to "diesel"),
+            isHotDeal = true,
+            discountPct = 28,
+            unitMetricComparison = "7 800 $ (медиана по Одессе 10 800 $)"
+        ),
+        ListingItem(
+            id = "auto-4",
+            title = "Ford Focus 2.0 AT Titanium 2016",
+            description = "Свежепригнан, чистый 2016 год, 2.0 бензин на надежном классическом автомате. Кожа, люк, SYNC 3, климат. Аркадия.",
+            category = Category.TRANSPORT_AUTO,
+            price = 8200.0,
+            currency = "USD",
+            district = ODESA_DISTRICTS[1], // Аркадия
+            distanceKm = 2.8,
+            isExternal = true,
+            sourceName = "AUTO.ria",
+            sourceUrl = "https://auto.ria.com/auto_ford_focus_ID103.html",
+            imageUrl = "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Ford", "year" to "2016", "transmission" to "automatic"),
+            isHotDeal = true,
+            discountPct = 25,
+            unitMetricComparison = "8 200 $ (медиана по Одессе 11 000 $)"
+        ),
+        ListingItem(
+            id = "auto-5",
+            title = "Skoda Octavia A5 FL 1.6 MPI Газ/Бензин 2012",
+            description = "Простой надежный атмосферный двигатель 1.6 MPI, установлен газ Евро-4, обслужена ходовая, кондиционер. Черёмушки.",
+            category = Category.TRANSPORT_AUTO,
+            price = 6900.0,
+            currency = "USD",
+            district = ODESA_DISTRICTS[3], // Черёмушки
+            distanceKm = 3.2,
+            isExternal = false,
+            sourceName = "На нашей площадке",
+            phone = "+380673332211",
+            imageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Skoda", "year" to "2012", "fuel" to "gas/petrol")
+        ),
+        ListingItem(
+            id = "auto-6",
+            title = "Volkswagen Golf 7 1.6 TDI 2014",
+            description = "Отличное состояние, родной пробег 185 тыс км, 2-зонный климат, адаптивный круиз, мультируль, чистый салон. Центр.",
+            category = Category.TRANSPORT_AUTO,
+            price = 9200.0,
+            currency = "USD",
+            district = ODESA_DISTRICTS[2], // Центр
+            distanceKm = 3.8,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/vw-golf-7-ID104.html",
+            imageUrl = "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Volkswagen", "year" to "2014")
+        ),
+        ListingItem(
+            id = "auto-7",
+            title = "Chevrolet Cruze 1.4 Turbo LTZ 2015",
+            description = "Максимальная комплектация LTZ, кожаный салон, кнопка Start/Stop, люк, литые диски R17. Большой Фонтан.",
+            category = Category.TRANSPORT_AUTO,
+            price = 6500.0,
+            currency = "USD",
+            district = ODESA_DISTRICTS[4], // Большой Фонтан
+            distanceKm = 2.4,
+            isExternal = false,
+            sourceName = "На нашей площадке",
+            phone = "+380509998877",
+            imageUrl = "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Chevrolet", "year" to "2015"),
+            isHotDeal = true,
+            discountPct = 31,
+            unitMetricComparison = "6 500 $ (медиана по Одессе 9 400 $)"
+        ),
+        ListingItem(
+            id = "auto-8",
+            title = "Volkswagen Passat B8 2.0 TDI 2017 Official",
+            description = "Официальный седан бизнес-класса, сервисная книжка, без ДТП. Кожаный салон, 3-зонный климат, LED фары. Таирова.",
+            category = Category.TRANSPORT_AUTO,
+            price = 15800.0,
+            currency = "USD",
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 1.4,
+            isExternal = true,
+            sourceName = "AUTO.ria",
+            sourceUrl = "https://auto.ria.com/auto_passat_b8_ID105.html",
+            imageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.GOOD,
+            attributes = mapOf("brand" to "Volkswagen", "year" to "2017")
         ),
 
         // SERVICES
@@ -650,9 +775,10 @@ object MockDataRepository {
     ): List<ListingItem> {
         val queryLower = keywords.lowercase()
         val stopWords = setOf(
-            "ищу", "нужен", "нужна", "нужно", "куплю", "купить", "покупка", "продам", "продажа",
+            "ищу", "нужен", "нужна", "нужно", "куплю", "купить", "купит", "купят", "купим", "купите", "приобрести", "покупка", "продам", "продажа",
             "хороший", "хорошую", "хорошие", "хорошее", "отличный", "нормальный", "недорого",
-            "до", "грн", "uah", "бу", "б/у", "в", "на", "одесса", "одессе", "тыс", "тис", "тысяч"
+            "до", "грн", "uah", "гривен", "гривны", "дол", "долл", "доллар", "доллара", "долларов", "usd", "сша", "бакс", "баксов", "евро", "eur",
+            "бу", "б/у", "в", "на", "одесса", "одессе", "тыс", "тис", "тысяч"
         )
         val tokens = queryLower
             .replace(Regex("""[.,\/#!$%\^&\*;:{}=\-_`~()"?«»]"""), " ")
@@ -665,7 +791,8 @@ object MockDataRepository {
             setOf("3к", "3-к", "3-комн", "3 комн", "трехкомнатн", "трёхкомнатн", "3-комнатн"),
             setOf("центр", "дерибасовск", "горсад", "греческ", "ришельевск", "пушкинск"),
             setOf("аренд", "аренда", "снять", "сниму", "сдам", "сдается", "долгосрочн"),
-            setOf("телефон", "телефона", "телефоны", "смартфон", "смартфона", "смартфоны", "айфон", "iphone", "samsung", "самсунг", "xiaomi", "сяоми", "редми", "redmi", "pixel", "пиксель", "motorola", "моторола", "oneplus")
+            setOf("телефон", "телефона", "телефоны", "смартфон", "смартфона", "смартфоны", "айфон", "iphone", "samsung", "самсунг", "xiaomi", "сяоми", "редми", "redmi", "pixel", "пиксель", "motorola", "моторола", "oneplus"),
+            setOf("машина", "машину", "машины", "авто", "автомобиль", "автомобиля", "легковой", "легковая", "иномарка", "nissan", "ниссан", "volkswagen", "фольксваген", "passat", "пассат", "golf", "гольф", "renault", "рено", "megane", "меган", "ford", "форд", "focus", "фокус", "skoda", "шкода", "octavia", "октавия", "toyota", "тойота", "corolla", "hyundai", "хюндай", "kia", "киа", "электромобиль", "leaf", "лиф", "chevrolet", "cruze", "шевроле")
         )
 
         // Strict compound matching: requires all tokens or their synonyms to match
@@ -693,18 +820,25 @@ object MockDataRepository {
             LISTINGS_POOL.filter { category == Category.OTHER || it.category == category }
         }
 
+        val isUsdQuery = Regex("""(?:дол|долл|usd|\$|сша|баксов)""").containsMatchIn(queryLower)
+
         return pool
             .map { listing ->
                 val distance = calculateDistance(
                     userDistrict.lat, userDistrict.lon,
                     listing.district.lat, listing.district.lon
                 )
-                // Determine relevance grade based on distance and price
-                val isWithinBudget = (maxPrice == null || listing.price <= maxPrice)
+                // Normalize price based on currency comparison
+                val normalizedPrice = when {
+                    isUsdQuery && listing.currency != "USD" -> listing.price / 41.5
+                    !isUsdQuery && listing.currency == "USD" -> listing.price * 41.5
+                    else -> listing.price
+                }
+                val isWithinBudget = (maxPrice == null || normalizedPrice <= maxPrice)
                 val grade = when {
                     isWithinBudget && distance <= 3.0 -> MatchGrade.EXCELLENT
                     isWithinBudget -> MatchGrade.EXCELLENT
-                    maxPrice != null && listing.price <= maxPrice * 1.5 -> MatchGrade.GOOD
+                    maxPrice != null && normalizedPrice <= maxPrice * 1.5 -> MatchGrade.GOOD
                     else -> MatchGrade.PARTIAL
                 }
                 listing.copy(distanceKm = distance, matchGrade = grade)
@@ -727,9 +861,10 @@ object MockDataRepository {
     ): List<ListingItem> {
         val queryLower = keywords.lowercase().trim()
         val stopWords = setOf(
-            "ищу", "нужен", "нужна", "нужно", "куплю", "купить", "покупка", "продам", "продажа",
+            "ищу", "нужен", "нужна", "нужно", "куплю", "купить", "купит", "купят", "купим", "купите", "приобрести", "покупка", "продам", "продажа",
             "хороший", "хорошую", "хорошие", "хорошее", "отличный", "нормальный", "недорого",
-            "до", "грн", "uah", "бу", "б/у", "в", "на", "одесса", "одессе", "тыс", "тис", "тысяч"
+            "до", "грн", "uah", "гривен", "гривны", "дол", "долл", "доллар", "доллара", "долларов", "usd", "сша", "бакс", "баксов", "евро", "eur",
+            "бу", "б/у", "в", "на", "одесса", "одессе", "тыс", "тис", "тысяч"
         )
         val tokens = queryLower
             .replace(Regex("""[.,\/#!$%\^&\*;:{}=\-_`~()"?«»]"""), " ")
@@ -742,7 +877,8 @@ object MockDataRepository {
             setOf("3к", "3-к", "3-комн", "3 комн", "трехкомнатн", "трёхкомнатн", "3-комнатн"),
             setOf("центр", "дерибасовск", "горсад", "греческ", "ришельевск", "пушкинск"),
             setOf("аренд", "аренда", "снять", "сниму", "сдам", "сдается", "долгосрочн"),
-            setOf("телефон", "телефона", "телефоны", "смартфон", "смартфона", "смартфоны", "айфон", "iphone", "samsung", "самсунг", "xiaomi", "сяоми", "редми", "redmi", "pixel", "пиксель", "motorola", "моторола", "oneplus")
+            setOf("телефон", "телефона", "телефоны", "смартфон", "смартфона", "смартфоны", "айфон", "iphone", "samsung", "самсунг", "xiaomi", "сяоми", "редми", "redmi", "pixel", "пиксель", "motorola", "моторола", "oneplus"),
+            setOf("машина", "машину", "машины", "авто", "автомобиль", "автомобиля", "легковой", "легковая", "иномарка", "nissan", "ниссан", "volkswagen", "фольксваген", "passat", "пассат", "golf", "гольф", "renault", "рено", "megane", "меган", "ford", "форд", "focus", "фокус", "skoda", "шкода", "octavia", "октавия", "toyota", "тойота", "corolla", "hyundai", "хюндай", "kia", "киа", "электромобиль", "leaf", "лиф", "chevrolet", "cruze", "шевроле")
         )
 
         return LISTINGS_POOL

@@ -90,11 +90,14 @@ object IntentParser {
             }
         }
 
-        // 3. Extract Price (до 40 тысяч, 10 тыс грн, 40000, 15к, до 100 грн)
+        // 3. Extract Price (до 40 тысяч, 10 тыс дол США, 40000, 15к, до 100 грн)
+        val isUsd = Regex("""(?:дол|долл|usd|\$|сша|баксов)""").containsMatchIn(lower)
+        val currency = if (isUsd) "USD" else "UAH"
+
         var priceMax: Double? = null
         val priceThousandRegex = Regex("""(?:до\s*|бюджет\s*|<=|<)?\s*(\d+[.,]?\d*)\s*(?:тысяч[а-я]*|тыс[а-я.]*|тис[а-я.]*|к|k)(?:[\s,.]|$)""")
-        val pricePlainRegex = Regex("""(?:до\s*|бюджет\s*|<=|<)\s*(\d{1,7})\s*(?:грн|uah)?""")
-        val priceFallbackRegex = Regex("""(\d{1,7})\s*(?:грн|uah)""")
+        val pricePlainRegex = Regex("""(?:до\s*|бюджет\s*|<=|<)\s*(\d{1,7})\s*(?:грн|uah|usd|\$|дол)?""")
+        val priceFallbackRegex = Regex("""(\d{1,7})\s*(?:грн|uah|usd|\$|дол)""")
 
         val thousandMatch = priceThousandRegex.find(lower)
         if (thousandMatch != null) {
@@ -131,6 +134,7 @@ object IntentParser {
             category = category,
             attributes = attributes,
             priceMax = priceMax,
+            currency = currency,
             targetDistrict = targetDistrict ?: MockDataRepository.ODESA_DISTRICTS[0] // Default to Tairova
         )
     }
