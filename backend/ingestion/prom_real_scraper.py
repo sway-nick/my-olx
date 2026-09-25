@@ -27,20 +27,36 @@ CAT_SMARTPHONES = "c0000000-0000-0000-0000-000000000010"
 CAT_LAPTOPS_PC = "c0000000-0000-0000-0000-000000000011"
 CAT_APPLIANCES = "c0000000-0000-0000-0000-000000000012"
 CAT_SPORTS = "c0000000-0000-0000-0000-000000000080"
-CAT_FASHION_JEWELRY = "c0000000-0000-0000-0000-000000000090"
+CAT_ELECTRONICS = "c0000000-0000-0000-0000-000000000004"
+CAT_FURNITURE = "c0000000-0000-0000-0000-000000000060"
+CAT_KIDS = "c0000000-0000-0000-0000-000000000070"
+CAT_AUTO_PARTS = "c0000000-0000-0000-0000-000000000051"
 
 SEARCH_NICHES = [
     ("генератор", CAT_GENERATORS),
-    ("инвертор", CAT_GENERATORS),
+    ("инвертор 12v 220v", CAT_GENERATORS),
     ("ecoflow зарядная станция", CAT_POWER_STATIONS),
-    ("lifepo4 аккумулятор", CAT_POWER_STATIONS),
+    ("lifepo4 аккумулятор 100ah", CAT_POWER_STATIONS),
     ("насос велосипедный", CAT_SPORTS),
-    ("велосипед", CAT_SPORTS),
+    ("велосипед горный", CAT_SPORTS),
     ("чайник электрический", CAT_APPLIANCES),
     ("стиральная машина", CAT_APPLIANCES),
+    ("холодильник", CAT_APPLIANCES),
+    ("микроволновка", CAT_APPLIANCES),
+    ("бойлер 80 л", CAT_APPLIANCES),
+    ("пылесос", CAT_APPLIANCES),
     ("iphone", CAT_SMARTPHONES),
+    ("samsung galaxy", CAT_SMARTPHONES),
     ("ноутбук", CAT_LAPTOPS_PC),
-    ("видеокарта", CAT_LAPTOPS_PC),
+    ("видеокарта rtx", CAT_LAPTOPS_PC),
+    ("монитор 27", CAT_LAPTOPS_PC),
+    ("павербанк 20000", CAT_ELECTRONICS),
+    ("диван угловой", CAT_FURNITURE),
+    ("кресло офисное", CAT_FURNITURE),
+    ("детская коляска", CAT_KIDS),
+    ("автокресло детское", CAT_KIDS),
+    ("шины зимние r16", CAT_AUTO_PARTS),
+    ("автосигнализация", CAT_AUTO_PARTS),
     ("часы наручные", CAT_FASHION_JEWELRY)
 ]
 
