@@ -1600,7 +1600,7 @@
         is_hot_deal: true,
         discount_pct: 36,
         unit_metric_comparison: "Медиана по Одессе: 250 грн • Скидка 36%",
-        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
+        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60"
       },
       {
         id: 117,
@@ -1616,7 +1616,7 @@
         source: "Prom.ua",
         url: "https://prom.ua",
         is_hot_deal: false,
-        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
+        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60"
       },
       {
         id: 118,
@@ -1634,7 +1634,7 @@
         is_hot_deal: true,
         discount_pct: 25,
         unit_metric_comparison: "Медиана по Одессе: 260 грн • Скидка 25%",
-        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
+        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60"
       },
       {
         id: 119,
@@ -1652,7 +1652,7 @@
         is_hot_deal: true,
         discount_pct: 28,
         unit_metric_comparison: "Медиана по Одессе: 470 грн • Скидка 28%",
-        img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60"
+        img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60"
       },
       {
         id: 120,
@@ -1934,6 +1934,17 @@
                       (row.external_url && row.external_url.includes('prom.ua')) ? 'Prom.ua' :
                       (row.external_url && row.external_url.includes('auto.ria')) ? 'AUTO.ria' :
                       (row.external_url && row.external_url.includes('dom.ria')) ? 'DOM.ria' : 'OLX';
+
+              let defaultImg = 'https://images.unsplash.com/photo-1558441719-8b449c6ff673?w=500&auto=format&fit=crop&q=60';
+              const catNorm = (row.category_normalized || '').toLowerCase();
+              if (catNorm.includes('sport') || titleL.includes('насос') || titleL.includes('вело')) {
+                defaultImg = 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60';
+              } else if (catNorm.includes('auto') || titleL.includes('авто') || titleL.includes('машин')) {
+                defaultImg = 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=500&auto=format&fit=crop&q=60';
+              } else if (catNorm.includes('apartment') || catNorm.includes('real-estate') || titleL.includes('квартир')) {
+                defaultImg = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&auto=format&fit=crop&q=60';
+              }
+
               return {
                   id: row.id,
                   title: row.title,
@@ -1947,15 +1958,15 @@
                   isExternal: true,
                   source: itemSource,
                   url: resolveLiveUrl(itemSource, row.external_url, row.title),
-                  img: (row.images && row.images[0]) || 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=60',
+                  img: (row.images && row.images[0] && !row.images[0].includes('photo-1544787219-7f47ccb76574')) ? row.images[0] : defaultImg,
                   is_hot_deal: isHot,
                   discount_pct: discountPct,
                   unit_metric_comparison: unitComparison
                 };
             });
 
-            // Combine live database items with local seed items
-            itemsToRender = [...liveItems, ...mockListings];
+            // In live database mode, use ONLY authentic database listings
+            itemsToRender = liveItems;
             isLiveFromSupabase = true;
           }
         } catch (e) {
@@ -2552,9 +2563,23 @@
     }
 
     function resolveLiveUrl(source, url, title) {
-      if (url && !url.includes('smart-') && !url.includes('ID') && !url.includes('realty-') && !url.includes('realty_rent-') && !url.includes('vserabotniki') && !url.endsWith('olx.ua') && !url.endsWith('olx.ua/') && url.length > 25) {
-        return url;
+      if (url && typeof url === 'string') {
+        const u = url.trim();
+        // If it's a real direct URL to an item or product, open it directly!
+        if ((u.startsWith('http://') || u.startsWith('https://')) &&
+            !u.includes('smart-') &&
+            !u.endsWith('olx.ua') &&
+            !u.endsWith('olx.ua/') &&
+            !u.endsWith('prom.ua') &&
+            !u.endsWith('prom.ua/') &&
+            !u.endsWith('dom.ria.com') &&
+            !u.endsWith('dom.ria.com/') &&
+            !u.endsWith('auto.ria.com') &&
+            !u.endsWith('auto.ria.com/')) {
+          return u;
+        }
       }
+
       const titleLower = (title || '').toLowerCase();
       const cleanTitle = (title || '')
         .replace(/\(.*?\)/g, '')
