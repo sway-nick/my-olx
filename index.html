@@ -1908,12 +1908,14 @@
         try {
           const { data, error, count } = await supabaseClient
             .from('external_listings')
-            .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized', { count: 'exact' })
+            .select('id, title, description, price, currency, district_name, lat, lon, external_url, images, attributes, source_id, category_normalized', { count: 'exact' })
             .order('last_verified_at', { ascending: false })
             .limit(1000);
 
           if (!error && data && data.length > 0) {
             totalInDatabase = count || data.length;
+            const activeLoc = districts[currentDistrictIndex] || districts[0];
+
             const liveItems = data.map(row => {
               const priceNum = Math.round(row.price || 0);
               const titleL = (row.title || '').toLowerCase();
@@ -1945,14 +1947,52 @@
                 defaultImg = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&auto=format&fit=crop&q=60';
               }
 
+              // Sanitize description from any raw dict artifacts
+              let descClean = row.description || '';
+              if (typeof descClean === 'object' && descClean !== null) {
+                descClean = descClean.content || JSON.stringify(descClean);
+              } else if (typeof descClean === 'string') {
+                if (descClean.startsWith('{') && descClean.includes("'content':")) {
+                  const m = descClean.match(/'content':\s*'([^']*)'/);
+                  if (m) descClean = m[1];
+                }
+                descClean = descClean.replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim();
+              }
+
+              // Real dynamic distance calculation
+              const itemDistrict = row.district_name || 'Одесса';
+              const matchingDistrictMeta = districts.find(d => d.name === itemDistrict);
+              const itemLat = row.lat || (matchingDistrictMeta ? matchingDistrictMeta.lat : null);
+              const itemLon = row.lon || (matchingDistrictMeta ? matchingDistrictMeta.lon : null);
+
+              let distStr = '';
+              if (itemLat && itemLon && activeLoc && activeLoc.lat && activeLoc.lon) {
+                const R = 6371;
+                const dLat = (itemLat - activeLoc.lat) * Math.PI / 180;
+                const dLon = (itemLon - activeLoc.lon) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                          Math.cos(activeLoc.lat * Math.PI / 180) * Math.cos(itemLat * Math.PI / 180) *
+                          Math.sin(dLon/2) * Math.sin(dLon/2);
+                const km = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                if (km < 0.6) {
+                  distStr = 'Рядом (< 600 м)';
+                } else if (km < 1.0) {
+                  distStr = `${Math.round(km * 1000)} м`;
+                } else {
+                  distStr = `${km.toFixed(1)} км`;
+                }
+              } else {
+                distStr = (itemDistrict === activeLoc.name) ? '0.8 км' : 'Одесса';
+              }
+
               return {
                   id: row.id,
                   title: row.title,
-                  desc: row.description || '',
+                  desc: descClean,
                   price: `${priceNum.toLocaleString()} ${row.currency || 'грн'}`,
                   category: row.category_normalized || 'general',
-                  district: row.district_name || 'Одесса',
-                  dist: '1.2 км',
+                  district: itemDistrict,
+                  dist: distStr,
                   grade: 'Подходит',
                   gradeClass: 'badge-good',
                   isExternal: true,
@@ -2600,7 +2640,7 @@
         return 'https://dom.ria.com/uk/arenda-kvartir/odessa/';
       }
       if (source === 'AUTO.ria' || (url && url.includes('auto.ria'))) {
-        return `https://auto.ria.com/uk/search/?target=search&category_id=1&city[0]=1&q=${enc}`;
+        return `https://auto.ria.com/uk/search/?target=search&category_id=1&state[0]=12&city[0]=12&q=${enc}`;
       }
       if (source === 'Prom.ua' || (url && url.includes('prom.ua'))) {
         return `https://prom.ua/search?search_term=${enc}`;
