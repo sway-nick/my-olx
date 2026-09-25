@@ -221,10 +221,11 @@ def build_market_expansion_dataset(batch_num: int = 1) -> List[Dict[str, Any]]:
         dist_meta = next((d for d in ODESA_DISTRICTS if d["name"] == dist_name), ODESA_DISTRICTS[0])
         lat, lon = generate_district_jitter(dist_meta["lat"], dist_meta["lon"])
         ext_id = f"smart-re-{deal_type}-{abs(hash(title + str(batch_num))) % 1000000}"
+        live_re_url = "https://dom.ria.com/uk/prodazha-kvartir/odessa/" if deal_type == "sale" else "https://dom.ria.com/uk/arenda-kvartir/odessa/"
         dataset.append({
             "source_id": src_id,
             "external_id": ext_id,
-            "external_url": f"https://dom.ria.com/uk/realty-{ext_id}.html",
+            "external_url": live_re_url,
             "title": title,
             "description": desc,
             "price": price,
@@ -262,10 +263,13 @@ def build_market_expansion_dataset(batch_num: int = 1) -> List[Dict[str, Any]]:
         dist_meta = next((d for d in ODESA_DISTRICTS if d["name"] == dist_name), ODESA_DISTRICTS[0])
         lat, lon = generate_district_jitter(dist_meta["lat"], dist_meta["lon"])
         ext_id = f"smart-auto-{abs(hash(title + str(batch_num))) % 1000000}"
+        clean_model = re.sub(r'\(.*?\)', '', title).strip().split()
+        q_auto = urllib.parse.quote(' '.join(clean_model[:3]))
+        live_auto_url = f"https://auto.ria.com/uk/search/?target=search&category_id=1&city[0]=1&q={q_auto}"
         dataset.append({
             "source_id": olx_adapter.OLX_SOURCE_ID,
             "external_id": ext_id,
-            "external_url": f"https://www.olx.ua/d/uk/obyavlenie/{ext_id}.html",
+            "external_url": live_auto_url,
             "title": title,
             "description": desc,
             "price": price,
@@ -291,10 +295,13 @@ def build_market_expansion_dataset(batch_num: int = 1) -> List[Dict[str, Any]]:
         dist_meta = next((d for d in ODESA_DISTRICTS if d["name"] == dist_name), ODESA_DISTRICTS[0])
         lat, lon = generate_district_jitter(dist_meta["lat"], dist_meta["lon"])
         ext_id = f"smart-power-{abs(hash(title + str(batch_num))) % 1000000}"
+        clean_kw = re.sub(r'\(.*?\)', '', title).strip().split()
+        q_power = urllib.parse.quote(' '.join(clean_kw[:3]))
+        live_power_url = f"https://prom.ua/search?search_term={q_power}"
         dataset.append({
             "source_id": prom_adapter.PROM_SOURCE_ID,
             "external_id": ext_id,
-            "external_url": f"https://prom.ua/ua/p-{ext_id}.html",
+            "external_url": live_power_url,
             "title": title,
             "description": desc,
             "price": price,
@@ -322,10 +329,11 @@ def build_market_expansion_dataset(batch_num: int = 1) -> List[Dict[str, Any]]:
         dist_meta = next((d for d in ODESA_DISTRICTS if d["name"] == dist_name), ODESA_DISTRICTS[0])
         lat, lon = generate_district_jitter(dist_meta["lat"], dist_meta["lon"])
         ext_id = f"smart-serv-{abs(hash(title + str(batch_num))) % 1000000}"
+        live_serv_url = "https://rabotniki.ua/catalog/odessa/"
         dataset.append({
             "source_id": rabotniki_adapter.RABOTNIKI_SOURCE_ID,
             "external_id": ext_id,
-            "external_url": f"https://www.vserabotniki.com.ua/odessa/{ext_id}",
+            "external_url": live_serv_url,
             "title": title,
             "description": desc,
             "price": price,
@@ -360,10 +368,13 @@ def build_market_expansion_dataset(batch_num: int = 1) -> List[Dict[str, Any]]:
         dist_meta = next((d for d in ODESA_DISTRICTS if d["name"] == dist_name), ODESA_DISTRICTS[0])
         lat, lon = generate_district_jitter(dist_meta["lat"], dist_meta["lon"])
         ext_id = f"smart-elec-{abs(hash(title + str(batch_num))) % 1000000}"
+        clean_elec = re.sub(r'\(.*?\)', '', title).strip()
+        elec_slug = "-".join([w for w in re.findall(r'[a-zA-Z0-9а-яА-ЯёЁіІїЇєЄ]+', clean_elec) if len(w) >= 2][:3]).lower()
+        live_elec_url = f"https://www.olx.ua/uk/odessa/q-{elec_slug}/"
         dataset.append({
             "source_id": olx_adapter.OLX_SOURCE_ID,
             "external_id": ext_id,
-            "external_url": f"https://www.olx.ua/d/uk/obyavlenie/{ext_id}.html",
+            "external_url": live_elec_url,
             "title": title,
             "description": desc,
             "price": price,
@@ -388,10 +399,13 @@ def build_market_expansion_dataset(batch_num: int = 1) -> List[Dict[str, Any]]:
         dist_meta = next((d for d in ODESA_DISTRICTS if d["name"] == dist_name), ODESA_DISTRICTS[0])
         lat, lon = generate_district_jitter(dist_meta["lat"], dist_meta["lon"])
         ext_id = f"smart-watch-{abs(hash(title + str(batch_num))) % 1000000}"
+        clean_watch = re.sub(r'\(.*?\)', '', title).strip()
+        watch_slug = "-".join([w for w in re.findall(r'[a-zA-Z0-9а-яА-ЯёЁіІїЇєЄ]+', clean_watch) if len(w) >= 2][:3]).lower()
+        live_watch_url = f"https://www.olx.ua/uk/odessa/q-{watch_slug}/"
         dataset.append({
             "source_id": olx_adapter.OLX_SOURCE_ID,
             "external_id": ext_id,
-            "external_url": f"https://www.olx.ua/d/uk/obyavlenie/{ext_id}.html",
+            "external_url": live_watch_url,
             "title": title,
             "description": desc,
             "price": price,
@@ -416,10 +430,13 @@ def build_market_expansion_dataset(batch_num: int = 1) -> List[Dict[str, Any]]:
         dist_meta = next((d for d in ODESA_DISTRICTS if d["name"] == dist_name), ODESA_DISTRICTS[0])
         lat, lon = generate_district_jitter(dist_meta["lat"], dist_meta["lon"])
         ext_id = f"smart-sport-{abs(hash(title + str(batch_num))) % 1000000}"
+        clean_sport = re.sub(r'\(.*?\)', '', title).strip().split()
+        q_sport = urllib.parse.quote(' '.join(clean_sport[:3]))
+        live_sport_url = f"https://prom.ua/search?search_term={q_sport}"
         dataset.append({
             "source_id": prom_adapter.PROM_SOURCE_ID,
             "external_id": ext_id,
-            "external_url": f"https://prom.ua/ua/p-{ext_id}.html",
+            "external_url": live_sport_url,
             "title": title,
             "description": desc,
             "price": price,
@@ -444,10 +461,13 @@ def build_market_expansion_dataset(batch_num: int = 1) -> List[Dict[str, Any]]:
         dist_meta = next((d for d in ODESA_DISTRICTS if d["name"] == dist_name), ODESA_DISTRICTS[0])
         lat, lon = generate_district_jitter(dist_meta["lat"], dist_meta["lon"])
         ext_id = f"smart-appl-{abs(hash(title + str(batch_num))) % 1000000}"
+        clean_appl = re.sub(r'\(.*?\)', '', title).strip()
+        appl_slug = "-".join([w for w in re.findall(r'[a-zA-Z0-9а-яА-ЯёЁіІїЇєЄ]+', clean_appl) if len(w) >= 2][:3]).lower()
+        live_appl_url = f"https://www.olx.ua/uk/odessa/q-{appl_slug}/"
         dataset.append({
             "source_id": olx_adapter.OLX_SOURCE_ID,
             "external_id": ext_id,
-            "external_url": f"https://www.olx.ua/d/uk/obyavlenie/{ext_id}.html",
+            "external_url": live_appl_url,
             "title": title,
             "description": desc,
             "price": price,

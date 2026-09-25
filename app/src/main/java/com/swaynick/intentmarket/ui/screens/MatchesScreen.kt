@@ -418,9 +418,10 @@ fun MatchesScreen(
 }
 
 private fun resolveLiveMarketplaceUrl(sourceName: String, title: String, rawUrl: String?): String {
-    if (rawUrl != null && !rawUrl.contains("ID") && !rawUrl.contains("smart-") && rawUrl.length > 25 && !rawUrl.endsWith("olx.ua") && !rawUrl.endsWith("olx.ua/")) {
+    if (rawUrl != null && !rawUrl.contains("ID") && !rawUrl.contains("smart-") && !rawUrl.contains("realty-") && !rawUrl.contains("vserabotniki") && rawUrl.length > 25 && !rawUrl.endsWith("olx.ua") && !rawUrl.endsWith("olx.ua/")) {
         return rawUrl
     }
+    val titleLower = title.lowercase()
     val cleanTitle = title
         .replace(Regex("""\(.*?\)"""), "")
         .replace(Regex("""[^\p{L}\p{N}\s]"""), " ")
@@ -434,15 +435,18 @@ private fun resolveLiveMarketplaceUrl(sourceName: String, title: String, rawUrl:
     val slug = cleanTitle.lowercase().replace(Regex("""\s+"""), "-")
 
     return when {
+        sourceName.contains("DOM", ignoreCase = true) || rawUrl?.contains("dom.ria") == true || titleLower.contains("квартир") ->
+            if (titleLower.contains("продаж") || titleLower.contains("куп"))
+                "https://dom.ria.com/uk/prodazha-kvartir/odessa/"
+            else
+                "https://dom.ria.com/uk/arenda-kvartir/odessa/"
         sourceName.contains("AUTO", ignoreCase = true) || rawUrl?.contains("auto.ria") == true ->
             "https://auto.ria.com/uk/search/?target=search&category_id=1&city[0]=1&q=$enc"
-        sourceName.contains("DOM", ignoreCase = true) || rawUrl?.contains("dom.ria") == true ->
-            "https://dom.ria.com/uk/search/?category=1&city=1"
         sourceName.contains("Prom", ignoreCase = true) || rawUrl?.contains("prom.ua") == true ->
             "https://prom.ua/search?search_term=$enc"
-        sourceName.contains("Работники", ignoreCase = true) || rawUrl?.contains("vserabotniki") == true ->
-            "https://vserabotniki.com.ua/odessa/"
+        sourceName.contains("Работники", ignoreCase = true) || rawUrl?.contains("vserabotniki") == true || rawUrl?.contains("rabotniki") == true ->
+            "https://rabotniki.ua/catalog/odessa/"
         else ->
-            "https://www.olx.ua/odessa/q-$slug/"
+            "https://www.olx.ua/uk/odessa/q-$slug/"
     }
 }

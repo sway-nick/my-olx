@@ -1,7 +1,7 @@
 {
-  "last_run": "2026-09-25T06:18:55.741326+00:00",
-  "total_listings_in_db": 421,
-  "storage_mb": 0.47,
+  "last_run": "2026-09-25T06:46:46.804842+00:00",
+  "total_listings_in_db": 542,
+  "storage_mb": 0.61,
   "free_tier_budget_mb": 500.0,
   "mode": "SMART_CACHE_ROTATION",
   "retention_ttl_days": 14

@@ -1693,26 +1693,28 @@
                 unitComparison = `Медиана по Одессе выше на ${discountPct}%`;
               }
 
+              const itemSource = (row.external_url && (row.external_url.includes('vserabotniki') || row.external_url.includes('rabotniki'))) ? 'Работники UA' :
+                      (row.external_url && row.external_url.includes('prom.ua')) ? 'Prom.ua' :
+                      (row.external_url && row.external_url.includes('auto.ria')) ? 'AUTO.ria' :
+                      (row.external_url && row.external_url.includes('dom.ria')) ? 'DOM.ria' : 'OLX';
               return {
-                id: row.id,
-                title: row.title,
-                desc: row.description || '',
-                price: `${priceNum.toLocaleString()} ${row.currency || 'грн'}`,
-                category: row.category_normalized || 'general',
-                district: row.district_name || 'Одесса',
-                dist: '1.2 км',
-                grade: 'Подходит',
-                gradeClass: 'badge-good',
-                isExternal: true,
-                source: (row.external_url && row.external_url.includes('vserabotniki')) ? 'Работники UA' :
-                        (row.external_url && row.external_url.includes('prom.ua')) ? 'Prom.ua' :
-                        (row.external_url && row.external_url.includes('dom.ria')) ? 'DOM.ria' : 'OLX',
-                url: row.external_url || '#',
-                img: (row.images && row.images[0]) || 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=60',
-                is_hot_deal: isHot,
-                discount_pct: discountPct,
-                unit_metric_comparison: unitComparison
-              };
+                  id: row.id,
+                  title: row.title,
+                  desc: row.description || '',
+                  price: `${priceNum.toLocaleString()} ${row.currency || 'грн'}`,
+                  category: row.category_normalized || 'general',
+                  district: row.district_name || 'Одесса',
+                  dist: '1.2 км',
+                  grade: 'Подходит',
+                  gradeClass: 'badge-good',
+                  isExternal: true,
+                  source: itemSource,
+                  url: resolveLiveUrl(itemSource, row.external_url, row.title),
+                  img: (row.images && row.images[0]) || 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=60',
+                  is_hot_deal: isHot,
+                  discount_pct: discountPct,
+                  unit_metric_comparison: unitComparison
+                };
             });
 
             // Combine live database items with local seed items
@@ -2308,9 +2310,10 @@
     }
 
     function resolveLiveUrl(source, url, title) {
-      if (url && !url.includes('smart-') && !url.includes('ID') && !url.endsWith('olx.ua') && !url.endsWith('olx.ua/') && url.length > 25) {
+      if (url && !url.includes('smart-') && !url.includes('ID') && !url.includes('realty-') && !url.includes('realty_rent-') && !url.includes('vserabotniki') && !url.endsWith('olx.ua') && !url.endsWith('olx.ua/') && url.length > 25) {
         return url;
       }
+      const titleLower = (title || '').toLowerCase();
       const cleanTitle = (title || '')
         .replace(/\(.*?\)/g, '')
         .replace(/[^\p{L}\p{N}\s]/gu, ' ')
@@ -2323,20 +2326,23 @@
       const enc = encodeURIComponent(cleanTitle);
       const slug = cleanTitle.toLowerCase().replace(/\s+/g, '-');
 
+      if (source === 'DOM.ria' || (url && url.includes('dom.ria')) || titleLower.includes('квартир')) {
+        if (titleLower.includes('продаж') || titleLower.includes('куп')) {
+          return 'https://dom.ria.com/uk/prodazha-kvartir/odessa/';
+        }
+        return 'https://dom.ria.com/uk/arenda-kvartir/odessa/';
+      }
       if (source === 'AUTO.ria' || (url && url.includes('auto.ria'))) {
         return `https://auto.ria.com/uk/search/?target=search&category_id=1&city[0]=1&q=${enc}`;
-      }
-      if (source === 'DOM.ria' || (url && url.includes('dom.ria'))) {
-        return `https://dom.ria.com/uk/search/?category=1&city=1`;
       }
       if (source === 'Prom.ua' || (url && url.includes('prom.ua'))) {
         return `https://prom.ua/search?search_term=${enc}`;
       }
-      if (source === 'Работники UA' || (url && url.includes('vserabotniki'))) {
-        return `https://vserabotniki.com.ua/odessa/`;
+      if (source === 'Работники UA' || (url && (url.includes('vserabotniki') || url.includes('rabotniki')))) {
+        return 'https://rabotniki.ua/catalog/odessa/';
       }
       // Live verified OLX Odessa query URL (HTTP 200 OK)
-      return `https://www.olx.ua/odessa/q-${encodeURIComponent(slug)}/`;
+      return `https://www.olx.ua/uk/odessa/q-${encodeURIComponent(slug)}/`;
     }
 
     function openAdModal(source, url, title) {
