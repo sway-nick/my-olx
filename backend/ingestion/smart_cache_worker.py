@@ -334,6 +334,12 @@ def build_market_expansion_dataset(batch_num: int = 1) -> List[Dict[str, Any]]:
     # 5. ELECTRONICS, PHONES, LAPTOPS & GPUS
     electronics_catalog = [
         ("Apple iPhone 15 Pro 128GB Black Titanium (Neverlock)", "АКБ 100%, без сколов, куплен официально. В чехле с защитным стеклом. Самовывоз Центр (Дерибасовская).", 31999.0, "Центр", CAT_SMARTPHONES),
+        ("Apple iPhone 11 128GB Black (Neverlock, АКБ 88%)", "Отличное состояние, True Tone, Face ID работают идеально. Комплект с чехлом и кабелем. Таирова (Люстдорфская дор.).", 8400.0, "Таирова", CAT_SMARTPHONES),
+        ("Samsung Galaxy A54 5G 8/128GB Awesome Graphite", "Super AMOLED 120Hz, влагозащита IP67, аккумулятор 5000 mAh. В идеале, наклеено бронестекло. Центр (Дерибасовская).", 7900.0, "Центр", CAT_SMARTPHONES),
+        ("Xiaomi Redmi Note 12 Pro 8/256GB Midnight Black", "Камера 50 Мп с оптической стабилизацией (OIS), турбо-зарядка 67W. Полный магазинный комплект. Черёмушки.", 6700.0, "Черёмушки", CAT_SMARTPHONES),
+        ("Google Pixel 6a 6/128GB Charcoal (Neverlock)", "Топовая камера Google с ночным режимом Night Sight, чистый Android 14. Состояние нового. Аркадия.", 7500.0, "Аркадия", CAT_SMARTPHONES),
+        ("Apple iPhone XR 64GB Coral (Neverlock, АКБ 86%)", "Все функции (Face ID, True Tone) исправны, корпус без царапин. В защитном стекле. Таирова.", 6200.0, "Таирова", CAT_SMARTPHONES),
+        ("Motorola Moto G84 5G 12/256GB OLED 120Hz", "Свежий смартфон, яркий POLED экран 120Hz, 12 ГБ оперативки, стереозвук Dolby Atmos. Большой Фонтан.", 7800.0, "Большой Фонтан", CAT_SMARTPHONES),
         ("Samsung Galaxy S23 Ultra 12/512GB Phantom Black (Snapdragon)", "Камера 200 Мп с 100x зумом, стилус S-Pen, экран Dynamic AMOLED 2X 120Hz. Полный комплект с коробкой.", 28900.0, "Центр", CAT_SMARTPHONES),
         ("Apple MacBook Air 13 M2 16GB / 256GB Midnight", "Идеальное состояние для работы и учебы. 25 циклов зарядки батареи. Центр (ул. Пушкинская).", 34500.0, "Центр", CAT_LAPTOPS_PC),
         ("Lenovo Legion 5 15ACH6H Ryzen 7 / RTX 3060 / 16GB / 1TB SSD", "Мощный игровой ноутбук, экран 165Hz IPS sRGB 100%, видеокарта RTX 3060 130W TDP. Таирова.", 32500.0, "Таирова", CAT_LAPTOPS_PC),

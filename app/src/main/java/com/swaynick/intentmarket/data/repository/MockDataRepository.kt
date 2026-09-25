@@ -142,6 +142,87 @@ object MockDataRepository {
             matchGrade = MatchGrade.GOOD,
             attributes = mapOf("brand" to "Samsung", "memory_gb" to "256")
         ),
+        ListingItem(
+            id = "phone-3",
+            title = "Apple iPhone 11 64GB Black (Neverlock)",
+            description = "Отличное состояние, Face ID и True Tone работают, батарея 85%. Комплект: телефон, провод, чехол.",
+            category = Category.SMARTPHONES,
+            price = 8400.0,
+            district = ODESA_DISTRICTS[0], // Таирова
+            distanceKm = 2.1,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/iphone-11-black-ID901.html",
+            imageUrl = "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Apple", "memory_gb" to "64"),
+            isHotDeal = true,
+            discountPct = 26,
+            unitMetricComparison = "8 400 грн (медиана по Одессе 11 500 грн)"
+        ),
+        ListingItem(
+            id = "phone-4",
+            title = "Samsung Galaxy A54 5G 8/128GB Awesome Graphite",
+            description = "Экран 120Hz Super AMOLED, стереозвук, батарея 5000 mAh. Полный магазинный комплект с гарантией.",
+            category = Category.SMARTPHONES,
+            price = 7900.0,
+            district = ODESA_DISTRICTS[3], // Черемушки
+            distanceKm = 3.5,
+            isExternal = false,
+            sourceName = "На нашей площадке",
+            phone = "+380679998877",
+            imageUrl = "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Samsung", "memory_gb" to "128"),
+            isHotDeal = true,
+            discountPct = 30,
+            unitMetricComparison = "7 900 грн (медиана по Одессе 11 200 грн)"
+        ),
+        ListingItem(
+            id = "phone-5",
+            title = "Xiaomi Redmi Note 12 Pro 8/256GB Midnight Black",
+            description = "Камера 50MP Sony IMX766 с OIS, быстрая зарядка 67W Turbo Charge. Идеальное состояние.",
+            category = Category.SMARTPHONES,
+            price = 6700.0,
+            district = ODESA_DISTRICTS[5], // Поселок Котовского
+            distanceKm = 8.2,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/redmi-note-12-pro-ID902.html",
+            imageUrl = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Xiaomi", "memory_gb" to "256")
+        ),
+        ListingItem(
+            id = "phone-6",
+            title = "Google Pixel 6a 6/128GB Charcoal (Идеальное состояние)",
+            description = "Чистый Android, шикарная камера Google Pixel, процессор Google Tensor. Без дефектов.",
+            category = Category.SMARTPHONES,
+            price = 7500.0,
+            district = ODESA_DISTRICTS[2], // Центр
+            distanceKm = 4.8,
+            isExternal = false,
+            sourceName = "На нашей площадке",
+            phone = "+380504443322",
+            imageUrl = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Google", "memory_gb" to "128")
+        ),
+        ListingItem(
+            id = "phone-7",
+            title = "Apple iPhone XR 64GB Coral (Neverlock)",
+            description = "Все функции исправны, аккумулятор 88%, бережная эксплуатация девушкой. Одесса Приморский.",
+            category = Category.SMARTPHONES,
+            price = 6200.0,
+            district = ODESA_DISTRICTS[1], // Аркадия
+            distanceKm = 3.9,
+            isExternal = true,
+            sourceName = "OLX",
+            sourceUrl = "https://olx.ua/d/obyavlenie/iphone-xr-coral-ID903.html",
+            imageUrl = "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500&auto=format&fit=crop&q=60",
+            matchGrade = MatchGrade.EXCELLENT,
+            attributes = mapOf("brand" to "Apple", "memory_gb" to "64")
+        ),
 
         // LAPTOPS & COMPUTERS
         ListingItem(
@@ -568,7 +649,11 @@ object MockDataRepository {
         keywords: String
     ): List<ListingItem> {
         val queryLower = keywords.lowercase()
-        val stopWords = setOf("ищу", "нужен", "нужна", "нужно", "куплю", "до", "грн", "uah", "бу", "б/у", "в", "на", "одесса", "одессе")
+        val stopWords = setOf(
+            "ищу", "нужен", "нужна", "нужно", "куплю", "купить", "покупка", "продам", "продажа",
+            "хороший", "хорошую", "хорошие", "хорошее", "отличный", "нормальный", "недорого",
+            "до", "грн", "uah", "бу", "б/у", "в", "на", "одесса", "одессе", "тыс", "тис", "тысяч"
+        )
         val tokens = queryLower
             .replace(Regex("""[.,\/#!$%\^&\*;:{}=\-_`~()"?«»]"""), " ")
             .split(Regex("""\s+"""))
@@ -579,7 +664,8 @@ object MockDataRepository {
             setOf("1к", "1-к", "1-комн", "1 комн", "однокомнатн", "1-комнатн", "однокомнатная", "однокомнатной", "студи", "студия"),
             setOf("3к", "3-к", "3-комн", "3 комн", "трехкомнатн", "трёхкомнатн", "3-комнатн"),
             setOf("центр", "дерибасовск", "горсад", "греческ", "ришельевск", "пушкинск"),
-            setOf("аренд", "аренда", "снять", "сниму", "сдам", "сдается", "долгосрочн")
+            setOf("аренд", "аренда", "снять", "сниму", "сдам", "сдается", "долгосрочн"),
+            setOf("телефон", "телефона", "телефоны", "смартфон", "смартфона", "смартфоны", "айфон", "iphone", "samsung", "самсунг", "xiaomi", "сяоми", "редми", "redmi", "pixel", "пиксель", "motorola", "моторола", "oneplus")
         )
 
         // Strict compound matching: requires all tokens or their synonyms to match
@@ -640,7 +726,11 @@ object MockDataRepository {
         keywords: String = ""
     ): List<ListingItem> {
         val queryLower = keywords.lowercase().trim()
-        val stopWords = setOf("ищу", "нужен", "нужна", "нужно", "куплю", "до", "грн", "uah", "бу", "б/у", "в", "на", "одесса", "одессе")
+        val stopWords = setOf(
+            "ищу", "нужен", "нужна", "нужно", "куплю", "купить", "покупка", "продам", "продажа",
+            "хороший", "хорошую", "хорошие", "хорошее", "отличный", "нормальный", "недорого",
+            "до", "грн", "uah", "бу", "б/у", "в", "на", "одесса", "одессе", "тыс", "тис", "тысяч"
+        )
         val tokens = queryLower
             .replace(Regex("""[.,\/#!$%\^&\*;:{}=\-_`~()"?«»]"""), " ")
             .split(Regex("""\s+"""))
@@ -651,7 +741,8 @@ object MockDataRepository {
             setOf("1к", "1-к", "1-комн", "1 комн", "однокомнатн", "1-комнатн", "однокомнатная", "однокомнатной", "студи", "студия"),
             setOf("3к", "3-к", "3-комн", "3 комн", "трехкомнатн", "трёхкомнатн", "3-комнатн"),
             setOf("центр", "дерибасовск", "горсад", "греческ", "ришельевск", "пушкинск"),
-            setOf("аренд", "аренда", "снять", "сниму", "сдам", "сдается", "долгосрочн")
+            setOf("аренд", "аренда", "снять", "сниму", "сдам", "сдается", "долгосрочн"),
+            setOf("телефон", "телефона", "телефоны", "смартфон", "смартфона", "смартфоны", "айфон", "iphone", "samsung", "самсунг", "xiaomi", "сяоми", "редми", "redmi", "pixel", "пиксель", "motorola", "моторола", "oneplus")
         )
 
         return LISTINGS_POOL

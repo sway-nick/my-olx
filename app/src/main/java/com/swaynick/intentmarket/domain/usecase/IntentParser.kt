@@ -90,15 +90,15 @@ object IntentParser {
             }
         }
 
-        // 3. Extract Price (до 40 тысяч, 40000, 15к, до 100 грн)
+        // 3. Extract Price (до 40 тысяч, 10 тыс грн, 40000, 15к, до 100 грн)
         var priceMax: Double? = null
-        val priceThousandRegex = Regex("""(?:до\s*)?(\d+)\s*(?:тысяч|тис|тис\.|к|k)""")
+        val priceThousandRegex = Regex("""(?:до\s*|бюджет\s*|<=|<)?\s*(\d+[.,]?\d*)\s*(?:тысяч[а-я]*|тыс[а-я.]*|тис[а-я.]*|к|k)(?:[\s,.]|$)""")
         val pricePlainRegex = Regex("""(?:до\s*|бюджет\s*|<=|<)\s*(\d{1,7})\s*(?:грн|uah)?""")
         val priceFallbackRegex = Regex("""(\d{1,7})\s*(?:грн|uah)""")
 
         val thousandMatch = priceThousandRegex.find(lower)
         if (thousandMatch != null) {
-            val num = thousandMatch.groupValues[1].toDoubleOrNull()
+            val num = thousandMatch.groupValues[1].replace(',', '.').toDoubleOrNull()
             if (num != null) priceMax = num * 1000
         } else {
             val plainMatch = pricePlainRegex.find(lower) ?: priceFallbackRegex.find(lower)

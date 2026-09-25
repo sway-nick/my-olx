@@ -977,6 +977,95 @@
         img: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&auto=format&fit=crop&q=60"
       },
       {
+        id: 130,
+        title: "Apple iPhone 11 128GB Black (Neverlock, АКБ 88%)",
+        desc: "Отличное состояние, True Tone, Face ID работают идеально. Комплект с чехлом и кабелем. Таирова (Люстдорфская дор.).",
+        price: "8 400 грн",
+        category: "smartphones",
+        district: "Таирова",
+        dist: "0.9 км",
+        grade: "Точное совпадение",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua/d/obyavlenie/iphone-11-128gb-tairova.html",
+        is_hot_deal: true,
+        discount_pct: 26,
+        unit_metric_comparison: "Медиана по Одессе: 11 500 грн • Скидка 26%",
+        img: "https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 131,
+        title: "Samsung Galaxy A54 5G 8/128GB Awesome Graphite",
+        desc: "Super AMOLED 120Hz, влагозащита IP67, аккумулятор 5000 mAh. В идеале, наклеено бронестекло. Центр (Дерибасовская).",
+        price: "7 900 грн",
+        category: "smartphones",
+        district: "Центр",
+        dist: "1.2 км",
+        grade: "Точное совпадение",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua/d/obyavlenie/samsung-a54-center.html",
+        is_hot_deal: true,
+        discount_pct: 32,
+        unit_metric_comparison: "Медиана по Одессе: 11 800 грн • Скидка 32%",
+        img: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 132,
+        title: "Xiaomi Redmi Note 12 Pro 8/256GB Midnight Black",
+        desc: "Камера 50 Мп с оптической стабилизацией (OIS), турбо-зарядка 67W. Полный магазинный комплект. Черёмушки.",
+        price: "6 700 грн",
+        category: "smartphones",
+        district: "Черёмушки",
+        dist: "2.3 км",
+        grade: "Точное совпадение",
+        gradeClass: "badge-excellent",
+        isExternal: false,
+        source: "На нашей площадке",
+        is_hot_deal: true,
+        discount_pct: 28,
+        unit_metric_comparison: "Медиана по Одессе: 9 300 грн • Скидка 28%",
+        img: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 133,
+        title: "Google Pixel 6a 6/128GB Charcoal (Neverlock)",
+        desc: "Топовая камера Google с ночным режимом Night Sight, чистый Android 14. Состояние нового. Аркадия.",
+        price: "7 500 грн",
+        category: "smartphones",
+        district: "Аркадия",
+        dist: "1.6 км",
+        grade: "Точное совпадение",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua/d/obyavlenie/pixel-6a-arkadia.html",
+        is_hot_deal: true,
+        discount_pct: 25,
+        unit_metric_comparison: "Медиана по Одессе: 10 000 грн • Скидка 25%",
+        img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&auto=format&fit=crop&q=60"
+      },
+      {
+        id: 134,
+        title: "Apple iPhone XR 64GB Coral (Neverlock, АКБ 86%)",
+        desc: "Все функции (Face ID, True Tone) исправны, корпус без царапин. В защитном стекле. Таирова.",
+        price: "6 200 грн",
+        category: "smartphones",
+        district: "Таирова",
+        dist: "0.7 км",
+        grade: "Точное совпадение",
+        gradeClass: "badge-excellent",
+        isExternal: true,
+        source: "OLX",
+        url: "https://olx.ua/d/obyavlenie/iphone-xr-tairova.html",
+        is_hot_deal: true,
+        discount_pct: 30,
+        unit_metric_comparison: "Медиана по Одессе: 8 900 грн • Скидка 30%",
+        img: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=300&auto=format&fit=crop&q=60"
+      },
+      {
         id: 102,
         title: "Apple MacBook Air 13 M2 16GB / 256GB Midnight",
         desc: "Идеальное состояние для работы и учебы. 25 циклов батареи. Центр (ул. Екатерининская).",
@@ -1407,6 +1496,12 @@
         document.getElementById('aiInput').value = "iPhone 15 Pro Одесса";
       }
       renderListings();
+      setTimeout(() => {
+        const resArea = document.getElementById('resultsArea');
+        if (resArea) {
+          resArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 150);
     }
 
     async function renderListings() {
@@ -1599,9 +1694,9 @@
 
         // Extract Max Price
         let maxPrice = null;
-        const thousandMatch = lower.match(/(?:до\s*)?(\d+)\s*(?:тысяч|тис|к|k)/);
+        const thousandMatch = lower.match(/(?:до\s*|бюджет\s*|<=|<)?\s*(\d+[.,]?\d*)\s*(?:тысяч[а-я]*|тыс[а-я.]*|тис[а-я.]*|к|k)(?:[\s,.]|$)/i);
         if (thousandMatch) {
-          maxPrice = parseFloat(thousandMatch[1]) * 1000;
+          maxPrice = parseFloat(thousandMatch[1].replace(',', '.')) * 1000;
         } else {
           const plainPriceMatch = lower.match(/(?:до\s*|бюджет\s*|<=|<)\s*(\d+(?:[\s_]\d+)*)/) ||
                                   lower.match(/(\d+(?:[\s_]\d+)*)\s*(?:грн|uah|гривен)/);
@@ -1612,8 +1707,9 @@
 
         // Extract Search Tokens
         const stopWords = new Set([
-          "ищу", "нужен", "нужна", "нужно", "куплю", "хочу", "найти", "где", "почем", 
-          "одесса", "одессе", "грн", "uah", "гривен", "до", "на", "в", "по", "для", 
+          "ищу", "нужен", "нужна", "нужно", "куплю", "купить", "покупка", "хочу", "найти", "где", "почем", 
+          "продам", "продажа", "хороший", "хорошую", "хорошие", "хорошее", "отличный", "нормальный", "недорого",
+          "одесса", "одессе", "грн", "uah", "гривен", "до", "на", "в", "по", "для", "тыс", "тис", "тысяч",
           "бу", "б/у", "под", "бы", "мне", "как", "кто", "есть", "ли", "срочно"
         ]);
 
@@ -1622,14 +1718,15 @@
           .split(/\s+/)
           .filter(t => t.length >= 3 && !stopWords.has(t) && !/^\d+$/.test(t));
 
-        // Real Estate & Commercial Synonym Lexicon
+        // Real Estate, Tech & Commercial Synonym Lexicon
         const SYNONYM_GROUPS = [
           ['2к', '2-к', '2-комн', '2 комн', 'двухкомнатн', '2-комнатн', 'двухкомнатная', 'двухкомнатной', 'двухкомнатную'],
           ['1к', '1-к', '1-комн', '1 комн', 'однокомнатн', '1-комнатн', 'однокомнатная', 'однокомнатной', 'однокомнатную', 'студи', 'студия'],
           ['3к', '3-к', '3-комн', '3 комн', 'трехкомнатн', 'трёхкомнатн', '3-комнатн', 'трехкомнатная', 'трехкомнатной'],
           ['центр', 'дерибасовск', 'горсад', 'греческ', 'ришельевск', 'пушкинск', 'соборк'],
           ['аренд', 'аренда', 'аренду', 'снять', 'сниму', 'сдам', 'сдается', 'долгосрочн', 'rent'],
-          ['продаж', 'продажа', 'купить', 'куплю', 'продам', 'продается', 'sale']
+          ['продаж', 'продажа', 'купить', 'куплю', 'продам', 'продается', 'sale'],
+          ['телефон', 'телефона', 'телефоны', 'смартфон', 'смартфона', 'смартфоны', 'айфон', 'iphone', 'samsung', 'самсунг', 'xiaomi', 'сяоми', 'редми', 'redmi', 'pixel', 'пиксель', 'motorola', 'моторола', 'oneplus']
         ];
 
         // Separate items into Exact Matches (all substantive tokens matched) and Partial
