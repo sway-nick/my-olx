@@ -1365,7 +1365,7 @@
               .from('external_listings')
               .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized', { count: 'exact' })
               .order('last_verified_at', { ascending: false })
-              .limit(3000);
+              .limit(10000);
 
             if (!error && data && data.length > 0) {
               cachedSupabaseData = data;
