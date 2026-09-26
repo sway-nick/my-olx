@@ -612,6 +612,13 @@
       align-items: center;
       gap: 12px;
       width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .results-banner-text {
+      min-width: 0;
+      flex: 1;
     }
 
     .results-banner-text strong {
@@ -623,32 +630,47 @@
     .results-banner-text small {
       font-size: 12px;
       color: var(--text-muted);
+      line-height: 1.5;
+      display: block;
+      margin-top: 2px;
+      word-break: break-word;
     }
 
     /* Modern Responsive CSS Grid for Listings */
     .listings-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 18px;
       width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       .listings-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
         gap: 12px;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1023px) {
+      .listings-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
       }
     }
 
     @media (min-width: 1024px) and (max-width: 1399px) {
       .listings-grid {
         grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
       }
     }
 
     @media (min-width: 1400px) {
       .listings-grid {
         grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
       }
     }
 
@@ -722,12 +744,14 @@
     }
 
     .distance-tag {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
       color: var(--accent-blue);
       display: flex;
       align-items: center;
       gap: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .card-body {
@@ -735,6 +759,7 @@
       flex-direction: column;
       gap: 12px;
       flex: 1;
+      min-width: 0;
     }
 
     .card-img {
@@ -745,16 +770,44 @@
       background: var(--surface-variant);
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 768px) {
+      .screen-content {
+        padding: 12px 14px 60px 14px;
+        gap: 14px;
+      }
+      .match-card {
+        padding: 14px;
+        gap: 10px;
+      }
       .card-body {
         flex-direction: row;
         align-items: flex-start;
+        gap: 14px;
       }
       .card-img {
-        width: 90px;
-        height: 90px;
+        width: 96px;
+        height: 96px;
         flex-shrink: 0;
-        border-radius: 10px;
+        border-radius: 12px;
+      }
+      .card-details h4 {
+        font-size: 14px;
+        line-height: 1.35;
+      }
+      .card-price {
+        font-size: 16.5px;
+      }
+      .card-desc {
+        font-size: 12px;
+        -webkit-line-clamp: 2;
+      }
+      .card-footer {
+        padding-top: 8px;
+      }
+      .btn-external {
+        height: 34px;
+        font-size: 12px;
+        padding: 0 12px;
       }
     }
 
@@ -1446,9 +1499,12 @@
                 distStr = (itemDistrict === activeLoc.name) ? '0.8 км' : 'Одесса';
               }
 
+              const rawTitle = row.title || '';
+              const titleClean = rawTitle.replace(/^Мастер:\s*Мастер\b/i, 'Мастер:').trim();
+
               return {
                   id: row.id,
-                  title: row.title,
+                  title: titleClean,
                   desc: descClean,
                   price: `${priceNum.toLocaleString()} ${row.currency || 'грн'}`,
                   category: row.category_normalized || 'general',
@@ -1495,7 +1551,7 @@
       if (isLiveFromSupabase) {
         const displayTotal = totalInDatabase || itemsToRender.length;
         const approxMb = ((displayTotal * 1.1) / 1024).toFixed(2);
-        badgeHtml = ` <span style="background: rgba(16,185,129,0.15); color: #10B981; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-left: 6px;" title="Оптимизировано под бесплатный тариф Supabase (500 МБ)">⚡ База Одессы: ${displayTotal.toLocaleString()} поз. • Хранилище: ~${approxMb} МБ / 500 МБ</span>`;
+        badgeHtml = ` <span style="background: rgba(16,185,129,0.15); color: #10B981; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-left: 6px; white-space: nowrap; display: inline-block; vertical-align: middle;" title="Оптимизировано под бесплатный тариф Supabase (500 МБ)">⚡ База Одессы: ${displayTotal.toLocaleString()} поз. • ~${approxMb} МБ / 500 МБ</span>`;
         const headerDbStats = document.getElementById('headerDbStats');
         if (headerDbStats) {
           headerDbStats.innerText = `${displayTotal.toLocaleString()} предложений • База Одессы`;
