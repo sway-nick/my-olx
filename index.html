@@ -1171,7 +1171,7 @@
         <div class="input-card">
           <div class="input-header">
             <h3 id="inputTitle">Что вам нужно найти?</h3>
-            <button class="smart-form-link" onclick="openSmartFormAlert()">
+            <button class="smart-form-link" id="smartFormBtn" onclick="openSmartFormAlert()" style="display: none;">
               ⚙️ Открыть умную анкету с фото
             </button>
           </div>
@@ -1396,10 +1396,15 @@
       const inputTitle = document.getElementById('inputTitle');
       const aiInput = document.getElementById('aiInput');
       const mainActionBtn = document.getElementById('mainActionBtn');
+      const smartFormBtn = document.getElementById('smartFormBtn');
 
       dBtn.className = "mode-btn";
       sBtn.className = "mode-btn";
       hBtn.className = "mode-btn";
+
+      if (smartFormBtn) {
+        smartFormBtn.style.display = (mode === 'SUPPLY') ? 'flex' : 'none';
+      }
 
       if (mode === 'DEMAND') {
         dBtn.className = "mode-btn active demand";
