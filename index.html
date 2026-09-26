@@ -247,15 +247,39 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      white-space: nowrap;
       padding: 0 8px;
+    }
+
+    .mode-text-short {
+      display: none;
     }
 
     @media (max-width: 380px) {
       .mode-btn {
         font-size: 11px;
-        padding: 0 2px;
+        padding: 0 4px;
         gap: 2px;
+      }
+    }
+
+    @media (max-width: 350px) {
+      .mode-text-full {
+        display: none;
+      }
+      .mode-text-short {
+        display: inline;
+      }
+      .mode-switcher-bar {
+        padding: 0 8px;
+        margin: 10px auto 0 auto;
+      }
+      .mode-btn {
+        font-size: 10.5px;
+        padding: 0 3px;
+        gap: 2px;
+      }
+      .screen-content {
+        padding: 10px 8px 50px 8px;
       }
     }
 
@@ -648,28 +672,28 @@
 
     @media (max-width: 768px) {
       .listings-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: minmax(0, 1fr) !important;
         gap: 12px;
       }
     }
 
     @media (min-width: 769px) and (max-width: 1023px) {
       .listings-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 16px;
       }
     }
 
     @media (min-width: 1024px) and (max-width: 1399px) {
       .listings-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 18px;
       }
     }
 
     @media (min-width: 1400px) {
       .listings-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 20px;
       }
     }
@@ -685,6 +709,9 @@
       flex-direction: column;
       gap: 12px;
       box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.15);
+      min-width: 0;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .ad-card {
@@ -696,6 +723,9 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      min-width: 0;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     /* Match Card */
@@ -710,6 +740,9 @@
       gap: 14px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      min-width: 0;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .match-card:hover {
@@ -816,6 +849,8 @@
       flex-direction: column;
       gap: 4px;
       flex: 1;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .card-details h4 {
@@ -823,6 +858,8 @@
       font-weight: 700;
       line-height: 1.35;
       color: var(--text);
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .card-price {
@@ -830,6 +867,7 @@
       font-weight: 800;
       color: var(--primary);
       margin-top: 2px;
+      white-space: nowrap;
     }
 
     .card-desc {
@@ -841,6 +879,8 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
       margin-top: 4px;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .card-footer {
@@ -1091,7 +1131,7 @@
           📦 Предлагаю
         </button>
         <button class="mode-btn" id="hotDealsBtn" onclick="switchMode('HOT_DEALS')">
-          🔥 Хорошая цена
+          🔥 <span class="mode-text-full">Хорошая цена</span><span class="mode-text-short">Скидки</span>
         </button>
       </div>
     </div>
@@ -1313,6 +1353,30 @@
 
     let pendingRedirectUrl = "";
 
+    function stripHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/<[^>]*$/g, ' ')
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&[a-z0-9]+;/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     function toggleTheme() {
       const html = document.documentElement;
       const current = html.getAttribute('data-theme');
@@ -1433,30 +1497,30 @@
             // 1. Build authentic product clusters & mathematical price medians across live data
             const clusterPrices = {};
             const CLUSTER_PATTERNS = [
-              { key: 'ecoflow-delta-pro', test: /\becoflow\s+delta\s+pro\b/i },
-              { key: 'ecoflow-delta-max', test: /\becoflow\s+delta\s+max\b/i },
-              { key: 'ecoflow-delta-3', test: /\becoflow\s+delta\s*3\b/i },
-              { key: 'ecoflow-delta-2', test: /\becoflow\s+delta\s*2\b/i },
-              { key: 'ecoflow-river-2-pro', test: /\becoflow\s+river\s*2\s+pro\b/i },
-              { key: 'ecoflow-river-2', test: /\becoflow\s+river\s*2\b/i },
-              { key: 'iphone-15-pro-max', test: /\biphone\s*15\s*pro\s*max\b/i },
-              { key: 'iphone-15-pro', test: /\biphone\s*15\s*pro\b/i },
-              { key: 'iphone-15', test: /\biphone\s*15\b/i },
-              { key: 'iphone-14-pro', test: /\biphone\s*14\s*pro\b/i },
-              { key: 'iphone-14', test: /\biphone\s*14\b/i },
-              { key: 'macbook-pro', test: /\bmacbook\s*pro\b/i },
-              { key: 'macbook-air', test: /\bmacbook\s*air\b/i },
-              { key: 'samsung-s24', test: /\bsamsung\s*s24\b/i },
-              { key: 'samsung-s23', test: /\bsamsung\s*s23\b/i },
-              { key: 'rtx-4070', test: /\brtx\s*4070\b/i },
-              { key: 'rtx-4060', test: /\brtx\s*4060\b/i },
-              { key: 'rtx-3060', test: /\brtx\s*3060\b/i },
-              { key: 'lifepo4-100ah', test: /\blifepo4\b.*\b100\s*ah\b|\b100\s*ah\b.*\blifepo4\b/i },
-              { key: 'lifepo4-200ah', test: /\blifepo4\b.*\b200\s*ah\b|\b200\s*ah\b.*\blifepo4\b/i },
-              { key: 'generator-5kw', test: /\bгенератор\b.*\b5\s*квт\b|\b5\s*квт\b.*\bгенератор\b/i },
-              { key: 'generator-3kw', test: /\bгенератор\b.*\b(?:2\.[5-8]|3|3\.5)\s*квт\b/i },
-              { key: 'bike-pump-floor', test: /\bнасос\b.*\bнапольный\b|\bнапольный\b.*\bнасос\b/i },
-              { key: 'bike-pump-hand', test: /\bнасос\b.*\b(?:ручной|мини)\b|\bмини-насос\b/i }
+              { key: 'ecoflow-delta-pro', regex: /\becoflow\s+delta\s+pro\b/i },
+              { key: 'ecoflow-delta-max', regex: /\becoflow\s+delta\s+max\b/i },
+              { key: 'ecoflow-delta-3', regex: /\becoflow\s+delta\s*3\b/i },
+              { key: 'ecoflow-delta-2', regex: /\becoflow\s+delta\s*2\b/i },
+              { key: 'ecoflow-river-2-pro', regex: /\becoflow\s+river\s*2\s+pro\b/i },
+              { key: 'ecoflow-river-2', regex: /\becoflow\s+river\s*2\b/i },
+              { key: 'iphone-15-pro-max', regex: /\biphone\s*15\s*pro\s*max\b/i },
+              { key: 'iphone-15-pro', regex: /\biphone\s*15\s*pro\b/i },
+              { key: 'iphone-15', regex: /\biphone\s*15\b/i },
+              { key: 'iphone-14-pro', regex: /\biphone\s*14\s*pro\b/i },
+              { key: 'iphone-14', regex: /\biphone\s*14\b/i },
+              { key: 'macbook-pro', regex: /\bmacbook\s*pro\b/i },
+              { key: 'macbook-air', regex: /\bmacbook\s*air\b/i },
+              { key: 'samsung-s24', regex: /\bsamsung\s*s24\b/i },
+              { key: 'samsung-s23', regex: /\bsamsung\s*s23\b/i },
+              { key: 'rtx-4070', regex: /\brtx\s*4070\b/i },
+              { key: 'rtx-4060', regex: /\brtx\s*4060\b/i },
+              { key: 'rtx-3060', regex: /\brtx\s*3060\b/i },
+              { key: 'lifepo4-100ah', regex: /\blifepo4\b.*\b100\s*ah\b|\b100\s*ah\b.*\blifepo4\b/i },
+              { key: 'lifepo4-200ah', regex: /\blifepo4\b.*\b200\s*ah\b|\b200\s*ah\b.*\blifepo4\b/i },
+              { key: 'generator-5kw', regex: /\bгенератор\b.*\b5\s*квт\b|\b5\s*квт\b.*\bгенератор\b/i },
+              { key: 'generator-3kw', regex: /\bгенератор\b.*\b(?:2\.[5-8]|3|3\.5)\s*квт\b/i },
+              { key: 'bike-pump-floor', regex: /\bнасос\b.*\bнапольный\b|\bнапольный\b.*\bнасос\b/i },
+              { key: 'bike-pump-hand', regex: /\bнасос\b.*\b(?:ручной|мини)\b|\bмини-насос\b/i }
             ];
 
             for (const r of cachedSupabaseData) {
@@ -1464,7 +1528,7 @@
               if (p <= 0) continue;
               const t = (r.title || '');
               for (const pat of CLUSTER_PATTERNS) {
-                if (pat.test(t)) {
+                if (pat.regex.test(t)) {
                   if (!clusterPrices[pat.key]) clusterPrices[pat.key] = [];
                   clusterPrices[pat.key].push(p);
                   break;
@@ -1490,7 +1554,7 @@
               let unitComparison = null;
 
               for (const pat of CLUSTER_PATTERNS) {
-                if (pat.test(row.title || '')) {
+                if (pat.regex.test(row.title || '')) {
                   const cInfo = clusterMedians[pat.key];
                   if (cInfo && cInfo.count >= 2 && cInfo.median > 0) {
                     if (priceNum > 0 && priceNum <= cInfo.median * 0.75) {
@@ -1521,7 +1585,7 @@
                 defaultImg = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&auto=format&fit=crop&q=60';
               }
 
-              // Sanitize description from any raw dict artifacts
+              // Sanitize description from any raw dict artifacts and strip raw HTML tags
               let descClean = row.description || '';
               if (typeof descClean === 'object' && descClean !== null) {
                 descClean = descClean.content || JSON.stringify(descClean);
@@ -1530,8 +1594,8 @@
                   const m = descClean.match(/'content':\s*'([^']*)'/);
                   if (m) descClean = m[1];
                 }
-                descClean = descClean.replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim();
               }
+              descClean = stripHtml(descClean);
 
               // Real dynamic distance calculation
               const itemDistrict = row.district_name || 'Одесса';
@@ -1560,7 +1624,7 @@
               }
 
               const rawTitle = row.title || '';
-              const titleClean = rawTitle.replace(/^Мастер:\s*Мастер\b/i, 'Мастер:').trim();
+              const titleClean = stripHtml(rawTitle).replace(/^Мастер:\s*Мастер\s+/iu, 'Мастер: ').trim();
 
               return {
                   id: row.id,
@@ -1976,26 +2040,35 @@
           </div>
         ` : '';
 
+        const safeTitle = escapeHtml(item.title);
+        const safeDesc = escapeHtml(item.desc);
+        const safeSource = escapeHtml(item.source || 'Одесса');
+        const safeDistrict = escapeHtml(item.district || 'Одесса');
+        const safePrice = escapeHtml(item.price || '');
+        const safeDist = escapeHtml(item.dist || '');
+        const safeUrl = (item.url || '').replace(/'/g, '%27').replace(/"/g, '%22');
+        const safeTitleJs = (item.title || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
         return `
           <div class="match-card">
             <div class="card-top">
               ${item.is_hot_deal 
                 ? `<span class="badge-hot-deal">🔥 ХОРОШАЯ ЦЕНА -${item.discount_pct}%</span>` 
                 : `<span class="${item.gradeClass}">${item.grade}</span>`}
-              <span class="distance-tag">📍 ${item.dist} (${item.district})</span>
+              <span class="distance-tag">📍 ${safeDist} (${safeDistrict})</span>
             </div>
             <div class="card-body">
-              <img src="${item.img}" class="card-img" alt="${item.title}">
+              <img src="${item.img}" class="card-img" alt="${safeTitle}">
               <div class="card-details">
-                <h4>${item.title}</h4>
-                <div class="card-price">${item.price}</div>
-                ${item.unit_metric_comparison ? `<div style="font-size: 11px; color: #FF5722; font-weight: 700; margin-bottom: 4px;">📉 ${item.unit_metric_comparison}</div>` : ''}
-                <div class="card-desc">${item.desc}</div>
+                <h4>${safeTitle}</h4>
+                <div class="card-price">${safePrice}</div>
+                ${item.unit_metric_comparison ? `<div style="font-size: 11px; color: #FF5722; font-weight: 700; margin-bottom: 4px;">📉 ${escapeHtml(item.unit_metric_comparison)}</div>` : ''}
+                <div class="card-desc">${safeDesc}</div>
               </div>
             </div>
             <div class="card-footer">
-              <span class="source-tag">🌐 ${item.source || 'Одесса'}</span>
-              <button class="btn-external" onclick="openAdModal('${item.source || 'Источник'}', '${item.url}', '${(item.title || '').replace(/'/g, "\\'")}')">Открыть источник</button>
+              <span class="source-tag">🌐 ${safeSource}</span>
+              <button class="btn-external" onclick="openAdModal('${safeSource}', '${safeUrl}', '${safeTitleJs}')">Открыть источник</button>
             </div>
           </div>
           ${adHtml}
