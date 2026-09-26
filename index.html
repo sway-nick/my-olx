@@ -1430,6 +1430,58 @@
             totalInDatabase = cachedSupabaseCount;
             const activeLoc = districts[currentDistrictIndex] || districts[0];
 
+            // 1. Build authentic product clusters & mathematical price medians across live data
+            const clusterPrices = {};
+            const CLUSTER_PATTERNS = [
+              { key: 'ecoflow-delta-pro', test: /\becoflow\s+delta\s+pro\b/i },
+              { key: 'ecoflow-delta-max', test: /\becoflow\s+delta\s+max\b/i },
+              { key: 'ecoflow-delta-3', test: /\becoflow\s+delta\s*3\b/i },
+              { key: 'ecoflow-delta-2', test: /\becoflow\s+delta\s*2\b/i },
+              { key: 'ecoflow-river-2-pro', test: /\becoflow\s+river\s*2\s+pro\b/i },
+              { key: 'ecoflow-river-2', test: /\becoflow\s+river\s*2\b/i },
+              { key: 'iphone-15-pro-max', test: /\biphone\s*15\s*pro\s*max\b/i },
+              { key: 'iphone-15-pro', test: /\biphone\s*15\s*pro\b/i },
+              { key: 'iphone-15', test: /\biphone\s*15\b/i },
+              { key: 'iphone-14-pro', test: /\biphone\s*14\s*pro\b/i },
+              { key: 'iphone-14', test: /\biphone\s*14\b/i },
+              { key: 'macbook-pro', test: /\bmacbook\s*pro\b/i },
+              { key: 'macbook-air', test: /\bmacbook\s*air\b/i },
+              { key: 'samsung-s24', test: /\bsamsung\s*s24\b/i },
+              { key: 'samsung-s23', test: /\bsamsung\s*s23\b/i },
+              { key: 'rtx-4070', test: /\brtx\s*4070\b/i },
+              { key: 'rtx-4060', test: /\brtx\s*4060\b/i },
+              { key: 'rtx-3060', test: /\brtx\s*3060\b/i },
+              { key: 'lifepo4-100ah', test: /\blifepo4\b.*\b100\s*ah\b|\b100\s*ah\b.*\blifepo4\b/i },
+              { key: 'lifepo4-200ah', test: /\blifepo4\b.*\b200\s*ah\b|\b200\s*ah\b.*\blifepo4\b/i },
+              { key: 'generator-5kw', test: /\bгенератор\b.*\b5\s*квт\b|\b5\s*квт\b.*\bгенератор\b/i },
+              { key: 'generator-3kw', test: /\bгенератор\b.*\b(?:2\.[5-8]|3|3\.5)\s*квт\b/i },
+              { key: 'bike-pump-floor', test: /\bнасос\b.*\bнапольный\b|\bнапольный\b.*\bнасос\b/i },
+              { key: 'bike-pump-hand', test: /\bнасос\b.*\b(?:ручной|мини)\b|\bмини-насос\b/i }
+            ];
+
+            for (const r of cachedSupabaseData) {
+              const p = Math.round(r.price || 0);
+              if (p <= 0) continue;
+              const t = (r.title || '');
+              for (const pat of CLUSTER_PATTERNS) {
+                if (pat.test(t)) {
+                  if (!clusterPrices[pat.key]) clusterPrices[pat.key] = [];
+                  clusterPrices[pat.key].push(p);
+                  break;
+                }
+              }
+            }
+
+            const clusterMedians = {};
+            for (const [k, pr] of Object.entries(clusterPrices)) {
+              if (pr.length >= 2) {
+                pr.sort((a, b) => a - b);
+                const mid = Math.floor(pr.length / 2);
+                const median = (pr.length % 2 !== 0) ? pr[mid] : (pr[mid - 1] + pr[mid]) / 2;
+                clusterMedians[k] = { median, count: pr.length, min: pr[0], max: pr[pr.length - 1] };
+              }
+            }
+
             const liveItems = cachedSupabaseData.map(row => {
               const priceNum = Math.round(row.price || 0);
               const titleL = (row.title || '').toLowerCase();
@@ -1437,13 +1489,21 @@
               let discountPct = 0;
               let unitComparison = null;
 
-              if (titleL.includes('giyo') || titleL.includes('мини-насос') || titleL.includes('scarlett') || 
-                  titleL.includes('whistle') || titleL.includes('1600w') || titleL.includes('marlin') || 
-                  titleL.includes('lifepo4') || titleL.includes('powmr') || titleL.includes('15 pro') ||
-                  titleL.includes('hyundai') || titleL.includes('напольный насос') || titleL.includes('tissot')) {
-                isHot = true;
-                discountPct = titleL.includes('scarlett') ? 64 : titleL.includes('giyo') ? 36 : 28;
-                unitComparison = `Медиана по Одессе выше на ${discountPct}%`;
+              for (const pat of CLUSTER_PATTERNS) {
+                if (pat.test(row.title || '')) {
+                  const cInfo = clusterMedians[pat.key];
+                  if (cInfo && cInfo.count >= 2 && cInfo.median > 0) {
+                    if (priceNum > 0 && priceNum <= cInfo.median * 0.75) {
+                      // Genuinely 25%+ cheaper than median of local sellers in Odesa
+                      discountPct = Math.round(((cInfo.median - priceNum) / cInfo.median) * 100);
+                      isHot = true;
+                      unitComparison = `Ниже медианы по Одессе на ${discountPct}% (медиана: ${Math.round(cInfo.median).toLocaleString()} грн)`;
+                    } else if (priceNum > cInfo.median * 1.05) {
+                      unitComparison = `Рыночная цена в Одессе (медиана: ${Math.round(cInfo.median).toLocaleString()} грн)`;
+                    }
+                  }
+                  break;
+                }
               }
 
               const itemSource = (row.external_url && (row.external_url.includes('vserabotniki') || row.external_url.includes('rabotniki'))) ? 'Работники UA' :
