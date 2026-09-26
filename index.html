@@ -49,6 +49,11 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    html {
+      scroll-padding-top: 72px;
+      scroll-behavior: smooth;
+    }
+
     body {
       background: var(--bg);
       color: var(--text);
@@ -1478,15 +1483,23 @@
       if (supabaseClient) {
         try {
           if (!cachedSupabaseData) {
-            const { data, error, count } = await supabaseClient
-              .from('external_listings')
-              .select('id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized', { count: 'exact' })
-              .order('last_verified_at', { ascending: false })
-              .limit(10000);
-
-            if (!error && data && data.length > 0) {
-              cachedSupabaseData = data;
-              cachedSupabaseCount = count || data.length;
+            const selectCols = 'id, title, description, price, currency, district_name, external_url, images, attributes, source_id, category_normalized';
+            const ranges = [[0, 999], [1000, 1999], [2000, 2999], [3000, 3999]];
+            const chunkPromises = ranges.map(([start, end]) => 
+              supabaseClient
+                .from('external_listings')
+                .select(selectCols)
+                .order('last_verified_at', { ascending: false })
+                .range(start, end)
+            );
+            const chunkResults = await Promise.all(chunkPromises);
+            let combined = [];
+            for (const res of chunkResults) {
+              if (res.data && res.data.length > 0) combined = combined.concat(res.data);
+            }
+            if (combined.length > 0) {
+              cachedSupabaseData = combined;
+              cachedSupabaseCount = combined.length;
             }
           }
 
@@ -1818,12 +1831,12 @@
 
         // Real Estate, Tech, Auto & Commercial Synonym Lexicon
         const SYNONYM_GROUPS = [
-          ['2к', '2-к', '2-комн', '2 комн', 'двухкомнатн', '2-комнатн', 'двухкомнатная', 'двухкомнатной', 'двухкомнатную'],
-          ['1к', '1-к', '1-комн', '1 комн', 'однокомнатн', '1-комнатн', 'однокомнатная', 'однокомнатной', 'однокомнатную', 'студи', 'студия'],
-          ['3к', '3-к', '3-комн', '3 комн', 'трехкомнатн', 'трёхкомнатн', '3-комнатн', 'трехкомнатная', 'трехкомнатной'],
-          ['центр', 'дерибасовск', 'горсад', 'греческ', 'ришельевск', 'пушкинск', 'соборк'],
-          ['аренд', 'аренда', 'аренду', 'снять', 'сниму', 'сдам', 'сдается', 'долгосрочн', 'rent'],
-          ['продаж', 'продажа', 'купить', 'куплю', 'продам', 'продается', 'sale'],
+          ['2к', '2-к', '2-комн', '2 комн', '2-кімн', '2 кімн', 'двухкомнатн', '2-комнатн', 'двухкомнатная', 'двухкомнатной', 'двухкомнатную', 'двокімнатна', 'двокімнатну', '2 комнаты', 'комнаты', 'комнат', 'кімнат', 'кімнати'],
+          ['1к', '1-к', '1-комн', '1 комн', '1-кімн', '1 кімн', 'однокомнатн', '1-комнатн', 'однокомнатная', 'однокомнатной', 'однокомнатную', 'однокімнатна', 'студи', 'студия', '1 комната', 'комната'],
+          ['3к', '3-к', '3-комн', '3 комн', '3-кімн', '3 кімн', 'трехкомнатн', 'трёхкомнатн', '3-комнатн', 'трикімнатна', '3 комнаты'],
+          ['центр', 'приморский', 'приморський', 'дерибасовск', 'горсад', 'греческ', 'ришельевск', 'пушкинск', 'соборк'],
+          ['аренд', 'аренда', 'аренду', 'оренда', 'оренду', 'оренди', 'снять', 'сниму', 'сдам', 'сдается', 'здається', 'долгосрочн', 'довгостроково', 'rent'],
+          ['продаж', 'продажа', 'продажу', 'купить', 'куплю', 'продам', 'продается', 'продається', 'купівля', 'sale'],
           ['телефон', 'телефона', 'телефоны', 'смартфон', 'смартфона', 'смартфоны', 'айфон', 'iphone', 'samsung', 'самсунг', 'xiaomi', 'сяоми', 'редми', 'redmi', 'pixel', 'пиксель', 'motorola', 'моторола', 'oneplus'],
           ['машина', 'машину', 'машины', 'авто', 'автомобиль', 'автомобиля', 'легковой', 'легковая', 'иномарка', 'nissan', 'ниссан', 'volkswagen', 'фольксваген', 'passat', 'пассат', 'golf', 'гольф', 'renault', 'рено', 'megane', 'меган', 'ford', 'форд', 'focus', 'фокус', 'skoda', 'шкода', 'octavia', 'октавия', 'toyota', 'тойота', 'corolla', 'hyundai', 'хюндай', 'kia', 'киа', 'электромобиль', 'leaf', 'лиф', 'chevrolet', 'cruze', 'шевроле']
         ];
@@ -1833,7 +1846,7 @@
         let partialMatches = [];
 
         for (const item of itemsToRender) {
-          const itemText = (item.title + " " + item.desc + " " + item.category + " " + (item.source || "")).toLowerCase();
+          const itemText = (item.title + " " + item.desc + " " + item.category + " " + (item.district || "") + " " + (item.source || "")).toLowerCase();
           const itemPriceNum = parseFloat((item.price || '').replace(/[^\d.]/g, '')) || 0;
 
           let tokenMatches = 0;
@@ -1876,7 +1889,8 @@
           }
 
           const isWithinBudget = (maxPrice === null || normalizedItemPrice <= normalizedMaxPrice);
-          const isExact = (tokens.length === 1 && tokenMatches >= 1) || (tokens.length > 1 && tokenMatches >= tokens.length);
+          const isExact = (tokens.length <= 2 && tokenMatches >= tokens.length) || 
+                          (tokens.length >= 3 && tokenMatches >= tokens.length - 1);
 
           const priceUnitLabel = itemIsUsd ? '$' : 'грн';
 
@@ -1888,7 +1902,7 @@
               grade: grade,
               gradeClass: gradeClass,
               _isExact: true,
-              _score: 100 + (item.is_hot_deal ? 50 : 0) + (isWithinBudget ? 30 : -10) - (normalizedItemPrice > (normalizedMaxPrice || 9999999) ? 20 : 0),
+              _score: (tokenMatches * 30) + 100 + (item.is_hot_deal ? 50 : 0) + (isWithinBudget ? 30 : -10) - (normalizedItemPrice > (normalizedMaxPrice || 9999999) ? 20 : 0),
               _withinBudget: isWithinBudget,
               _priceNum: normalizedItemPrice
             });
